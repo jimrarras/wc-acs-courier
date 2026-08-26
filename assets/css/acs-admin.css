@@ -1,0 +1,163 @@
+/**
+ * ACS Courier Admin Styles
+ */
+
+/* ─── Settings Page ──────────────────────────────── */
+.wc-acs-settings .nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+.wc-acs-test-result {
+    margin-left: 10px;
+    font-weight: 600;
+}
+
+.wc-acs-test-result.success {
+    color: #00a32a;
+}
+
+.wc-acs-test-result.error {
+    color: #d63638;
+}
+
+/* ─── Order Metabox ──────────────────────────────── */
+#wc_acs_voucher .inside {
+    padding: 0;
+    margin: 0;
+}
+
+#wc-acs-voucher-box {
+    padding: 12px;
+}
+
+.wc-acs-voucher-code {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1d2327;
+    background: #f0f0f1;
+    padding: 3px 8px;
+    border-radius: 3px;
+}
+
+.wc-acs-voucher-info {
+    margin: 0 0 10px;
+}
+
+.wc-acs-tracking-status {
+    margin: 0 0 10px;
+    padding: 6px 10px;
+    background: #f0f6fc;
+    border-left: 3px solid #2271b1;
+    font-size: 12px;
+}
+
+/* Action buttons */
+.wc-acs-actions {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.wc-acs-actions .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    font-size: 12px;
+}
+
+.wc-acs-actions .button .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+}
+
+.wc-acs-delete-voucher {
+    color: #b32d2e !important;
+    border-color: #b32d2e !important;
+}
+
+.wc-acs-delete-voucher:hover {
+    background: #b32d2e !important;
+    color: #fff !important;
+}
+
+/* Create section */
+.wc-acs-create-section .wc-acs-field {
+    margin-bottom: 8px;
+}
+
+.wc-acs-create-section label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 3px;
+    font-size: 12px;
+    color: #50575e;
+}
+
+.wc-acs-create-section .wc-acs-field label + label {
+    display: inline-block;
+    font-weight: normal;
+    margin-right: 10px;
+}
+
+.wc-acs-create-voucher {
+    width: 100%;
+    text-align: center;
+    margin-top: 6px;
+}
+
+/* Notice */
+.wc-acs-notice {
+    padding: 8px 12px;
+    margin-top: 10px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.wc-acs-notice.success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.wc-acs-notice.error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Tracking details table */
+#wc-acs-tracking-details table {
+    font-size: 12px;
+}
+
+#wc-acs-tracking-details th,
+#wc-acs-tracking-details td {
+    padding: 4px 8px;
+}
+
+/* Pickup list */
+.wc-acs-pickup-info {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.wc-acs-pickup-info code {
+    font-size: 12px;
+}
+
+/* ─── Orders List Column ─────────────────────────── */
+.column-acs_voucher {
+    width: 120px;
+}
+
+.column-acs_voucher code {
+    font-size: 11px;
+    background: #f0f0f1;
+    padding: 2px 5px;
+    border-radius: 2px;
+}

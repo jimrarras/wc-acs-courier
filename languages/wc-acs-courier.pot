@@ -1,0 +1,649 @@
+# Copyright (C) 2026 Dimitrios Rarras
+# This file is distributed under the GPL-2.0-or-later.
+msgid ""
+msgstr ""
+"Project-Id-Version: ACS Courier for WooCommerce 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/jimrarras/wc-acs-courier/issues\n"
+"POT-Creation-Date: 2026-02-27T00:00:00+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#. Plugin Name of the plugin
+msgid "ACS Courier for WooCommerce"
+msgstr ""
+
+#: wc-acs-courier.php:36
+msgid "requires WooCommerce to be installed and active."
+msgstr ""
+
+#: wc-acs-courier.php:109 wc-acs-courier.php:135
+msgctxt "Order status"
+msgid "Delivered (ACS)"
+msgstr ""
+
+#: wc-acs-courier.php:115
+msgid "Delivered (ACS) <span class=\"count\">(%s)</span>"
+msgid_plural "Delivered (ACS) <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: wc-acs-courier.php:119 wc-acs-courier.php:136
+msgctxt "Order status"
+msgid "Delivery Denied (ACS)"
+msgstr ""
+
+#: wc-acs-courier.php:125
+msgid "Delivery Denied (ACS) <span class=\"count\">(%s)</span>"
+msgid_plural "Delivery Denied (ACS) <span class=\"count\">(%s)</span>"
+msgstr[0] ""
+msgstr[1] ""
+
+#: wc-acs-courier.php:169
+msgid "Settings"
+msgstr ""
+
+#: includes/class-acs-api.php:65
+msgid "ACS API Key is not configured."
+msgstr ""
+
+#: includes/class-acs-api.php:95
+msgid "Invalid ACS API Key."
+msgstr ""
+
+#: includes/class-acs-api.php:99
+msgid "ACS API rate limit exceeded. Try again shortly."
+msgstr ""
+
+#: includes/class-acs-api.php:106
+msgid "Invalid response from ACS API."
+msgstr ""
+
+#: includes/class-acs-api.php:111
+msgid "Unknown ACS API error."
+msgstr ""
+
+#: includes/class-acs-api.php:412
+msgid "Connection test failed — no data returned."
+msgstr ""
+
+#: includes/class-acs-admin.php:47
+msgid "ACS Courier Settings"
+msgstr ""
+
+#: includes/class-acs-admin.php:48 includes/class-acs-voucher.php:66
+#: includes/class-acs-voucher.php:77
+msgid "ACS Courier"
+msgstr ""
+
+#: includes/class-acs-admin.php:176
+msgid "Testing connection..."
+msgstr ""
+
+#: includes/class-acs-admin.php:177
+msgid "Connection successful!"
+msgstr ""
+
+#: includes/class-acs-admin.php:178
+msgid "Connection failed"
+msgstr ""
+
+#: includes/class-acs-admin.php:179
+msgid "Creating voucher..."
+msgstr ""
+
+#: includes/class-acs-admin.php:180
+msgid "Are you sure you want to delete this voucher?"
+msgstr ""
+
+#: includes/class-acs-admin.php:192 includes/class-acs-voucher.php:371
+#: includes/class-acs-voucher.php:453 includes/class-acs-voucher.php:508
+#: includes/class-acs-voucher.php:555 includes/class-acs-voucher.php:591
+#: includes/class-acs-voucher.php:654
+msgid "Unauthorized."
+msgstr ""
+
+#: includes/class-acs-admin.php:201
+msgid "Connection to ACS API successful!"
+msgstr ""
+
+#: includes/class-acs-admin.php:220
+msgid "API Credentials"
+msgstr ""
+
+#: includes/class-acs-admin.php:224
+msgid "Shipping"
+msgstr ""
+
+#: includes/class-acs-admin.php:228
+msgid "Automation"
+msgstr ""
+
+#: includes/class-acs-admin.php:238
+msgid "API Key"
+msgstr ""
+
+#: includes/class-acs-admin.php:243
+msgid "The API Key provided by ACS."
+msgstr ""
+
+#: includes/class-acs-admin.php:247
+msgid "Company ID"
+msgstr ""
+
+#: includes/class-acs-admin.php:255
+msgid "Company Password"
+msgstr ""
+
+#: includes/class-acs-admin.php:263
+msgid "User ID"
+msgstr ""
+
+#: includes/class-acs-admin.php:271
+msgid "User Password"
+msgstr ""
+
+#: includes/class-acs-admin.php:279 includes/class-acs-admin.php:282
+msgid "Test Connection"
+msgstr ""
+
+#: includes/class-acs-admin.php:288
+msgid "Debug Logging"
+msgstr ""
+
+#: includes/class-acs-admin.php:293
+msgid "Enable debug logging (WooCommerce > Status > Logs)"
+msgstr ""
+
+#: includes/class-acs-admin.php:302
+msgid "Billing Code"
+msgstr ""
+
+#: includes/class-acs-admin.php:307
+msgid "Your ACS credit/billing code (e.g., 2ΑΘ999999)."
+msgstr ""
+
+#: includes/class-acs-admin.php:311
+msgid "Sender Name"
+msgstr ""
+
+#: includes/class-acs-admin.php:319
+msgid "Origin Station Code"
+msgstr ""
+
+#: includes/class-acs-admin.php:324
+msgid "ACS station code in Greek uppercase (e.g., ΑΘ for Athens). Found via zip code lookup."
+msgstr ""
+
+#: includes/class-acs-admin.php:328
+msgid "Default Weight (kg)"
+msgstr ""
+
+#: includes/class-acs-admin.php:333
+msgid "Default weight when product weight is not set. Minimum 0.5 kg."
+msgstr ""
+
+#: includes/class-acs-admin.php:337
+msgid "Charge Type"
+msgstr ""
+
+#: includes/class-acs-admin.php:341
+msgid "Sender pays"
+msgstr ""
+
+#: includes/class-acs-admin.php:344
+msgid "Recipient pays"
+msgstr ""
+
+#: includes/class-acs-admin.php:354
+msgid "Auto-create Voucher"
+msgstr ""
+
+#: includes/class-acs-admin.php:359
+msgid "Automatically create a voucher when order status changes."
+msgstr ""
+
+#: includes/class-acs-admin.php:364
+msgid "Auto-create on Status"
+msgstr ""
+
+#: includes/class-acs-admin.php:377
+msgid "Which order status triggers automatic voucher creation."
+msgstr ""
+
+#: includes/class-acs-admin.php:381
+msgid "Auto Tracking"
+msgstr ""
+
+#: includes/class-acs-admin.php:386
+msgid "Automatically check shipment status and update orders."
+msgstr ""
+
+#: includes/class-acs-admin.php:391
+msgid "Tracking Frequency"
+msgstr ""
+
+#: includes/class-acs-admin.php:395
+msgid "Every hour"
+msgstr ""
+
+#: includes/class-acs-admin.php:398
+msgid "Twice a day"
+msgstr ""
+
+#: includes/class-acs-admin.php:401
+msgid "Once a day"
+msgstr ""
+
+#: includes/class-acs-admin.php:407
+msgid "Email Tracking Code"
+msgstr ""
+
+#: includes/class-acs-admin.php:412
+msgid "Send tracking number to customer via email when voucher is created."
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:22
+msgid "Real-time shipping rates from ACS Courier based on your contract pricing."
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:59
+msgid "Title"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:61
+msgid "Title displayed at checkout."
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:67
+msgid "Tax Status"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:70
+msgid "Taxable"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:71
+msgid "None (VAT included in ACS rate)"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:75
+msgid "Rate Type"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:79
+msgid "API Price Calculation (real-time from ACS)"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:80
+msgid "Flat Rate"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:84
+msgid "Flat Rate (€)"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:87
+msgid "Used when Rate Type is Flat Rate."
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:91
+msgid "Free Shipping Minimum (€)"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:94
+msgid "Offer free shipping for orders above this amount. Leave empty to disable."
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:98
+msgid "Handling Fee (€)"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:101
+msgid "Extra fee added on top of the ACS rate."
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:105
+msgid "COD Extra Fee (€)"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:108
+msgid "Extra fee for Cash on Delivery orders."
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:112
+msgid "Fallback Cost (€)"
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:115
+msgid "Cost to use if API calculation fails."
+msgstr ""
+
+#: includes/class-acs-shipping-method.php:134
+msgid "Free"
+msgstr ""
+
+#: includes/class-acs-voucher.php:97
+msgid "Order not found."
+msgstr ""
+
+#: includes/class-acs-voucher.php:110
+msgid "Voucher:"
+msgstr ""
+
+#: includes/class-acs-voucher.php:119
+msgid "Status:"
+msgstr ""
+
+#: includes/class-acs-voucher.php:126
+msgid "Print A4 (Laser)"
+msgstr ""
+
+#: includes/class-acs-voucher.php:127
+msgid "A4"
+msgstr ""
+
+#: includes/class-acs-voucher.php:130
+msgid "Print Thermal"
+msgstr ""
+
+#: includes/class-acs-voucher.php:131
+msgid "Thermal"
+msgstr ""
+
+#: includes/class-acs-voucher.php:134
+msgid "Track Shipment"
+msgstr ""
+
+#: includes/class-acs-voucher.php:135
+msgid "Track"
+msgstr ""
+
+#: includes/class-acs-voucher.php:138
+msgid "Delete Voucher"
+msgstr ""
+
+#: includes/class-acs-voucher.php:150
+#, php-format
+msgid "Issue Pickup List (%s)"
+msgstr ""
+
+#: includes/class-acs-voucher.php:154
+msgid "Issues a pickup list for all vouchers on this date."
+msgstr ""
+
+#: includes/class-acs-voucher.php:159
+msgid "Pickup List:"
+msgstr ""
+
+#: includes/class-acs-voucher.php:172
+msgid "Parcels"
+msgstr ""
+
+#: includes/class-acs-voucher.php:176
+msgid "Weight (kg)"
+msgstr ""
+
+#: includes/class-acs-voucher.php:182
+msgid "Extra Services"
+msgstr ""
+
+#: includes/class-acs-voucher.php:183
+msgid "Saturday"
+msgstr ""
+
+#: includes/class-acs-voucher.php:184
+msgid "Morning"
+msgstr ""
+
+#: includes/class-acs-voucher.php:185
+msgid "Return Docs"
+msgstr ""
+
+#: includes/class-acs-voucher.php:188
+msgid "Notes"
+msgstr ""
+
+#: includes/class-acs-voucher.php:190
+msgid "Delivery notes..."
+msgstr ""
+
+#: includes/class-acs-voucher.php:194
+msgid "Create Voucher"
+msgstr ""
+
+#: includes/class-acs-voucher.php:340
+#, php-format
+msgid "Smartpoint pickup: %s"
+msgstr ""
+
+#: includes/class-acs-voucher.php:383
+msgid "This order already has an ACS voucher."
+msgstr ""
+
+#: includes/class-acs-voucher.php:421
+msgid "Failed to create voucher."
+msgstr ""
+
+#: includes/class-acs-voucher.php:429
+#, php-format
+msgid "ACS voucher created: %s"
+msgstr ""
+
+#: includes/class-acs-voucher.php:442
+msgid "Voucher created successfully!"
+msgstr ""
+
+#: includes/class-acs-voucher.php:466
+msgid "No voucher found for this order."
+msgstr ""
+
+#: includes/class-acs-voucher.php:498
+msgid "Could not retrieve PDF data."
+msgstr ""
+
+#: includes/class-acs-voucher.php:520
+msgid "No voucher to delete."
+msgstr ""
+
+#: includes/class-acs-voucher.php:541
+#, php-format
+msgid "ACS voucher deleted: %s"
+msgstr ""
+
+#: includes/class-acs-voucher.php:545
+msgid "Voucher deleted."
+msgstr ""
+
+#: includes/class-acs-voucher.php:567
+msgid "No voucher to track."
+msgstr ""
+
+#: includes/class-acs-voucher.php:612
+msgid "Failed to issue pickup list."
+msgstr ""
+
+#: includes/class-acs-voucher.php:643
+msgid "Pickup list issued."
+msgstr ""
+
+#: includes/class-acs-voucher.php:668
+msgid "No pickup list found."
+msgstr ""
+
+#: includes/class-acs-voucher.php:692
+msgid "Could not retrieve pickup list PDF."
+msgstr ""
+
+#: includes/class-acs-voucher.php:731
+#, php-format
+msgid "ACS auto-voucher failed: %s"
+msgstr ""
+
+#: includes/class-acs-voucher.php:745
+#, php-format
+msgid "ACS voucher auto-created: %s"
+msgstr ""
+
+#: includes/class-acs-voucher.php:755
+#, php-format
+msgid "ACS auto-voucher error: %s"
+msgstr ""
+
+#: includes/class-acs-voucher.php:771
+#, php-format
+msgid "Your order #%s has been shipped via ACS Courier"
+msgstr ""
+
+#: includes/class-acs-voucher.php:779
+#, php-format
+msgid "Dear %1$s,\n\nYour order #%2$s has been shipped via ACS Courier.\n\nTracking Number: %3$s\nTrack your shipment: %4$s\n\nThank you for your purchase!\n%5$s"
+msgstr ""
+
+#: includes/class-acs-voucher.php:808
+msgid "ACS: Create Vouchers"
+msgstr ""
+
+#: includes/class-acs-voucher.php:809
+msgid "ACS: Print Vouchers (A4)"
+msgstr ""
+
+#: includes/class-acs-voucher.php:919
+#, php-format
+msgid "%d ACS voucher created."
+msgid_plural "%d ACS vouchers created."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-acs-voucher.php:932
+#, php-format
+msgid "%d voucher ready for printing."
+msgid_plural "%d vouchers ready for printing."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-acs-voucher.php:948
+msgid "Failed to print ACS vouchers. Please try printing individually."
+msgstr ""
+
+#: includes/class-acs-voucher.php:955
+msgid "No ACS vouchers found on the selected orders. Create vouchers first."
+msgstr ""
+
+#: includes/class-acs-voucher.php:974
+msgid "ACS Voucher"
+msgstr ""
+
+#: includes/class-acs-tracking.php:118
+msgid "ACS: Shipment delivered."
+msgstr ""
+
+#: includes/class-acs-tracking.php:121
+#, php-format
+msgid "ACS Tracking: Delivered — %s"
+msgstr ""
+
+#: includes/class-acs-tracking.php:129
+msgid "ACS: Delivery denied/returned."
+msgstr ""
+
+#: includes/class-acs-tracking.php:132
+#, php-format
+msgid "ACS Tracking: Denied — %1$s (Reason: %2$s)"
+msgstr ""
+
+#: includes/class-acs-tracking.php:140
+#, php-format
+msgid "ACS Tracking update: %s"
+msgstr ""
+
+#: includes/class-acs-tracking.php:183
+msgid "Shipment Tracking"
+msgstr ""
+
+#: includes/class-acs-tracking.php:187
+msgid "Courier"
+msgstr ""
+
+#: includes/class-acs-tracking.php:191
+msgid "Tracking Number"
+msgstr ""
+
+#: includes/class-acs-tracking.php:200
+msgid "Status"
+msgstr ""
+
+#: includes/class-acs-tracking.php:226
+msgid "ACS Courier Tracking:"
+msgstr ""
+
+#: includes/class-acs-tracking.php:227
+msgid "Track your shipment:"
+msgstr ""
+
+#: includes/class-acs-tracking.php:230
+msgid "ACS Courier:"
+msgstr ""
+
+#: includes/class-acs-tracking.php:250
+msgid "Track your ACS shipment:"
+msgstr ""
+
+#: includes/class-acs-tracking.php:253
+msgid "Enter tracking number"
+msgstr ""
+
+#: includes/class-acs-tracking.php:261
+msgid "Track your shipment on the ACS website"
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:71
+msgid "Loading ACS pickup points..."
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:72
+msgid "Select a pickup point"
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:73
+msgid "Selected:"
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:74
+msgid "Search by area or zip code..."
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:75
+msgid "No pickup points found for this area."
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:76
+msgid "Smartpoint Locker"
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:77
+msgid "ACS Store"
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:107
+msgid "Pick up from ACS Smartpoint / Store"
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:124
+msgid "Pickup point:"
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:129
+msgid "Change"
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:220
+msgid "Please select an ACS pickup point or uncheck the Smartpoint option."
+msgstr ""
+
+#: includes/class-acs-smartpoints.php:261
+msgid "ACS Smartpoint Pickup:"
+msgstr ""
