@@ -93,6 +93,7 @@ abstract class TestCase extends PHPUnitTestCase {
             'billing_first_name' => 'John',
             'meta'            => [],
             'items'           => [],
+            'shipping_methods' => [],
         ];
 
         $cfg = array_merge( $defaults, $overrides );
@@ -113,12 +114,16 @@ abstract class TestCase extends PHPUnitTestCase {
         } );
 
         $order->shouldReceive( 'get_items' )->andReturn( $cfg['items'] );
+        $order->shouldReceive( 'get_shipping_methods' )->andReturn( $cfg['shipping_methods'] );
         $order->updated_meta = [];
         $order->shouldReceive( 'update_meta_data' )->andReturnUsing( function ( $key, $value ) use ( $order ) {
             $order->updated_meta[ $key ] = $value;
         } );
         $order->shouldReceive( 'delete_meta_data' )->andReturnNull();
-        $order->shouldReceive( 'add_order_note' )->andReturnNull();
+        $order->notes = [];
+        $order->shouldReceive( 'add_order_note' )->andReturnUsing( function ( $note ) use ( $order ) {
+            $order->notes[] = $note;
+        } );
         $order->shouldReceive( 'set_status' )->andReturnNull();
         $order->shouldReceive( 'save' )->andReturnNull();
 

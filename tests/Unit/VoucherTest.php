@@ -473,4 +473,95 @@ class VoucherTest extends TestCase {
         $this->assertArrayHasKey( 'acs_print_vouchers', $result );
         $this->assertArrayHasKey( 'trash', $result );
     }
+
+    // ── auto_create_voucher(): orders shipped by another carrier plugin ──
+
+    private function shippingItem( string $method_id ) {
+        $item = Mockery::mock( 'WC_Order_Item_Shipping' );
+        $item->shouldReceive( 'get_method_id' )->andReturn( $method_id );
+        return $item;
+    }
+
+    public function test_auto_create_skips_an_order_shipped_with_boxnow(): void {
+        // pooq.gr runs wc-boxnow-delivery alongside this plugin. A BOX NOW locker
+        // order reaching the trigger status must not also get an ACS voucher.
+        // The ACS rate on that store is a plain flat_rate, so the rule is
+        // "not another known carrier", never "is the ACS shipping method".
+        $this->stubGetOption( [
+            'wc_acs_auto_create_voucher' => 'yes',
+            'wc_acs_auto_create_status'  => 'wc-processing',
+        ] );
+
+        $order = $this->createOrderMock( [
+            'shipping_methods' => [ $this->shippingItem( 'box_now_delivery' ) ],
+        ] );
+        Functions\when( 'wc_get_order' )->justReturn( $order );
+
+        // wp_remote_post not stubbed: a call would fatal, proving the API was never reached.
+        $this->voucher->auto_create_voucher( 100, 'pending', 'processing' );
+
+        $this->assertArrayNotHasKey( '_acs_voucher_no', $order->updated_meta );
+        $this->assertCount( 1, $order->notes, 'The operator should see why no ACS voucher was created.' );
+        $this->assertStringContainsString( 'BOX NOW', $order->notes[0] );
+    }
+
+    public function test_auto_create_proceeds_for_a_flat_rate_order(): void {
+        // The store's ACS rate is flat_rate:2, so a flat_rate order must still
+        // be handled; only other carrier plugins are excluded.
+        $this->stubGetOption( [
+            'wc_acs_auto_create_voucher' => 'yes',
+            'wc_acs_auto_create_status'  => 'wc-processing',
+            'wc_acs_email_tracking'      => 'no',
+            'wc_acs_charge_type'         => '2',
+            'wc_acs_default_weight'      => '0.5',
+            'woocommerce_weight_unit'    => 'kg',
+            'wc_acs_api_key'             => 'test-api-key',
+        ] );
+
+        $order = $this->createOrderMock( [
+            'shipping_methods' => [ $this->shippingItem( 'flat_rate' ) ],
+        ] );
+        Functions\when( 'wc_get_order' )->justReturn( $order );
+        Functions\when( 'wp_remote_post' )->justReturn( [ 'response' => [ 'code' => 200 ], 'body' => '' ] );
+        Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( 200 );
+        Functions\when( 'wp_remote_retrieve_body' )->justReturn( json_encode( [
+            'ACSExecution_HasError' => false,
+            'ACSOutputResponse'     => [
+                'ACSValueOutput' => [ [ 'Voucher_No' => '7000124', 'Error_Message' => '' ] ],
+            ],
+        ] ) );
+
+        $this->voucher->auto_create_voucher( 100, 'pending', 'processing' );
+
+        $this->assertSame( '7000124', $order->updated_meta['_acs_voucher_no'] ?? null );
+    }
+
+    public function test_auto_create_can_be_vetoed_per_order_by_filter(): void {
+        // Same credentials as the flat_rate test above, so that without the
+        // veto the call WOULD reach wp_remote_post, which is not stubbed here
+        // and would fatal. That is what makes the veto observable.
+        $this->stubGetOption( [
+            'wc_acs_auto_create_voucher' => 'yes',
+            'wc_acs_auto_create_status'  => 'wc-processing',
+            'wc_acs_email_tracking'      => 'no',
+            'wc_acs_charge_type'         => '2',
+            'wc_acs_default_weight'      => '0.5',
+            'woocommerce_weight_unit'    => 'kg',
+            'wc_acs_api_key'             => 'test-api-key',
+        ] );
+
+        Functions\when( 'apply_filters' )->alias( function ( $tag, $value, ...$args ) {
+            return 'wc_acs_auto_create_voucher_allowed' === $tag ? false : $value;
+        } );
+
+        $order = $this->createOrderMock( [
+            'shipping_methods' => [ $this->shippingItem( 'flat_rate' ) ],
+        ] );
+        Functions\when( 'wc_get_order' )->justReturn( $order );
+
+        // wp_remote_post not stubbed: a call would fatal.
+        $this->voucher->auto_create_voucher( 100, 'pending', 'processing' );
+
+        $this->assertArrayNotHasKey( '_acs_voucher_no', $order->updated_meta );
+    }
 }

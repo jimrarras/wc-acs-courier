@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 9.6
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -121,6 +121,9 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.0.1 =
+* Automatic voucher creation skips orders shipped through another carrier plugin (BOX NOW), with a per-order veto filter wc_acs_auto_create_voucher_allowed and a wc_acs_other_carrier_method_ids filter for the excluded method ids
 
 = 1.0.0 =
 * Initial release
