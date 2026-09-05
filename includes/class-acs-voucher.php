@@ -710,7 +710,52 @@ class WC_ACS_Voucher {
         ) );
     }
 
-  /**
+    /**
+     * Should this order get an ACS voucher automatically?
+     *
+     * A store may run another carrier plugin alongside this one (pooq.gr runs
+     * wc-boxnow-delivery). An order shipped through that carrier must not also
+     * get an ACS voucher when it reaches the trigger status. The rule is "not
+     * another known carrier", never "is the ACS shipping method": on pooq.gr
+     * the ACS rate is a plain flat_rate, so requiring our own method id would
+     * switch automation off for every real ACS order.
+     *
+     * @param WC_Order $order Order.
+     * @return bool
+     */
+    public function should_auto_create( $order ) {
+        /**
+         * Shipping method ids that belong to other carrier plugins.
+         *
+         * @since 1.0.1
+         *
+         * @param string[] $method_ids Method ids to leave alone. Default: BOX NOW's.
+         */
+        $other_carriers = (array) apply_filters( 'wc_acs_other_carrier_method_ids', array( 'box_now_delivery' ) );
+
+        foreach ( $order->get_shipping_methods() as $item ) {
+            if ( in_array( $item->get_method_id(), $other_carriers, true ) ) {
+                $order->add_order_note(
+                    /* translators: %s: shipping method id of the other carrier */
+                    sprintf( __( 'ACS auto-voucher skipped: this order ships with %s (BOX NOW or another carrier), not ACS.', 'wc-acs-courier' ), $item->get_method_id() )
+                );
+                $order->save();
+                return false;
+            }
+        }
+
+        /**
+         * Final say on automatic ACS voucher creation for one order.
+         *
+         * @since 1.0.1
+         *
+         * @param bool     $allowed True to create the voucher automatically.
+         * @param WC_Order $order   The order reaching the trigger status.
+         */
+        return (bool) apply_filters( 'wc_acs_auto_create_voucher_allowed', true, $order );
+    }
+
+    /**
      * Auto-create voucher on order status change.
      *
      * @param int    $order_id   Order ID.
@@ -731,6 +776,10 @@ class WC_ACS_Voucher {
 
         $order = wc_get_order( $order_id );
         if ( ! $order || $order->get_meta( '_acs_voucher_no' ) ) {
+            return;
+        }
+
+        if ( ! $this->should_auto_create( $order ) ) {
             return;
         }
 
