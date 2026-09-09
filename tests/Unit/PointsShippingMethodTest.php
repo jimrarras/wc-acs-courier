@@ -52,7 +52,7 @@ class PointsShippingMethodTest extends TestCase {
         $this->assertArrayHasKey( 'cod_mode', $fields );
         $this->assertSame( 'select', $fields['cod_mode']['type'] );
         $this->assertSame( 'terminal', $fields['cod_mode']['default'] );
-        $this->assertSame( [ 'terminal', 'stores', 'off' ], array_keys( $fields['cod_mode']['options'] ) );
+        $this->assertSame( [ 'terminal', 'stores', 'off', 'exclusive' ], array_keys( $fields['cod_mode']['options'] ) );
 
         $keys = array_keys( $fields );
         $this->assertSame( array_search( 'point_types', $keys, true ) + 1, array_search( 'cod_mode', $keys, true ) );

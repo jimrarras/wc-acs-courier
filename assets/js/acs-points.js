@@ -180,7 +180,7 @@
     }
 
     function allowsCod( p ) {
-        if ( cfg.codMode === 'off' ) {
+        if ( cfg.codMode === 'off' || cfg.codMode === 'exclusive' ) {
             return false;
         }
         if ( cfg.codMode === 'stores' ) {

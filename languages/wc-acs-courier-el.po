@@ -564,6 +564,10 @@ msgstr "Ποτέ σε lockers, επιτρέπεται σε καταστήματ�
 msgid "Never at any ACS Point"
 msgstr "Ποτέ σε σημείο ACS"
 
+#: includes/class-acs-points-shipping-method.php:123
+msgid "Never at any ACS Point, and hide ACS Point while cash on delivery is selected"
+msgstr "Ποτέ σε σημείο ACS, και απόκρυψη του ACS Point όσο είναι επιλεγμένη η αντικαταβολή"
+
 #: includes/class-acs-points-shipping-method.php:111
 #: includes/class-acs-shipping-method.php:84
 msgid "Tax Status"

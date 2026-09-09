@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 9.6
-Stable tag: 1.1.4
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,6 +123,9 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.2.0 =
+* New: "exclusive" cash-on-delivery mode: choosing cash on delivery removes the ACS Point option and choosing ACS Point hides cash on delivery
 
 = 1.1.4 =
 * Fix: the map settings are localized after the checkout renders, so the point-type filter and COD badges match the zone instance on first load

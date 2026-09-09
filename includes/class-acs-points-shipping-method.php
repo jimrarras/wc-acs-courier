@@ -117,9 +117,10 @@ class WC_ACS_Points_Shipping_Method extends WC_Shipping_Method {
                 'description' => __( 'Where cash on delivery is offered for ACS Point pickup.', 'wc-acs-courier' ),
                 'default'     => 'terminal',
                 'options'     => array(
-                    'terminal' => __( 'Only at points with a card terminal (ACS data)', 'wc-acs-courier' ),
-                    'stores'   => __( 'Never at lockers, allowed at ACS stores', 'wc-acs-courier' ),
-                    'off'      => __( 'Never at any ACS Point', 'wc-acs-courier' ),
+                    'terminal'  => __( 'Only at points with a card terminal (ACS data)', 'wc-acs-courier' ),
+                    'stores'    => __( 'Never at lockers, allowed at ACS stores', 'wc-acs-courier' ),
+                    'off'       => __( 'Never at any ACS Point', 'wc-acs-courier' ),
+                    'exclusive' => __( 'Never at any ACS Point, and hide ACS Point while cash on delivery is selected', 'wc-acs-courier' ),
                 ),
                 'desc_tip'    => true,
             ),

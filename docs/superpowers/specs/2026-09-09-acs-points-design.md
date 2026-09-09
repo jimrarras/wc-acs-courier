@@ -115,7 +115,7 @@ array(
 | `free_min` | price | "" | subtotal at or above which the rate is 0; empty disables |
 | `max_weight` | decimal | 6 | kg; rate withheld above it (ACS standard locker limit) |
 | `point_types` | select | `both` | `both` or `lockers` |
-| `cod_mode` | select | terminal | terminal: COD where the point has a terminal; stores: never at lockers; off: never at any point |
+| `cod_mode` | select | terminal | terminal: COD where the point has a terminal; stores: never at lockers; off: never at any point; exclusive: never at any point and the rate is withheld while cash on delivery is the chosen payment (woocommerce_package_rates), and the cod gateway is hidden as soon as acs_points is chosen |
 | `tax_status` | select | none | as the home-delivery method |
 
 `calculate_shipping()` withholds the rate when the package weight (`wc_get_weight` of contents, falling back to `wc_acs_default_weight` per item without weight) exceeds `max_weight`, otherwise adds one rate at `cost`, or 0 when `free_min` applies. Rate id is `acs_points:<instance>`. On pooq.gr the 05-pooq-shipping rule zeroes every courier rate above the store threshold anyway; `free_min` exists for stores without that rule.

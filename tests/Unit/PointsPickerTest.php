@@ -13,6 +13,7 @@ class PointsPickerTest extends TestCase {
             'woocommerce_acs_points_4_settings' => [ 'point_types' => 'both' ],
             'woocommerce_acs_points_5_settings' => [ 'point_types' => 'both', 'cod_mode' => 'stores' ],
             'woocommerce_acs_points_6_settings' => [ 'point_types' => 'both', 'cod_mode' => 'off' ],
+            'woocommerce_acs_points_7_settings' => [ 'point_types' => 'both', 'cod_mode' => 'exclusive' ],
         ] );
     }
 
@@ -135,6 +136,10 @@ class PointsPickerTest extends TestCase {
         $this->assertSame( 'terminal', \WC_ACS_Points_Picker::instance_cod_mode( [ 'flat_rate:1' ] ) );
     }
 
+    public function test_instance_cod_mode_accepts_exclusive(): void {
+        $this->assertSame( 'exclusive', \WC_ACS_Points_Picker::instance_cod_mode( [ 'acs_points:7' ] ) );
+    }
+
     public function test_point_allows_cod_matrix(): void {
         $locker_with_cod    = $this->point( [ 'type' => 'locker', 'cod' => 1 ] );
         $locker_without_cod = $this->point( [ 'type' => 'locker', 'cod' => 0 ] );
@@ -153,6 +158,14 @@ class PointsPickerTest extends TestCase {
         $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $store, 'off' ) );
     }
 
+    public function test_point_allows_cod_is_false_in_exclusive_mode(): void {
+        $locker_with_cod = $this->point( [ 'type' => 'locker', 'cod' => 1 ] );
+        $store            = $this->point( [ 'type' => 'store', 'cod' => 0 ] );
+
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $locker_with_cod, 'exclusive' ) );
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $store, 'exclusive' ) );
+    }
+
     public function test_validate_rejects_cod_at_locker_in_stores_mode(): void {
         $errors = new \WP_Error();
         \WC_ACS_Points_Picker::validate( $this->data( [ 'shipping_method' => [ 'acs_points:5' ], 'payment_method' => 'cod' ] ), $this->point( [ 'type' => 'locker', 'cod' => 1 ] ), $errors );
@@ -165,6 +178,12 @@ class PointsPickerTest extends TestCase {
         $this->assertFalse( $errors->has_errors() );
     }
 
+    public function test_validate_rejects_cod_in_exclusive_mode_even_at_a_store(): void {
+        $errors = new \WP_Error();
+        \WC_ACS_Points_Picker::validate( $this->data( [ 'shipping_method' => [ 'acs_points:7' ], 'payment_method' => 'cod' ] ), $this->point( [ 'type' => 'store', 'cod' => 1 ] ), $errors );
+        $this->assertSame( [ 'acs_point_cod' ], $errors->get_error_codes() );
+    }
+
     public function test_gateway_filter_hides_cod_in_off_mode_even_with_terminal(): void {
         $this->resetStaticProperty( \WC_ACS_Points_Feed::class, 'instance' );
         $this->stubGetOption( [
@@ -175,6 +194,35 @@ class PointsPickerTest extends TestCase {
         $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:6' ], 'acs_point_id' => '1' ] );
 
         $this->assertSame( [ 'bacs' ], array_keys( \WC_ACS_Points_Picker::filter_payment_gateways( $gateways ) ) );
+    }
+
+    public function test_gateway_filter_hides_cod_in_exclusive_mode_before_a_point_is_chosen(): void {
+        $gateways = [ 'cod' => 'COD', 'bacs' => 'Bank' ];
+
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:7' ] ] );
+        $this->assertSame( [ 'bacs' ], array_keys( \WC_ACS_Points_Picker::filter_payment_gateways( $gateways ) ) );
+
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:4' ] ] );
+        $this->assertSame( [ 'cod', 'bacs' ], array_keys( \WC_ACS_Points_Picker::filter_payment_gateways( $gateways ) ) );
+    }
+
+    public function test_filter_package_rates_withholds_acs_points_when_cod_is_chosen_in_exclusive_mode(): void {
+        $flat = Mockery::mock( 'WC_Shipping_Rate' );
+        $flat->shouldReceive( 'get_method_id' )->andReturn( 'flat_rate' );
+        $acs = Mockery::mock( 'WC_Shipping_Rate' );
+        $acs->shouldReceive( 'get_method_id' )->andReturn( 'acs_points' );
+
+        $rates = [ 'flat_rate:2' => $flat, 'acs_points:7' => $acs ];
+
+        $this->mockSession( [ 'chosen_payment_method' => 'cod' ] );
+        $this->assertSame( [ 'flat_rate:2' ], array_keys( \WC_ACS_Points_Picker::filter_package_rates( $rates, [] ) ) );
+
+        $this->mockSession( [ 'chosen_payment_method' => 'bacs' ] );
+        $this->assertSame( [ 'flat_rate:2', 'acs_points:7' ], array_keys( \WC_ACS_Points_Picker::filter_package_rates( $rates, [] ) ) );
+
+        $rates_terminal = [ 'flat_rate:2' => $flat, 'acs_points:4' => $acs ];
+        $this->mockSession( [ 'chosen_payment_method' => 'cod' ] );
+        $this->assertSame( [ 'flat_rate:2', 'acs_points:4' ], array_keys( \WC_ACS_Points_Picker::filter_package_rates( $rates_terminal, [] ) ) );
     }
 
     public function test_order_has_points(): void {

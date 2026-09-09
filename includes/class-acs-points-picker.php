@@ -37,6 +37,7 @@ class WC_ACS_Points_Picker {
         add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_classic_checkout' ), 10, 2 );
         add_action( 'woocommerce_checkout_create_order', array( $this, 'save_classic_checkout' ), 10, 2 );
         add_filter( 'woocommerce_available_payment_gateways', array( __CLASS__, 'filter_payment_gateways' ) );
+        add_filter( 'woocommerce_package_rates', array( __CLASS__, 'filter_package_rates' ), 20, 2 );
 
         add_action( 'wp_ajax_wc_acs_set_point', array( $this, 'ajax_set_point' ) );
         add_action( 'wp_ajax_nopriv_wc_acs_set_point', array( $this, 'ajax_set_point' ) );
@@ -142,18 +143,18 @@ class WC_ACS_Points_Picker {
             $instance_id = isset( $parts[1] ) ? (int) $parts[1] : 0;
             $settings    = get_option( 'woocommerce_' . self::METHOD_ID . '_' . $instance_id . '_settings', array() );
             $mode        = is_array( $settings ) ? ( $settings['cod_mode'] ?? 'terminal' ) : 'terminal';
-            return in_array( $mode, array( 'terminal', 'stores', 'off' ), true ) ? $mode : 'terminal';
+            return in_array( $mode, array( 'terminal', 'stores', 'off', 'exclusive' ), true ) ? $mode : 'terminal';
         }
         return 'terminal';
     }
 
     /**
      * @param array  $point Feed record.
-     * @param string $mode  'terminal', 'stores' or 'off'.
+     * @param string $mode  'terminal', 'stores', 'off' or 'exclusive'.
      * @return bool
      */
     public static function point_allows_cod( array $point, $mode ) {
-        if ( 'off' === $mode ) {
+        if ( 'off' === $mode || 'exclusive' === $mode ) {
             return false;
         }
         if ( 'stores' === $mode ) {
@@ -331,12 +332,46 @@ class WC_ACS_Points_Picker {
             return $gateways;
         }
 
+        if ( 'exclusive' === self::instance_cod_mode( $chosen ) ) {
+            unset( $gateways['cod'] );
+            return $gateways;
+        }
+
         $point = WC_ACS_Points_Feed::instance()->find( (string) WC()->session->get( self::SESSION_KEY, '' ) );
         if ( is_array( $point ) && ! self::point_allows_cod( $point, self::instance_cod_mode( $chosen ) ) ) {
             unset( $gateways['cod'] );
         }
 
         return $gateways;
+    }
+
+    /**
+     * In exclusive mode, withhold the acs_points rate while cash on delivery
+     * is the chosen payment method. This runs after WooCommerce's session
+     * rate cache on every calculation, so a payment change (which the
+     * checkout posts through update_order_review before totals are
+     * recalculated) takes effect without a cart change.
+     *
+     * @param array $rates   Rate id => WC_Shipping_Rate.
+     * @param array $package Package.
+     * @return array
+     */
+    public static function filter_package_rates( $rates, $package ) {
+        if ( ! is_array( $rates ) || ! function_exists( 'WC' ) || ! WC()->session ) {
+            return $rates;
+        }
+        if ( 'cod' !== (string) WC()->session->get( 'chosen_payment_method', '' ) ) {
+            return $rates;
+        }
+        foreach ( $rates as $rate_id => $rate ) {
+            if ( self::METHOD_ID !== $rate->get_method_id() ) {
+                continue;
+            }
+            if ( 'exclusive' === self::instance_cod_mode( array( (string) $rate_id ) ) ) {
+                unset( $rates[ $rate_id ] );
+            }
+        }
+        return $rates;
     }
 
     // ─── Rendering ─────────────────────────────────────────────────

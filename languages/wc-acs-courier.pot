@@ -539,6 +539,10 @@ msgstr ""
 msgid "Never at any ACS Point"
 msgstr ""
 
+#: includes/class-acs-points-shipping-method.php:123
+msgid "Never at any ACS Point, and hide ACS Point while cash on delivery is selected"
+msgstr ""
+
 #: includes/class-acs-points-shipping-method.php:111
 #: includes/class-acs-shipping-method.php:84
 msgid "Tax Status"
