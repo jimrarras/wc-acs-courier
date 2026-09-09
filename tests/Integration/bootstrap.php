@@ -75,6 +75,10 @@ Functions\when( 'is_wp_error' )->alias( function ( $thing ) {
     return $thing instanceof WP_Error;
 } );
 
+Functions\when( 'current_time' )->alias( function ( $type, $gmt = 0 ) {
+    return date( $type );
+} );
+
 Functions\when( 'wc_get_logger' )->justReturn( new class {
     public function log( $level, $message, $context = [] ) {}
     public function __call( $name, $args ) {}

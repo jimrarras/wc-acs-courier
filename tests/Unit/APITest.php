@@ -209,55 +209,6 @@ class APITest extends TestCase {
         $this->assertSame( 'GR', $params['Recipient_Country'] );
     }
 
-    public function test_get_smartpoints_combines_lockers_and_points(): void {
-        $this->withOptions();
-
-        $call_count = 0;
-        Functions\when( 'wp_remote_post' )->alias( function () use ( &$call_count ) {
-            $call_count++;
-            return [ 'response' => [ 'code' => 200 ], 'body' => '' ];
-        } );
-        Functions\when( 'wp_remote_retrieve_response_code' )->justReturn( 200 );
-
-        $locker_response = json_encode( [
-            'ACSExecution_HasError' => false,
-            'ACSOutputResponce'     => [
-                'ACSTableOutput' => [ 'Table_Data' => [
-                    [ 'ACS_SHOP_ID_CODE' => 'L1', 'ACS_SHOP_KIND' => 7 ],
-                ] ],
-            ],
-        ] );
-        $point_response = json_encode( [
-            'ACSExecution_HasError' => false,
-            'ACSOutputResponce'     => [
-                'ACSTableOutput' => [ 'Table_Data' => [
-                    [ 'ACS_SHOP_ID_CODE' => 'P1', 'ACS_SHOP_KIND' => 4 ],
-                ] ],
-            ],
-        ] );
-
-        $responses = [ $locker_response, $point_response ];
-        $idx = 0;
-        Functions\when( 'wp_remote_retrieve_body' )->alias( function () use ( &$idx, $responses ) {
-            return $responses[ $idx++ ] ?? '{}';
-        } );
-
-        $result = \WC_ACS_API::get_smartpoints( 'GR' );
-
-        $this->assertCount( 2, $result );
-        $this->assertSame( 'locker', $result[0]['_type'] );
-        $this->assertSame( 'point', $result[1]['_type'] );
-    }
-
-    public function test_get_smartpoints_handles_wp_error_gracefully(): void {
-        $this->withOptions();
-        Functions\when( 'wp_remote_post' )->justReturn(
-            new \WP_Error( 'http_error', 'timeout' )
-        );
-        $result = \WC_ACS_API::get_smartpoints( 'GR' );
-        $this->assertSame( [], $result );
-    }
-
     public function test_test_connection_returns_true_on_success(): void {
         $this->withOptions();
         $body = json_encode( [

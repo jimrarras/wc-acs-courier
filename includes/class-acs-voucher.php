@@ -168,9 +168,13 @@ class WC_ACS_Voucher {
 
             <?php else : ?>
                 <div class="wc-acs-create-section">
+                    <?php $is_point_order = '' !== (string) $order->get_meta( '_acs_point_station' ); ?>
                     <p class="wc-acs-field">
                         <label><?php esc_html_e( 'Parcels', 'wc-acs-courier' ); ?></label>
-                        <input type="number" id="wc-acs-item-qty" value="1" min="1" max="99" class="small-text" />
+                        <input type="number" id="wc-acs-item-qty" value="1" min="1" max="99" class="small-text"<?php echo $is_point_order ? ' disabled="disabled"' : ''; ?> />
+                        <?php if ( $is_point_order ) : ?>
+                            <span class="description"><?php esc_html_e( 'ACS Points accept one parcel per shipment.', 'wc-acs-courier' ); ?></span>
+                        <?php endif; ?>
                     </p>
                     <p class="wc-acs-field">
                         <label><?php esc_html_e( 'Weight (kg)', 'wc-acs-courier' ); ?></label>
@@ -258,7 +262,7 @@ class WC_ACS_Voucher {
      *
      * @param WC_Order $order      Order object.
      * @param array    $extra_params Additional parameters.
-     * @return array
+     * @return array|WP_Error
      */
     public function build_voucher_params( $order, $extra_params = array() ) {
         $shipping_address = $order->get_address( 'shipping' );
@@ -286,33 +290,21 @@ class WC_ACS_Voucher {
             $products[] = 'COD';
         }
 
-        // Check for Smartpoint delivery
-        $smartpoint_id = $order->get_meta( '_acs_smartpoint_id' );
-        if ( $smartpoint_id ) {
-            $products[] = 'REC'; // Reception delivery (store/locker pickup)
+        // ACS Point delivery: routed by the two station codes, not by address.
+        $point_station = (string) $order->get_meta( '_acs_point_station' );
+        $point_branch  = (string) $order->get_meta( '_acs_point_branch' );
+        $is_point      = ( '' !== $point_station && '' !== $point_branch );
+        $mobile        = WC_ACS_Points_Picker::normalise_mobile( $order->get_billing_phone() );
 
-            // Override recipient address with smartpoint location so ACS delivers there
-            $smartpoint_name    = $order->get_meta( '_acs_smartpoint_name' );
-            $smartpoint_address = $order->get_meta( '_acs_smartpoint_address' );
-            $smartpoint_zipcode = $order->get_meta( '_acs_smartpoint_zipcode' );
-
-            if ( $smartpoint_name ) {
-                $recipient_name = $recipient_name . ' (c/o ' . $smartpoint_name . ')';
-            }
-            if ( $smartpoint_address ) {
-                $address['address_1'] = $smartpoint_address;
-            }
-            if ( $smartpoint_zipcode ) {
-                $address['postcode'] = $smartpoint_zipcode;
-            }
+        if ( $is_point && null === $mobile ) {
+            return new WP_Error( 'acs_point_mobile', __( 'ACS Points need a Greek mobile number.', 'wc-acs-courier' ) );
         }
 
         $delivery_products = ! empty( $products ) ? implode( ',', $products ) : null;
 
-        // Combine address lines; skip address_2 for smartpoint deliveries
-        // (smartpoint block above overwrites address_1 with the full location).
+        // Combine address lines.
         $address_line = $address['address_1'] ?? '';
-        if ( ! $smartpoint_id && ! empty( $address['address_2'] ) ) {
+        if ( ! empty( $address['address_2'] ) ) {
             $address_line .= ', ' . $address['address_2'];
         }
 
@@ -339,17 +331,6 @@ class WC_ACS_Voucher {
             'Language'              => 'EN',
         );
 
-        // Add smartpoint ID to Reference_Key2 and Delivery_Notes for ACS routing
-        if ( $smartpoint_id ) {
-            $params['Reference_Key2'] = $smartpoint_id;
-            $sp_note = sprintf(
-                /* translators: %s: smartpoint ID */
-                __( 'Smartpoint pickup: %s', 'wc-acs-courier' ),
-                $smartpoint_id
-            );
-            $params['Delivery_Notes'] = $sp_note;
-        }
-
         // Try to extract street number from address
         if ( preg_match( '/^(.+?)\s+(\d+[a-zA-Z]?)\s*$/', $params['Recipient_Address'], $matches ) ) {
             $params['Recipient_Address']        = $matches[1];
@@ -358,9 +339,22 @@ class WC_ACS_Voucher {
 
         $merged = array_merge( $params, $extra_params );
 
-        // If both smartpoint note and user delivery notes exist, combine them
-        if ( $smartpoint_id && ! empty( $extra_params['Delivery_Notes'] ) ) {
-            $merged['Delivery_Notes'] = $sp_note . ' | ' . $extra_params['Delivery_Notes'];
+        if ( $is_point ) {
+            $note = sprintf(
+                'ACS Point: %s, %s',
+                (string) $order->get_meta( '_acs_point_name' ),
+                (string) $order->get_meta( '_acs_point_address' )
+            );
+
+            $merged['Acs_Station_Destination']        = $point_station;
+            $merged['Acs_Station_Branch_Destination'] = (int) $point_branch;
+            // ACS refuses multi-parcel shipments to a Smart Point.
+            $merged['Item_Quantity']        = 1;
+            $merged['Recipient_Cell_Phone'] = $mobile;
+            $merged['Recipient_Phone']      = $mobile;
+            $merged['Delivery_Notes']       = ! empty( $extra_params['Delivery_Notes'] )
+                ? $note . ' | ' . $extra_params['Delivery_Notes']
+                : $note;
         }
 
         return $merged;
@@ -406,6 +400,10 @@ class WC_ACS_Voucher {
         }
 
         $params = $this->build_voucher_params( $order, $extra );
+
+        if ( is_wp_error( $params ) ) {
+            wp_send_json_error( $params->get_error_message() );
+        }
 
         // Merge extra services into delivery products (after build, to avoid double call)
         if ( ! empty( $_POST['services'] ) ) {
@@ -784,6 +782,16 @@ class WC_ACS_Voucher {
         }
 
         $params = $this->build_voucher_params( $order );
+
+        if ( is_wp_error( $params ) ) {
+            $order->add_order_note(
+                /* translators: %s: error message */
+                sprintf( __( 'ACS auto-voucher failed: %s', 'wc-acs-courier' ), $params->get_error_message() )
+            );
+            $order->save();
+            return;
+        }
+
         $result = WC_ACS_API::create_voucher( $params );
 
         if ( is_wp_error( $result ) ) {
@@ -949,6 +957,13 @@ class WC_ACS_Voucher {
                 }
 
                 $params = $this->build_voucher_params( $order );
+
+                if ( is_wp_error( $params ) ) {
+                    $order->add_order_note( sprintf( __( 'ACS voucher skipped: %s', 'wc-acs-courier' ), $params->get_error_message() ) );
+                    $order->save();
+                    continue;
+                }
+
                 $result = WC_ACS_API::create_voucher( $params );
 
                 if ( ! is_wp_error( $result ) ) {

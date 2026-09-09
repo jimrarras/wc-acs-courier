@@ -27,6 +27,8 @@ $options = array(
 	'wc_acs_tracking_frequency',
 	'wc_acs_email_tracking',
 	'wc_acs_debug_logging',
+	'wc_acs_points_feed',
+	'wc_acs_points_feed_error',
 );
 
 foreach ( $options as $option ) {
@@ -35,6 +37,7 @@ foreach ( $options as $option ) {
 
 // Clear scheduled cron.
 wp_clear_scheduled_hook( 'wc_acs_tracking_cron' );
+wp_clear_scheduled_hook( 'wc_acs_points_cron' );
 
 // Remove transients.
 global $wpdb;

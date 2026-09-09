@@ -158,28 +158,96 @@ class VoucherTest extends TestCase {
         $this->assertNull( $params['Cod_Payment_Way'] );
     }
 
-    public function test_build_params_smartpoint_order(): void {
+    private function pointMeta(): array {
+        return [
+            '_acs_point_id'      => '4400',
+            '_acs_point_type'    => 'locker',
+            '_acs_point_name'    => 'ACS SMARTPOINT LOCKER ΙΩΑΝΝΙΝΑ',
+            '_acs_point_address' => 'Market In, Χαρ. Τρικούπη 38, 45333 ΙΩΑΝΝΙΝΑ',
+            '_acs_point_station' => 'ΙΒ',
+            '_acs_point_branch'  => '501',
+            '_acs_point_cod'     => '1',
+        ];
+    }
+
+    private function pointOptions(): void {
         $this->stubGetOption( [
-            'wc_acs_charge_type'     => '2',
-            'wc_acs_default_weight'  => '0.5',
+            'wc_acs_charge_type'      => '2',
+            'wc_acs_default_weight'   => '0.5',
             'woocommerce_weight_unit' => 'kg',
         ] );
+    }
 
-        $order = $this->createOrderMock( [
-            'meta' => [
-                '_acs_smartpoint_id'      => 'SP123',
-                '_acs_smartpoint_name'    => 'ACS Locker Syntagma',
-                '_acs_smartpoint_address' => 'Syntagma Sq 1',
-                '_acs_smartpoint_zipcode' => '10563',
-            ],
-        ] );
+    public function test_build_params_point_order_routes_by_station_codes(): void {
+        $this->pointOptions();
+        $order = $this->createOrderMock( [ 'meta' => $this->pointMeta(), 'billing_phone' => '+30 691 234 5678' ] );
 
         $params = $this->voucher->build_voucher_params( $order );
 
-        $this->assertStringContainsString( 'REC', $params['Acs_Delivery_Products'] );
-        $this->assertStringContainsString( 'c/o ACS Locker Syntagma', $params['Recipient_Name'] );
-        $this->assertSame( 'SP123', $params['Reference_Key2'] );
-        $this->assertStringContainsString( 'SP123', $params['Delivery_Notes'] );
+        $this->assertSame( 'ΙΒ', $params['Acs_Station_Destination'] );
+        $this->assertSame( 501, $params['Acs_Station_Branch_Destination'] );
+        $this->assertSame( 1, $params['Item_Quantity'] );
+        $this->assertSame( '6912345678', $params['Recipient_Cell_Phone'] );
+        $this->assertSame( '6912345678', $params['Recipient_Phone'] );
+        $this->assertSame( 'john@example.com', $params['Recipient_Email'] );
+        $this->assertStringStartsWith( 'ACS Point: ACS SMARTPOINT LOCKER ΙΩΑΝΝΙΝΑ, Market In', $params['Delivery_Notes'] );
+    }
+
+    public function test_build_params_point_order_keeps_customer_address_and_no_rec(): void {
+        $this->pointOptions();
+        $order = $this->createOrderMock( [ 'meta' => $this->pointMeta(), 'billing_phone' => '6912345678' ] );
+
+        $params = $this->voucher->build_voucher_params( $order );
+
+        $this->assertSame( 'John Doe', $params['Recipient_Name'] );
+        $this->assertSame( 'Ermou', $params['Recipient_Address'] );
+        $this->assertSame( '25', $params['Recipient_Address_Number'] );
+        $this->assertSame( '10563', $params['Recipient_Zipcode'] );
+        $this->assertNull( $params['Acs_Delivery_Products'] );
+        $this->assertArrayNotHasKey( 'Reference_Key2', $params );
+    }
+
+    public function test_build_params_point_order_forces_single_parcel_over_metabox_value(): void {
+        $this->pointOptions();
+        $order = $this->createOrderMock( [ 'meta' => $this->pointMeta(), 'billing_phone' => '6912345678' ] );
+
+        $params = $this->voucher->build_voucher_params( $order, [ 'Item_Quantity' => 3, 'Delivery_Notes' => 'Ring twice' ] );
+
+        $this->assertSame( 1, $params['Item_Quantity'] );
+        $this->assertSame( 'ACS Point: ACS SMARTPOINT LOCKER ΙΩΑΝΝΙΝΑ, Market In, Χαρ. Τρικούπη 38, 45333 ΙΩΑΝΝΙΝΑ | Ring twice', $params['Delivery_Notes'] );
+    }
+
+    public function test_build_params_point_order_with_cod(): void {
+        $this->pointOptions();
+        $order = $this->createOrderMock( [ 'meta' => $this->pointMeta(), 'billing_phone' => '6912345678', 'payment_method' => 'cod', 'total' => '42.00' ] );
+
+        $params = $this->voucher->build_voucher_params( $order );
+
+        $this->assertSame( 'COD', $params['Acs_Delivery_Products'] );
+        $this->assertEquals( 42.0, $params['Cod_Ammount'] );
+        $this->assertSame( 'ΙΒ', $params['Acs_Station_Destination'] );
+    }
+
+    public function test_build_params_point_order_without_mobile_is_an_error(): void {
+        $this->pointOptions();
+        $order = $this->createOrderMock( [ 'meta' => $this->pointMeta(), 'billing_phone' => '2101234567' ] );
+
+        $params = $this->voucher->build_voucher_params( $order );
+
+        $this->assertInstanceOf( \WP_Error::class, $params );
+        $this->assertSame( 'acs_point_mobile', $params->get_error_code() );
+    }
+
+    public function test_build_params_home_delivery_has_no_station_routing(): void {
+        $this->pointOptions();
+        $order = $this->createOrderMock( [ 'billing_phone' => '2101234567' ] );
+
+        $params = $this->voucher->build_voucher_params( $order, [ 'Item_Quantity' => 2 ] );
+
+        $this->assertArrayNotHasKey( 'Acs_Station_Destination', $params );
+        $this->assertSame( 2, $params['Item_Quantity'] );
+        $this->assertSame( '2101234567', $params['Recipient_Cell_Phone'] );
+        $this->assertNull( $params['Delivery_Notes'] ?? null );
     }
 
     public function test_build_params_extracts_street_number(): void {
@@ -257,62 +325,6 @@ class VoucherTest extends TestCase {
         $this->assertStringContainsString( '3rd Floor', $params['Recipient_Address'] );
     }
 
-    public function test_build_params_smartpoint_ignores_address_2(): void {
-        $this->stubGetOption( [
-            'wc_acs_charge_type'     => '2',
-            'wc_acs_default_weight'  => '0.5',
-            'woocommerce_weight_unit' => 'kg',
-        ] );
-
-        $order = $this->createOrderMock( [
-            'shipping_address' => [
-                'first_name' => 'A',
-                'last_name'  => 'B',
-                'address_1'  => 'Ermou 25',
-                'address_2'  => '3rd Floor',
-                'postcode'   => '10563',
-                'city'       => 'Athens',
-                'country'    => 'GR',
-                'company'    => '',
-            ],
-            'meta' => [
-                '_acs_smartpoint_id'      => 'SP99',
-                '_acs_smartpoint_name'    => 'ACS Locker Test',
-                '_acs_smartpoint_address' => 'Syntagma Sq 1',
-                '_acs_smartpoint_zipcode' => '10563',
-            ],
-        ] );
-
-        $params = $this->voucher->build_voucher_params( $order );
-
-        $this->assertStringNotContainsString( '3rd Floor', $params['Recipient_Address'] );
-        $this->assertStringContainsString( 'Syntagma', $params['Recipient_Address'] );
-    }
-
-    public function test_build_params_cod_and_smartpoint(): void {
-        $this->stubGetOption( [
-            'wc_acs_charge_type'     => '2',
-            'wc_acs_default_weight'  => '0.5',
-            'woocommerce_weight_unit' => 'kg',
-        ] );
-
-        $order = $this->createOrderMock( [
-            'payment_method' => 'cod',
-            'total'          => '50.00',
-            'meta'           => [
-                '_acs_smartpoint_id'      => 'SP1',
-                '_acs_smartpoint_name'    => 'Locker',
-                '_acs_smartpoint_address' => 'Addr',
-                '_acs_smartpoint_zipcode' => '11111',
-            ],
-        ] );
-
-        $params = $this->voucher->build_voucher_params( $order );
-
-        $this->assertStringContainsString( 'COD', $params['Acs_Delivery_Products'] );
-        $this->assertStringContainsString( 'REC', $params['Acs_Delivery_Products'] );
-    }
-
     public function test_build_params_extra_params_override(): void {
         $this->stubGetOption( [
             'wc_acs_charge_type'     => '2',
@@ -329,31 +341,6 @@ class VoucherTest extends TestCase {
 
         $this->assertEquals( 10.0, $params['Weight'] );
         $this->assertSame( 3, $params['Item_Quantity'] );
-    }
-
-    public function test_build_params_smartpoint_notes_combined(): void {
-        $this->stubGetOption( [
-            'wc_acs_charge_type'     => '2',
-            'wc_acs_default_weight'  => '0.5',
-            'woocommerce_weight_unit' => 'kg',
-        ] );
-
-        $order = $this->createOrderMock( [
-            'meta' => [
-                '_acs_smartpoint_id'      => 'SP1',
-                '_acs_smartpoint_name'    => 'Locker',
-                '_acs_smartpoint_address' => 'Addr',
-                '_acs_smartpoint_zipcode' => '11111',
-            ],
-        ] );
-
-        $params = $this->voucher->build_voucher_params( $order, [
-            'Delivery_Notes' => 'Ring bell',
-        ] );
-
-        $this->assertStringContainsString( 'SP1', $params['Delivery_Notes'] );
-        $this->assertStringContainsString( 'Ring bell', $params['Delivery_Notes'] );
-        $this->assertStringContainsString( ' | ', $params['Delivery_Notes'] );
     }
 
     public function test_build_params_pickup_date_uses_site_local_date(): void {

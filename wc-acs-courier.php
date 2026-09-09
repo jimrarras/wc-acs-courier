@@ -2,8 +2,8 @@
 /**
  * Plugin Name: ACS Courier for WooCommerce
  * Plugin URI: https://github.com/jimrarras/wc-acs-courier
- * Description: Open source ACS Courier integration for WooCommerce — create/print vouchers, track shipments, calculate shipping costs, and support ACS Smartpoints pickup locations.
- * Version: 1.0.1
+ * Description: Open source ACS Courier integration for WooCommerce, create/print vouchers, track shipments, calculate shipping costs, and offer pickup from ACS Points (lockers and stores) on a map.
+ * Version: 1.1.0
  * Author: Dimitrios Rarras
  * Author URI: https://github.com/jimrarras/wc-acs-courier
  * License: GPL-2.0-or-later
@@ -19,7 +19,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Plugin constants — guarded to prevent fatal errors if loaded twice.
-defined( 'WC_ACS_VERSION' )    || define( 'WC_ACS_VERSION', '1.0.1' );
+defined( 'WC_ACS_VERSION' )    || define( 'WC_ACS_VERSION', '1.1.0' );
 defined( 'WC_ACS_PLUGIN_FILE' ) || define( 'WC_ACS_PLUGIN_FILE', __FILE__ );
 defined( 'WC_ACS_PLUGIN_DIR' )  || define( 'WC_ACS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 defined( 'WC_ACS_PLUGIN_URL' )  || define( 'WC_ACS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -54,7 +54,10 @@ function wc_acs_includes() {
         'includes/class-acs-voucher.php',
         'includes/class-acs-shipping-method.php',
         'includes/class-acs-tracking.php',
-        'includes/class-acs-smartpoints.php',
+        'includes/class-acs-points-feed.php',
+        'includes/class-acs-points-shipping-method.php',
+        'includes/class-acs-points-picker.php',
+        'includes/class-acs-points-order.php',
     );
 
     foreach ( $files as $file ) {
@@ -95,11 +98,14 @@ function wc_acs_init() {
     WC_ACS_Admin::instance();
     WC_ACS_Voucher::instance();
     WC_ACS_Tracking::instance();
-    WC_ACS_Smartpoints::instance();
+    WC_ACS_Points_Feed::instance();
+    WC_ACS_Points_Picker::instance();
+    WC_ACS_Points_Order::instance();
 
-    // Register shipping method
+    // Register shipping methods
     add_filter( 'woocommerce_shipping_methods', function ( $methods ) {
         $methods['acs_courier'] = 'WC_ACS_Shipping_Method';
+        $methods['acs_points']  = 'WC_ACS_Points_Shipping_Method';
         return $methods;
     } );
 
@@ -143,7 +149,10 @@ function wc_acs_activate() {
         'includes/class-acs-voucher.php',
         'includes/class-acs-shipping-method.php',
         'includes/class-acs-tracking.php',
-        'includes/class-acs-smartpoints.php',
+        'includes/class-acs-points-feed.php',
+        'includes/class-acs-points-shipping-method.php',
+        'includes/class-acs-points-picker.php',
+        'includes/class-acs-points-order.php',
     );
 
     foreach ( $required_files as $file ) {
@@ -166,6 +175,13 @@ function wc_acs_activate() {
         $frequency = get_option( 'wc_acs_tracking_frequency', 'hourly' );
         wp_schedule_event( time(), $frequency, 'wc_acs_tracking_cron' );
     }
+
+    // Schedule the daily ACS points refresh. The first tick is due immediately;
+    // the settings page has a manual "Refresh points" button for hosts whose
+    // cron runs late.
+    if ( ! wp_next_scheduled( 'wc_acs_points_cron' ) ) {
+        wp_schedule_event( time(), 'daily', 'wc_acs_points_cron' );
+    }
 }
 register_activation_hook( __FILE__, 'wc_acs_activate' );
 
@@ -174,6 +190,7 @@ register_activation_hook( __FILE__, 'wc_acs_activate' );
  */
 function wc_acs_deactivate() {
     wp_clear_scheduled_hook( 'wc_acs_tracking_cron' );
+    wp_clear_scheduled_hook( 'wc_acs_points_cron' );
 }
 register_deactivation_hook( __FILE__, 'wc_acs_deactivate' );
 

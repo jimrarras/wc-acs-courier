@@ -1,0 +1,353 @@
+/* ACS Points picker. Every rule is scoped to the picker or the overlay. */
+
+/* ---- Under the shipping rate ---- */
+.wc-acs-points-picker {
+    display: block;
+    margin: 10px 0 4px;
+}
+
+.wc-acs-points-open,
+.wc-acs-points-select {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 6px;
+    background: #e30613;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.95em;
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 10px 16px;
+    text-decoration: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    transition: filter 0.15s ease, transform 0.05s ease;
+}
+
+.wc-acs-points-open:hover,
+.wc-acs-points-open:focus-visible,
+.wc-acs-points-select:hover,
+.wc-acs-points-select:focus-visible {
+    filter: brightness(0.92);
+    outline: 2px solid #7f0a0f;
+    outline-offset: 2px;
+}
+
+.wc-acs-points-open[hidden],
+.wc-acs-points-selected[hidden] {
+    display: none;
+}
+
+.wc-acs-points-selected {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 10px;
+    font-size: 0.92em;
+}
+
+.wc-acs-points-selected-name {
+    flex: 1 1 100%;
+    font-weight: 600;
+}
+
+.wc-acs-points-selected-address {
+    flex: 1 1 100%;
+    color: #555;
+}
+
+.wc-acs-points-change {
+    background: none;
+    border: 0;
+    padding: 0;
+    color: #e30613;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.9em;
+    text-decoration: underline;
+}
+
+.wc-acs-points-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 999px;
+    font-size: 0.8em;
+    font-weight: 600;
+    line-height: 1.6;
+    background: #eef2f7;
+    color: #334155;
+}
+
+.wc-acs-points-badge--24 { background: #e0f2fe; color: #075985; }
+.wc-acs-points-badge--cod { background: #dcfce7; color: #166534; }
+.wc-acs-points-badge--nocod { background: #fee2e2; color: #991b1b; }
+
+/* ---- Overlay ---- */
+body.wc-acs-points-noscroll {
+    overflow: hidden;
+}
+
+.wc-acs-points-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.wc-acs-points-modal {
+    display: flex;
+    flex-direction: column;
+    width: min(1200px, 100%);
+    height: min(820px, 100%);
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.wc-acs-points-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.wc-acs-points-title {
+    font-weight: 700;
+    font-size: 1.05em;
+}
+
+.wc-acs-points-close {
+    border: 0;
+    background: none;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    color: #374151;
+    padding: 0 4px;
+}
+
+.wc-acs-points-body {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    flex: 1 1 auto;
+    min-height: 0;
+    position: relative;
+}
+
+.wc-acs-points-sidebar {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    border-right: 1px solid #e5e7eb;
+    background: #fff;
+}
+
+.wc-acs-points-sheet-toggle {
+    display: none;
+}
+
+.wc-acs-points-tools {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+}
+
+.wc-acs-points-search {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 9px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font: inherit;
+}
+
+.wc-acs-points-locate,
+.wc-acs-points-chip {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font: inherit;
+    font-size: 0.85em;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.wc-acs-points-chips {
+    display: flex;
+    gap: 6px;
+    padding: 0 12px 10px;
+}
+
+.wc-acs-points-chip.is-active {
+    background: #111827;
+    color: #fff;
+    border-color: #111827;
+}
+
+.wc-acs-points-list {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    min-height: 0;
+    border-top: 1px solid #e5e7eb;
+}
+
+.wc-acs-points-status {
+    margin: 0;
+    padding: 16px 12px;
+    color: #6b7280;
+    font-size: 0.9em;
+}
+
+.wc-acs-points-status--error {
+    color: #991b1b;
+}
+
+.wc-acs-points-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px 10px 16px;
+    border: 0;
+    border-bottom: 1px solid #f3f4f6;
+    border-left: 4px solid #9ca3af;
+    background: #fff;
+    cursor: pointer;
+    font: inherit;
+}
+
+.wc-acs-points-item--store {
+    border-left-color: #e30613;
+}
+
+.wc-acs-points-item:hover,
+.wc-acs-points-item:focus-visible {
+    background: #f9fafb;
+    outline: none;
+}
+
+.wc-acs-points-item-name {
+    font-weight: 600;
+    font-size: 0.95em;
+}
+
+.wc-acs-points-item-address {
+    color: #4b5563;
+    font-size: 0.88em;
+}
+
+.wc-acs-points-item-meta,
+.wc-acs-points-popup-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85em;
+    color: #6b7280;
+}
+
+.wc-acs-points-km {
+    margin-left: auto;
+    font-variant-numeric: tabular-nums;
+}
+
+.wc-acs-points-map {
+    min-height: 0;
+    height: 100%;
+    background: #e5e7eb;
+}
+
+/* Leaflet popup content */
+.wc-acs-points-popup {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.35;
+}
+
+.wc-acs-points-popup .wc-acs-points-select {
+    align-self: flex-start;
+    padding: 8px 14px;
+    margin-top: 4px;
+}
+
+/* ---- Phones: the list becomes a bottom sheet ---- */
+@media (max-width: 767px) {
+    .wc-acs-points-overlay {
+        padding: 0;
+    }
+
+    .wc-acs-points-modal {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+
+    .wc-acs-points-body {
+        display: block;
+    }
+
+    .wc-acs-points-map {
+        position: absolute;
+        inset: 0;
+    }
+
+    .wc-acs-points-sidebar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 55%;
+        border-right: 0;
+        border-top: 1px solid #e5e7eb;
+        border-radius: 14px 14px 0 0;
+        box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.18);
+        transition: height 0.2s ease;
+        z-index: 1000;
+    }
+
+    .wc-acs-points-sidebar.is-collapsed {
+        height: 132px;
+    }
+
+    .wc-acs-points-sidebar.is-collapsed .wc-acs-points-list {
+        display: none;
+    }
+
+    .wc-acs-points-sheet-toggle {
+        display: block;
+        width: 100%;
+        height: 22px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+        padding: 8px 0 0;
+    }
+
+    .wc-acs-points-sheet-toggle span {
+        display: block;
+        width: 44px;
+        height: 5px;
+        margin: 0 auto;
+        border-radius: 999px;
+        background: #d1d5db;
+    }
+
+    .wc-acs-points-tools {
+        padding: 6px 12px 8px;
+    }
+}
