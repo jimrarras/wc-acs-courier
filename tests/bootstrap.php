@@ -20,22 +20,112 @@ class WP_Error {
     protected $code;
     protected $message;
     protected $data;
+    protected $errors = array();
 
     public function __construct( $code = '', $message = '', $data = '' ) {
         $this->code    = $code;
         $this->message = $message;
         $this->data    = $data;
+        if ( '' !== $code ) {
+            $this->errors[ $code ][] = $message;
+        }
+    }
+
+    public function add( $code, $message, $data = '' ) {
+        $this->errors[ $code ][] = $message;
+        if ( '' === $this->code ) {
+            $this->code    = $code;
+            $this->message = $message;
+            $this->data    = $data;
+        }
     }
 
     public function get_error_code() {
         return $this->code;
     }
 
-    public function get_error_message() {
-        return $this->message;
+    public function get_error_codes() {
+        return array_keys( $this->errors );
+    }
+
+    public function get_error_message( $code = '' ) {
+        if ( '' === $code ) {
+            return $this->message;
+        }
+        return $this->errors[ $code ][0] ?? '';
+    }
+
+    public function get_error_messages( $code = '' ) {
+        if ( '' !== $code ) {
+            return $this->errors[ $code ] ?? array();
+        }
+        $all = array();
+        foreach ( $this->errors as $messages ) {
+            $all = array_merge( $all, $messages );
+        }
+        return $all;
     }
 
     public function get_error_data() {
+        return $this->data;
+    }
+
+    public function has_errors() {
+        return ! empty( $this->errors );
+    }
+}
+
+// ── REST stubs ────────────────────────────────────────────────────
+class WP_REST_Request {
+    private $headers = array();
+    private $params  = array();
+
+    public function __construct( $method = 'GET', $route = '' ) {}
+
+    private function key( $name ) {
+        return strtolower( str_replace( '-', '_', $name ) );
+    }
+
+    public function set_header( $name, $value ) {
+        $this->headers[ $this->key( $name ) ] = $value;
+    }
+
+    public function get_header( $name ) {
+        return $this->headers[ $this->key( $name ) ] ?? null;
+    }
+
+    public function set_params( array $params ) {
+        $this->params = $params;
+    }
+
+    public function get_params() {
+        return $this->params;
+    }
+}
+
+class WP_REST_Response {
+    public $data;
+    public $status;
+    public $headers = array();
+
+    public function __construct( $data = null, $status = 200 ) {
+        $this->data   = $data;
+        $this->status = $status;
+    }
+
+    public function header( $name, $value ) {
+        $this->headers[ $name ] = $value;
+    }
+
+    public function get_headers() {
+        return $this->headers;
+    }
+
+    public function get_status() {
+        return $this->status;
+    }
+
+    public function get_data() {
         return $this->data;
     }
 }
@@ -96,4 +186,3 @@ require_once $plugin_dir . 'class-acs-admin.php';
 require_once $plugin_dir . 'class-acs-voucher.php';
 require_once $plugin_dir . 'class-acs-shipping-method.php';
 require_once $plugin_dir . 'class-acs-tracking.php';
-require_once $plugin_dir . 'class-acs-smartpoints.php';

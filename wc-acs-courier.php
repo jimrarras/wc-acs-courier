@@ -54,7 +54,6 @@ function wc_acs_includes() {
         'includes/class-acs-voucher.php',
         'includes/class-acs-shipping-method.php',
         'includes/class-acs-tracking.php',
-        'includes/class-acs-smartpoints.php',
     );
 
     foreach ( $files as $file ) {
@@ -95,7 +94,6 @@ function wc_acs_init() {
     WC_ACS_Admin::instance();
     WC_ACS_Voucher::instance();
     WC_ACS_Tracking::instance();
-    WC_ACS_Smartpoints::instance();
 
     // Register shipping method
     add_filter( 'woocommerce_shipping_methods', function ( $methods ) {
@@ -143,7 +141,6 @@ function wc_acs_activate() {
         'includes/class-acs-voucher.php',
         'includes/class-acs-shipping-method.php',
         'includes/class-acs-tracking.php',
-        'includes/class-acs-smartpoints.php',
     );
 
     foreach ( $required_files as $file ) {
