@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ACS Courier for WooCommerce 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/app\n"
+"Report-Msgid-Bugs-To: https://github.com/jimrarras/wc-acs-courier/issues\n"
 "POT-Creation-Date: 2026-09-09T11:30:19+00:00\n"
 "PO-Revision-Date: 2026-02-27T00:00:00+02:00\n"
 "Last-Translator: Dimitrios Rarras\n"
