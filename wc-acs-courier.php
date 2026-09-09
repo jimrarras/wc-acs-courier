@@ -54,6 +54,7 @@ function wc_acs_includes() {
         'includes/class-acs-voucher.php',
         'includes/class-acs-shipping-method.php',
         'includes/class-acs-tracking.php',
+        'includes/class-acs-points-feed.php',
     );
 
     foreach ( $files as $file ) {
@@ -94,6 +95,7 @@ function wc_acs_init() {
     WC_ACS_Admin::instance();
     WC_ACS_Voucher::instance();
     WC_ACS_Tracking::instance();
+    WC_ACS_Points_Feed::instance();
 
     // Register shipping method
     add_filter( 'woocommerce_shipping_methods', function ( $methods ) {
@@ -141,6 +143,7 @@ function wc_acs_activate() {
         'includes/class-acs-voucher.php',
         'includes/class-acs-shipping-method.php',
         'includes/class-acs-tracking.php',
+        'includes/class-acs-points-feed.php',
     );
 
     foreach ( $required_files as $file ) {
@@ -163,6 +166,11 @@ function wc_acs_activate() {
         $frequency = get_option( 'wc_acs_tracking_frequency', 'hourly' );
         wp_schedule_event( time(), $frequency, 'wc_acs_tracking_cron' );
     }
+
+    // Schedule the daily ACS points refresh and fetch once right away.
+    if ( ! wp_next_scheduled( 'wc_acs_points_cron' ) ) {
+        wp_schedule_event( time(), 'daily', 'wc_acs_points_cron' );
+    }
 }
 register_activation_hook( __FILE__, 'wc_acs_activate' );
 
@@ -171,6 +179,7 @@ register_activation_hook( __FILE__, 'wc_acs_activate' );
  */
 function wc_acs_deactivate() {
     wp_clear_scheduled_hook( 'wc_acs_tracking_cron' );
+    wp_clear_scheduled_hook( 'wc_acs_points_cron' );
 }
 register_deactivation_hook( __FILE__, 'wc_acs_deactivate' );
 

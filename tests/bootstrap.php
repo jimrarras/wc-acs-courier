@@ -186,3 +186,4 @@ require_once $plugin_dir . 'class-acs-admin.php';
 require_once $plugin_dir . 'class-acs-voucher.php';
 require_once $plugin_dir . 'class-acs-shipping-method.php';
 require_once $plugin_dir . 'class-acs-tracking.php';
+require_once $plugin_dir . 'class-acs-points-feed.php';
