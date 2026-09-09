@@ -38,6 +38,7 @@ class WC_ACS_Points_Picker {
         add_action( 'woocommerce_checkout_create_order', array( $this, 'save_classic_checkout' ), 10, 2 );
         add_filter( 'woocommerce_available_payment_gateways', array( __CLASS__, 'filter_payment_gateways' ) );
         add_filter( 'woocommerce_package_rates', array( __CLASS__, 'filter_package_rates' ), 20, 2 );
+        add_filter( 'woocommerce_cart_shipping_packages', array( __CLASS__, 'tag_packages_with_payment' ) );
 
         add_action( 'wp_ajax_wc_acs_set_point', array( $this, 'ajax_set_point' ) );
         add_action( 'wp_ajax_nopriv_wc_acs_set_point', array( $this, 'ajax_set_point' ) );
@@ -346,6 +347,28 @@ class WC_ACS_Points_Picker {
     }
 
     /**
+     * Put the chosen payment method into each package so WooCommerce's rate
+     * cache key changes when the customer toggles cash on delivery. Without
+     * this the woocommerce_package_rates filter only runs on a cache miss
+     * and a payment change would never re-evaluate the exclusive mode.
+     *
+     * @param array $packages Shipping packages.
+     * @return array
+     */
+    public static function tag_packages_with_payment( $packages ) {
+        if ( ! is_array( $packages ) || ! function_exists( 'WC' ) || ! WC()->session ) {
+            return $packages;
+        }
+        $cod = ( 'cod' === (string) WC()->session->get( 'chosen_payment_method', '' ) );
+        foreach ( $packages as $key => $package ) {
+            if ( is_array( $package ) ) {
+                $packages[ $key ]['acs_points_cod'] = $cod ? 1 : 0;
+            }
+        }
+        return $packages;
+    }
+
+    /**
      * In exclusive mode, withhold the acs_points rate while cash on delivery
      * is the chosen payment method. This runs after WooCommerce's session
      * rate cache on every calculation, so a payment change (which the
@@ -360,7 +383,10 @@ class WC_ACS_Points_Picker {
         if ( ! is_array( $rates ) || ! function_exists( 'WC' ) || ! WC()->session ) {
             return $rates;
         }
-        if ( 'cod' !== (string) WC()->session->get( 'chosen_payment_method', '' ) ) {
+        $cod = isset( $package['acs_points_cod'] )
+            ? ! empty( $package['acs_points_cod'] )
+            : ( 'cod' === (string) WC()->session->get( 'chosen_payment_method', '' ) );
+        if ( ! $cod ) {
             return $rates;
         }
         foreach ( $rates as $rate_id => $rate ) {

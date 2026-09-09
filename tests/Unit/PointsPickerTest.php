@@ -225,6 +225,44 @@ class PointsPickerTest extends TestCase {
         $this->assertSame( [ 'flat_rate:2', 'acs_points:4' ], array_keys( \WC_ACS_Points_Picker::filter_package_rates( $rates_terminal, [] ) ) );
     }
 
+    public function test_tag_packages_with_payment_marks_cod(): void {
+        $packages = [ [ 'contents' => [] ], [ 'contents' => [] ] ];
+
+        $this->mockSession( [ 'chosen_payment_method' => 'cod' ] );
+        $tagged = \WC_ACS_Points_Picker::tag_packages_with_payment( $packages );
+        $this->assertSame( 1, $tagged[0]['acs_points_cod'] );
+        $this->assertSame( 1, $tagged[1]['acs_points_cod'] );
+
+        $this->mockSession( [ 'chosen_payment_method' => 'bacs' ] );
+        $tagged = \WC_ACS_Points_Picker::tag_packages_with_payment( $packages );
+        $this->assertSame( 0, $tagged[0]['acs_points_cod'] );
+        $this->assertSame( 0, $tagged[1]['acs_points_cod'] );
+
+        Functions\when( 'WC' )->justReturn( (object) [ 'session' => null ] );
+        $this->assertSame( $packages, \WC_ACS_Points_Picker::tag_packages_with_payment( $packages ) );
+    }
+
+    public function test_filter_package_rates_prefers_the_package_tag(): void {
+        $flat = Mockery::mock( 'WC_Shipping_Rate' );
+        $flat->shouldReceive( 'get_method_id' )->andReturn( 'flat_rate' );
+        $acs = Mockery::mock( 'WC_Shipping_Rate' );
+        $acs->shouldReceive( 'get_method_id' )->andReturn( 'acs_points' );
+
+        $rates = [ 'flat_rate:2' => $flat, 'acs_points:7' => $acs ];
+
+        $this->mockSession( [ 'chosen_payment_method' => 'bacs' ] );
+        $this->assertSame(
+            [ 'flat_rate:2' ],
+            array_keys( \WC_ACS_Points_Picker::filter_package_rates( $rates, [ 'acs_points_cod' => 1 ] ) )
+        );
+
+        $this->mockSession( [ 'chosen_payment_method' => 'cod' ] );
+        $this->assertSame(
+            [ 'flat_rate:2', 'acs_points:7' ],
+            array_keys( \WC_ACS_Points_Picker::filter_package_rates( $rates, [ 'acs_points_cod' => 0 ] ) )
+        );
+    }
+
     public function test_order_has_points(): void {
         $line = Mockery::mock( 'WC_Order_Item_Shipping' );
         $line->shouldReceive( 'get_method_id' )->andReturn( 'acs_points' );
