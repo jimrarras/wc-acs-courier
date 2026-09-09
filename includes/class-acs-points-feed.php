@@ -133,10 +133,13 @@ class WC_ACS_Points_Feed {
             return $error;
         }
 
+        $rows = self::rows_for( $points );
+
         $this->stored = array(
             'fetched_at' => time(),
             'country'    => $country,
             'points'     => $points,
+            'rows'       => $rows,
         );
         update_option( self::OPTION, $this->stored, false );
         delete_option( self::ERROR_OPTION );
@@ -266,24 +269,35 @@ class WC_ACS_Points_Feed {
     }
 
     /**
-     * Positional rows keep the payload around 60 KB gzipped for 2,000 points.
+     * Positional rows for the REST payload, built once per refresh.
      * Column order: id, type, name, street, city, zip, lat, lon, station,
      * branch, cod, h24, hours, sat. acs-points.js reads the same order.
      *
+     * @param array $points Normalised point records.
      * @return array
      */
-    public function payload() {
+    public static function rows_for( array $points ) {
         $rows = array();
-        foreach ( $this->get_points() as $p ) {
+        foreach ( $points as $p ) {
             $rows[] = array(
                 $p['id'], $p['type'], $p['name'], $p['street'], $p['city'], $p['zip'],
                 $p['lat'], $p['lon'], $p['station'], $p['branch'],
                 (int) $p['cod'], (int) $p['h24'], $p['hours'], $p['sat'],
             );
         }
+        return $rows;
+    }
+
+    /**
+     * Positional rows keep the payload around 60 KB gzipped for 2,000 points.
+     *
+     * @return array
+     */
+    public function payload() {
+        $stored = $this->stored();
         return array(
             'v'      => $this->fetched_at(),
-            'points' => $rows,
+            'points' => $stored['rows'] ?? self::rows_for( $this->get_points() ),
         );
     }
 
@@ -293,10 +307,13 @@ class WC_ACS_Points_Feed {
      */
     public function rest_points( $request ) {
         $etag = '"' . $this->fetched_at() . '"';
+        $sent = (string) $request->get_header( 'if_none_match' );
+        $sent = trim( preg_replace( '/^W\//', '', $sent ) );
 
-        if ( $request->get_header( 'if_none_match' ) === $etag ) {
+        if ( $sent === $etag ) {
             $response = new WP_REST_Response( null, 304 );
             $response->header( 'ETag', $etag );
+            $response->header( 'Cache-Control', 'public, max-age=86400' );
             return $response;
         }
 

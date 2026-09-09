@@ -3,7 +3,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ACS Courier for WooCommerce 1.0.0\n"
+"Project-Id-Version: ACS Courier for WooCommerce 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/jimrarras/wc-acs-courier/issues\n"
 "POT-Creation-Date: 2026-09-09T11:30:19+00:00\n"
 "PO-Revision-Date: 2026-02-27T00:00:00+02:00\n"
@@ -76,6 +76,10 @@ msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετ�
 #: includes/class-acs-admin.php:179
 msgid "Refreshing..."
 msgstr "Ανανέωση..."
+
+#: includes/class-acs-admin.php:180
+msgid "Request failed."
+msgstr "Το αίτημα απέτυχε."
 
 #: includes/class-acs-admin.php:191 includes/class-acs-points-feed.php:316
 #: includes/class-acs-points-order.php:106
@@ -443,6 +447,10 @@ msgstr "Δεν ήταν δυνατή η φόρτωση των σημείων ACS
 #: includes/class-acs-points-picker.php:378
 msgid "Move the map to see more points"
 msgstr "Μετακινήστε τον χάρτη για περισσότερα σημεία"
+
+#: includes/class-acs-points-picker.php:383
+msgid "No ACS Points match your search."
+msgstr "Δεν βρέθηκαν σημεία ACS για την αναζήτησή σας."
 
 #: includes/class-acs-points-picker.php:382
 msgid "Weekdays"

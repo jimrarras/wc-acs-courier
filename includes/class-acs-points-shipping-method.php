@@ -123,6 +123,10 @@ class WC_ACS_Points_Shipping_Method extends WC_Shipping_Method {
      * @param array $package Shipping package.
      */
     public function calculate_shipping( $package = array() ) {
+        if ( WC_ACS_Points_Feed::instance()->count() < 1 ) {
+            return;
+        }
+
         $max = (float) $this->max_weight;
         if ( $max > 0 && self::package_weight_kg( $package ) > $max ) {
             return;

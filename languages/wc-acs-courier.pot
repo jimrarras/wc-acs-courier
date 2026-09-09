@@ -75,6 +75,10 @@ msgstr ""
 msgid "Refreshing..."
 msgstr ""
 
+#: includes/class-acs-admin.php:180
+msgid "Request failed."
+msgstr ""
+
 #: includes/class-acs-admin.php:191
 #: includes/class-acs-points-feed.php:316
 #: includes/class-acs-points-order.php:106
@@ -427,6 +431,10 @@ msgstr ""
 
 #: includes/class-acs-points-picker.php:378
 msgid "Move the map to see more points"
+msgstr ""
+
+#: includes/class-acs-points-picker.php:383
+msgid "No ACS Points match your search."
 msgstr ""
 
 #: includes/class-acs-points-picker.php:382

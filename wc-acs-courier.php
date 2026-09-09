@@ -176,7 +176,9 @@ function wc_acs_activate() {
         wp_schedule_event( time(), $frequency, 'wc_acs_tracking_cron' );
     }
 
-    // Schedule the daily ACS points refresh and fetch once right away.
+    // Schedule the daily ACS points refresh. The first tick is due immediately;
+    // the settings page has a manual "Refresh points" button for hosts whose
+    // cron runs late.
     if ( ! wp_next_scheduled( 'wc_acs_points_cron' ) ) {
         wp_schedule_event( time(), 'daily', 'wc_acs_points_cron' );
     }

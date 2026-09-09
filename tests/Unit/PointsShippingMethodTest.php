@@ -10,9 +10,11 @@ class PointsShippingMethodTest extends TestCase {
 
     protected function setUp(): void {
         parent::setUp();
+        $this->resetStaticProperty( \WC_ACS_Points_Feed::class, 'instance' );
         $this->stubGetOption( [
             'wc_acs_default_weight'   => '0.5',
             'woocommerce_weight_unit' => 'kg',
+            'wc_acs_points_feed'      => [ 'fetched_at' => 1, 'country' => 'GR', 'points' => [ [ 'id' => '1' ] ] ],
         ] );
         $this->method = new \WC_ACS_Points_Shipping_Method( 3 );
         $this->method->cost        = '2.50';
@@ -83,5 +85,17 @@ class PointsShippingMethodTest extends TestCase {
         $weight = \WC_ACS_Points_Shipping_Method::package_weight_kg( $this->package( [ $this->item( '250', 4 ) ] ) );
 
         $this->assertEqualsWithDelta( 1.0, $weight, 0.001 );
+    }
+
+    public function test_withheld_when_feed_is_empty(): void {
+        $this->resetStaticProperty( \WC_ACS_Points_Feed::class, 'instance' );
+        $this->stubGetOption( [
+            'wc_acs_default_weight'   => '0.5',
+            'woocommerce_weight_unit' => 'kg',
+        ] );
+
+        $this->method->calculate_shipping( $this->package( [ $this->item( '0.2', 2 ) ] ) );
+
+        $this->assertCount( 0, $this->method->rates_added );
     }
 }

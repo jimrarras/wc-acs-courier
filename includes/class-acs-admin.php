@@ -177,6 +177,7 @@ class WC_ACS_Admin {
                 'creating'       => __( 'Creating voucher...', 'wc-acs-courier' ),
                 'confirm_delete' => __( 'Are you sure you want to delete this voucher?', 'wc-acs-courier' ),
                 'refreshing'     => __( 'Refreshing...', 'wc-acs-courier' ),
+                'request_failed' => __( 'Request failed.', 'wc-acs-courier' ),
             ),
         ) );
     }

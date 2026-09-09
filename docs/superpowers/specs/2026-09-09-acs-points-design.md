@@ -190,7 +190,7 @@ When the order has `_acs_point_station` and `_acs_point_branch`:
 - `Acs_Delivery_Products`: `COD` only when the payment method is COD; the `REC` product and the address rewrite are removed.
 - Orders without the point meta are built exactly as before.
 
-**Open check, to be closed on the first live voucher.** The manual does not say what `Recipient_Address` should carry for a locker shipment. The first live point order will get a voucher created from the order screen, its PDF inspected, and the voucher deleted; if the label or ACS's response shows the point's address is expected instead, the builder switches to the point's street and zip for `Recipient_Address` and `Recipient_Zipcode` (a one-line change) and this section is updated.
+**Open check, to be closed on the first live voucher.** The manual does not say what `Recipient_Address` should carry for a locker shipment. The first live point order will get a voucher created from the order screen, its PDF inspected, and the voucher deleted; if the label or ACS's response shows the point's address is expected instead, the builder switches to the point's street and zip for `Recipient_Address` and `Recipient_Zipcode` (a one-line change) and this section is updated. The same inspection confirms the branch code format: the builder sends Acs_Station_Branch_Destination as an integer, which would drop a leading zero if ACS ever issued one.
 
 Auto-voucher: `acs_points` is not in `wc_acs_other_carrier_method_ids`, so the existing automation creates the voucher on `processing` as for home delivery.
 

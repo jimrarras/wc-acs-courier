@@ -285,6 +285,10 @@ class WC_ACS_Points_Picker {
      * @param int              $index Package index.
      */
     public function render_picker( $rate, $index ) {
+        if ( ! function_exists( 'is_checkout' ) || ! is_checkout() ) {
+            return;
+        }
+
         if ( self::METHOD_ID !== $rate->get_method_id() ) {
             return;
         }
@@ -376,6 +380,7 @@ class WC_ACS_Points_Picker {
                 'loading'     => __( 'Loading points...', 'wc-acs-courier' ),
                 'loadError'   => __( 'Could not load the ACS points. Please try again.', 'wc-acs-courier' ),
                 'moreHint'    => __( 'Move the map to see more points', 'wc-acs-courier' ),
+                'noMatches'   => __( 'No ACS Points match your search.', 'wc-acs-courier' ),
                 'open24'      => __( '24/7', 'wc-acs-courier' ),
                 'cod'         => __( 'Cash on delivery available', 'wc-acs-courier' ),
                 'noCod'       => __( 'No cash on delivery', 'wc-acs-courier' ),

@@ -90,13 +90,13 @@
                 .done(function (res) {
                     if (res.success) {
                         $result.text('✓ ' + res.data.count + ' (' + res.data.fetched + ')').addClass('success');
-                        $('#wc-acs-points-status').text(res.data.count + ' / ' + res.data.fetched);
+                        location.reload();
                     } else {
                         $result.text('✗ ' + res.data).addClass('error');
                     }
                 })
                 .fail(function () {
-                    $result.text('✗ Request failed').addClass('error');
+                    $result.text('✗ ' + wc_acs.i18n.request_failed).addClass('error');
                 })
                 .always(function () {
                     $btn.prop('disabled', false);
@@ -152,7 +152,7 @@
                     }
                 })
                 .fail(function () {
-                    window.alert('Request failed.');
+                    window.alert(wc_acs.i18n.request_failed);
                 });
         },
 

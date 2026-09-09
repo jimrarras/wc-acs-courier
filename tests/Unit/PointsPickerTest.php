@@ -354,7 +354,7 @@ class PointsPickerTest extends TestCase {
 
         $this->assertSame( [
             'title', 'search', 'all', 'lockers', 'stores', 'myLocation', 'select', 'change', 'close',
-            'loading', 'loadError', 'moreHint', 'open24', 'cod', 'noCod', 'weekdays', 'saturday',
+            'loading', 'loadError', 'moreHint', 'noMatches', 'open24', 'cod', 'noCod', 'weekdays', 'saturday',
             'locateError', 'locker', 'store',
         ], array_keys( $settings['i18n'] ) );
         foreach ( $settings['i18n'] as $value ) {
@@ -363,6 +363,7 @@ class PointsPickerTest extends TestCase {
     }
 
     public function test_render_picker_outputs_hidden_input_and_selected_summary(): void {
+        Functions\when( 'is_checkout' )->justReturn( true );
         Functions\when( 'esc_html_e' )->alias( function ( $text ) {
             echo $text;
         } );
@@ -397,5 +398,21 @@ class PointsPickerTest extends TestCase {
         $other_output = ob_get_clean();
 
         $this->assertSame( '', $other_output );
+    }
+
+    public function test_render_picker_is_silent_off_the_checkout(): void {
+        Functions\when( 'is_checkout' )->justReturn( false );
+        $this->seedFeed( [ $this->point() ] );
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+        $picker = $this->picker();
+
+        $rate = Mockery::mock( 'WC_Shipping_Rate' );
+        $rate->shouldReceive( 'get_method_id' )->andReturn( 'acs_points' );
+
+        ob_start();
+        $picker->render_picker( $rate, 0 );
+        $output = ob_get_clean();
+
+        $this->assertSame( '', $output );
     }
 }

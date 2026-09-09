@@ -120,7 +120,7 @@
     function escapeHtml( text ) {
         var div = document.createElement( 'div' );
         div.appendChild( document.createTextNode( text == null ? '' : String( text ) ) );
-        return div.innerHTML;
+        return div.innerHTML.replace( /"/g, '&quot;' );
     }
 
     function fold( text ) {
@@ -356,6 +356,9 @@
     }
 
     function renderMarkers() {
+        if ( ! state.cluster ) {
+            return;
+        }
         state.cluster.clearLayers();
         state.markers = {};
         visiblePoints().forEach( function ( p ) {
@@ -377,7 +380,7 @@
         } ).sort( function ( a, b ) { return a.d - b.d; } );
 
         if ( ! points.length ) {
-            list.html( '<p class="wc-acs-points-status">' + escapeHtml( cfg.i18n.moreHint ) + '</p>' );
+            list.html( '<p class="wc-acs-points-status">' + escapeHtml( cfg.i18n.noMatches ) + '</p>' );
             return;
         }
 

@@ -158,6 +158,14 @@ class PointsFeedTest extends TestCase {
         $this->assertSame( 150, \WC_ACS_Points_Feed::instance()->count() );
     }
 
+    public function test_refresh_stores_prebuilt_rows(): void {
+        $this->stubFeedResponse( $this->manyPoints( 150 ) );
+
+        \WC_ACS_Points_Feed::instance()->refresh();
+
+        $this->assertSame( '1', $this->options['wc_acs_points_feed']['rows'][0][0] );
+    }
+
     public function test_refresh_keeps_stored_copy_on_api_error(): void {
         $this->options['wc_acs_points_feed'] = [ 'fetched_at' => 123, 'country' => 'GR', 'points' => [ [ 'id' => 'old' ] ] ];
         Functions\when( 'wp_remote_post' )->justReturn( new \WP_Error( 'http', 'down' ) );
@@ -264,6 +272,17 @@ class PointsFeedTest extends TestCase {
 
         $this->assertSame( 304, $response->get_status() );
         $this->assertNull( $response->get_data() );
+        $this->assertSame( 'public, max-age=86400', $response->get_headers()['Cache-Control'] );
+    }
+
+    public function test_rest_points_matches_weak_etag(): void {
+        $this->seedStored();
+        $request = new \WP_REST_Request( 'GET', '/wc-acs/v1/points' );
+        $request->set_header( 'If-None-Match', 'W/"1700000000"' );
+
+        $response = \WC_ACS_Points_Feed::instance()->rest_points( $request );
+
+        $this->assertSame( 304, $response->get_status() );
     }
 
     // ── ajax_refresh() ───────────────────────────────────────────
