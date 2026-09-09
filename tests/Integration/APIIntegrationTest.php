@@ -173,4 +173,23 @@ class APIIntegrationTest extends IntegrationTestCase {
             'issue_pickup_list should communicate with the API without HTTP errors'
         );
     }
+
+    // ── Points feed ─────────────────────────────────────────────
+
+    public function test_get_points_feed_returns_lockers_and_stores(): void {
+        $result = \WC_ACS_API::get_points_feed();
+
+        $this->assertIsArray( $result, 'get_points_feed should return an array' );
+        $points = $result['ACSTableOutput']['Table_Data1'] ?? array();
+        $this->assertGreaterThan( 1000, count( $points ), 'ACS publishes about 2,000 points' );
+
+        $first = $points[0];
+        foreach ( array( 'id', 'type', 'name', 'lat', 'lon', 'street', 'city', 'sa_zipcode', 'Acs_Station_Destination', 'Acs_Station_Branch_Destination', 'Acs_Smartpoint_COD_Supported', 'Country_Code' ) as $key ) {
+            $this->assertArrayHasKey( $key, $first );
+        }
+
+        $types = array_unique( array_column( $points, 'type' ) );
+        $this->assertContains( 'smartlocker', $types );
+        $this->assertContains( 'branch', $types );
+    }
 }

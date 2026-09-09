@@ -354,35 +354,19 @@ class WC_ACS_API {
     }
 
     /**
-     * Get ACS Smartpoint locations (lockers + stores).
+     * Get every ACS pickup point (Smartpoint lockers and ACS stores) in one call.
      *
-     * @param string $country GR or CY.
-     * @return array|WP_Error Combined list of Smartpoints.
+     * Uses the alias that ACS ships in its own merchant plugin. Each row carries
+     * coordinates, opening hours, the two voucher routing codes
+     * (Acs_Station_Destination, Acs_Station_Branch_Destination) and a flag for
+     * card payment on collection. Verified 2026-09-09: about 2,000 rows.
+     *
+     * @return array|WP_Error ACSOutputResponce; points under ACSTableOutput.Table_Data1.
      */
-    public static function get_smartpoints( $country = 'GR' ) {
-        // Kind 7 = Smartpoint lockers
-        $lockers = self::get_stations( $country, 7 );
-
-        // Kind 4 = Xpress points
-        $points = self::get_stations( $country, 4 );
-
-        $all = array();
-
-        if ( ! is_wp_error( $lockers ) && ! empty( $lockers['ACSTableOutput']['Table_Data'] ) ) {
-            foreach ( $lockers['ACSTableOutput']['Table_Data'] as $item ) {
-                $item['_type'] = 'locker';
-                $all[] = $item;
-            }
-        }
-
-        if ( ! is_wp_error( $points ) && ! empty( $points['ACSTableOutput']['Table_Data'] ) ) {
-            foreach ( $points['ACSTableOutput']['Table_Data'] as $item ) {
-                $item['_type'] = 'point';
-                $all[] = $item;
-            }
-        }
-
-        return $all;
+    public static function get_points_feed() {
+        return self::request( 'ACS_Get_Stations_For_Plugin', array(
+            'locale' => null,
+        ) );
     }
 
     // ─── COD METHODS ───────────────────────────────────────────────
