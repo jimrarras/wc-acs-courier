@@ -52,6 +52,7 @@ class PointsOrderTest extends TestCase {
 
     public function test_email_meta_prints_pickup_line_in_plain_and_html(): void {
         $this->seedFeed( [] );
+        Functions\when( 'esc_url_raw' )->returnArg();
         $order = $this->createOrderMock( [ 'meta' => $this->pointMeta() ] );
         $obj   = $this->orderObj();
 
@@ -69,6 +70,22 @@ class PointsOrderTest extends TestCase {
         $this->assertStringContainsString( '<strong>Pickup from:</strong>', $html );
         $this->assertStringContainsString( 'google.com/maps', $html );
         $this->assertSame( '', $none );
+    }
+
+    public function test_email_meta_plain_text_is_not_entity_encoded(): void {
+        $this->seedFeed( [] );
+        Functions\when( 'esc_url_raw' )->returnArg();
+        $order = $this->createOrderMock( [ 'meta' => $this->pointMeta( [ '_acs_point_name' => 'Market In & Co', '_acs_point_address' => "Odos 'Alpha' 1, 45333 ΙΩΑΝΝΙΝΑ" ] ) ] );
+        $obj   = $this->orderObj();
+
+        ob_start();
+        $obj->render_email_meta( $order, false, true );
+        $plain = ob_get_clean();
+
+        $this->assertStringContainsString( "Pickup from: Market In & Co, Odos 'Alpha' 1, 45333 ΙΩΑΝΝΙΝΑ", $plain );
+        $this->assertStringNotContainsString( '&amp;', $plain );
+        $this->assertStringNotContainsString( '&#0', $plain );
+        $this->assertStringContainsString( 'https://www.google.com/maps/search/?api=1&query=', $plain );
     }
 
     public function test_ajax_search_points_matches_name_street_city_zip(): void {

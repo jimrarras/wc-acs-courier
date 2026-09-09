@@ -212,8 +212,9 @@ class WC_ACS_Points_Order {
         }
 
         if ( $plain_text ) {
-            echo "\n" . esc_html__( 'Pickup from:', 'wc-acs-courier' ) . ' ' . esc_html( $summary ) . "\n";
-            echo esc_url( self::maps_url( $order ) ) . "\n";
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- plain-text email body, not HTML.
+            echo "\n" . __( 'Pickup from:', 'wc-acs-courier' ) . ' ' . $summary . "\n";
+            echo esc_url_raw( self::maps_url( $order ) ) . "\n";
             return;
         }
 
