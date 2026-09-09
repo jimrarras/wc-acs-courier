@@ -55,6 +55,7 @@ function wc_acs_includes() {
         'includes/class-acs-shipping-method.php',
         'includes/class-acs-tracking.php',
         'includes/class-acs-points-feed.php',
+        'includes/class-acs-points-shipping-method.php',
     );
 
     foreach ( $files as $file ) {
@@ -97,9 +98,10 @@ function wc_acs_init() {
     WC_ACS_Tracking::instance();
     WC_ACS_Points_Feed::instance();
 
-    // Register shipping method
+    // Register shipping methods
     add_filter( 'woocommerce_shipping_methods', function ( $methods ) {
         $methods['acs_courier'] = 'WC_ACS_Shipping_Method';
+        $methods['acs_points']  = 'WC_ACS_Points_Shipping_Method';
         return $methods;
     } );
 
@@ -144,6 +146,7 @@ function wc_acs_activate() {
         'includes/class-acs-shipping-method.php',
         'includes/class-acs-tracking.php',
         'includes/class-acs-points-feed.php',
+        'includes/class-acs-points-shipping-method.php',
     );
 
     foreach ( $required_files as $file ) {
