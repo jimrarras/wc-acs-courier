@@ -23,6 +23,10 @@
             $(document).on('click', '.wc-acs-track-voucher', this.trackVoucher);
             $(document).on('click', '.wc-acs-issue-pickup-list', this.issuePickupList);
             $(document).on('click', '.wc-acs-print-pickup-list', this.printPickupList);
+
+            // Order screen: change the ACS Point while no voucher exists
+            $(document).on('input', '.wc-acs-point-search', this.searchPoints);
+            $(document).on('click', '.wc-acs-point-results li', this.setOrderPoint);
         },
 
         getOrderId() {
@@ -96,6 +100,59 @@
                 })
                 .always(function () {
                     $btn.prop('disabled', false);
+                });
+        },
+
+        // ─── ACS Point change control ───────────────────────────
+        pointSearchTimer: null,
+
+        searchPoints() {
+            const $input = $(this);
+            const $box = $input.closest('.wc-acs-point-admin');
+            const $results = $box.find('.wc-acs-point-results');
+            const q = $.trim($input.val());
+
+            clearTimeout(ACS.pointSearchTimer);
+            if (q.length < 2) {
+                $results.empty().prop('hidden', true);
+                return;
+            }
+
+            ACS.pointSearchTimer = setTimeout(function () {
+                $.post(wc_acs.ajax_url, { action: 'wc_acs_search_points', nonce: wc_acs.nonce, q: q })
+                    .done(function (res) {
+                        $results.empty();
+                        if (!res.success || !res.data.points.length) {
+                            $results.prop('hidden', true);
+                            return;
+                        }
+                        res.data.points.forEach(function (p) {
+                            $('<li>').attr('data-id', p.id).addClass('wc-acs-point-result--' + p.type).text(p.label).appendTo($results);
+                        });
+                        $results.prop('hidden', false);
+                    });
+            }, 300);
+        },
+
+        setOrderPoint() {
+            const $li = $(this);
+            const $box = $li.closest('.wc-acs-point-admin');
+
+            $.post(wc_acs.ajax_url, {
+                action: 'wc_acs_set_order_point',
+                nonce: wc_acs.nonce,
+                order_id: $box.data('order-id'),
+                point_id: $li.data('id'),
+            })
+                .done(function (res) {
+                    if (res.success) {
+                        location.reload();
+                    } else {
+                        window.alert(res.data);
+                    }
+                })
+                .fail(function () {
+                    window.alert('Request failed.');
                 });
         },
 

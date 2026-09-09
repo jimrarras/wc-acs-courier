@@ -161,3 +161,29 @@
     padding: 2px 5px;
     border-radius: 2px;
 }
+
+/* ACS Point change control on the order screen */
+.wc-acs-point-results {
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid #c3c4c7;
+    background: #fff;
+}
+
+.wc-acs-point-results li {
+    margin: 0;
+    padding: 6px 8px;
+    border-left: 3px solid #9ca3af;
+    cursor: pointer;
+}
+
+.wc-acs-point-results li.wc-acs-point-result--store {
+    border-left-color: #e30613;
+}
+
+.wc-acs-point-results li:hover {
+    background: #f0f6fc;
+}

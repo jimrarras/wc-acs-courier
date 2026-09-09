@@ -189,3 +189,4 @@ require_once $plugin_dir . 'class-acs-tracking.php';
 require_once $plugin_dir . 'class-acs-points-feed.php';
 require_once $plugin_dir . 'class-acs-points-shipping-method.php';
 require_once $plugin_dir . 'class-acs-points-picker.php';
+require_once $plugin_dir . 'class-acs-points-order.php';
