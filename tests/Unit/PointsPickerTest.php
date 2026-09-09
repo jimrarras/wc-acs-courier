@@ -146,4 +146,175 @@ class PointsPickerTest extends TestCase {
             '_acs_point_cod'     => '0',
         ], $order->updated_meta );
     }
+
+    // ── instance wiring ──────────────────────────────────────────
+
+    private function picker(): \WC_ACS_Points_Picker {
+        $this->resetStaticProperty( \WC_ACS_Points_Picker::class, 'instance' );
+        return \WC_ACS_Points_Picker::instance();
+    }
+
+    private function seedFeed( array $points ): void {
+        $this->resetStaticProperty( \WC_ACS_Points_Feed::class, 'instance' );
+        $feed = [ 'fetched_at' => 1, 'country' => 'GR', 'points' => $points ];
+        $this->stubGetOption( [
+            'wc_acs_points_feed'                => $feed,
+            'woocommerce_acs_points_3_settings' => [ 'point_types' => 'lockers' ],
+            'woocommerce_acs_points_4_settings' => [ 'point_types' => 'both' ],
+        ] );
+    }
+
+    private function mockSession( array $values ): void {
+        $session = Mockery::mock();
+        $session->stored = $values;
+        $session->shouldReceive( 'get' )->andReturnUsing( function ( $key, $default = null ) use ( $session ) {
+            return $session->stored[ $key ] ?? $default;
+        } );
+        $session->shouldReceive( 'set' )->andReturnUsing( function ( $key, $value ) use ( $session ) {
+            $session->stored[ $key ] = $value;
+        } );
+        Functions\when( 'WC' )->justReturn( (object) [ 'session' => $session, 'customer' => null ] );
+    }
+
+    private function pointsOrder( array $overrides = [] ): \Mockery\MockInterface {
+        $line = Mockery::mock( 'WC_Order_Item_Shipping' );
+        $line->shouldReceive( 'get_method_id' )->andReturn( 'acs_points' );
+        $line->shouldReceive( 'get_instance_id' )->andReturn( 4 );
+        return $this->createOrderMock( array_merge( [ 'shipping_methods' => [ $line ], 'billing_phone' => '6912345678' ], $overrides ) );
+    }
+
+    public function test_selected_point_id_prefers_post_then_session(): void {
+        $this->seedFeed( [] );
+        $this->mockSession( [ 'acs_point_id' => '9' ] );
+        $picker = $this->picker();
+
+        unset( $_POST['acs_point_id'] );
+        $this->assertSame( '9', $picker->get_selected_point_id() );
+
+        $_POST['acs_point_id'] = '4400';
+        $this->assertSame( '4400', $picker->get_selected_point_id() );
+        unset( $_POST['acs_point_id'] );
+    }
+
+    public function test_save_classic_checkout_throws_without_point(): void {
+        $this->seedFeed( [] );
+        $this->mockSession( [] );
+        unset( $_POST['acs_point_id'] );
+
+        $this->expectException( \Exception::class );
+        $this->picker()->save_classic_checkout( $this->pointsOrder(), [] );
+    }
+
+    public function test_save_classic_checkout_writes_meta_for_session_point(): void {
+        $this->seedFeed( [ $this->point() ] );
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+        unset( $_POST['acs_point_id'] );
+        $order = $this->pointsOrder();
+
+        $this->picker()->save_classic_checkout( $order, [] );
+
+        $this->assertSame( '4400', $order->updated_meta['_acs_point_id'] );
+        $this->assertSame( 'ΙΒ', $order->updated_meta['_acs_point_station'] );
+    }
+
+    public function test_save_classic_checkout_ignores_other_methods(): void {
+        $this->seedFeed( [] );
+        $this->mockSession( [] );
+        $order = $this->createOrderMock();
+
+        $this->picker()->save_classic_checkout( $order, [] );
+
+        $this->assertSame( [], $order->updated_meta );
+    }
+
+    public function test_validate_classic_checkout_falls_back_to_session_method(): void {
+        $this->seedFeed( [] );
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:4' ] ] );
+        unset( $_POST['acs_point_id'] );
+        $errors = new \WP_Error();
+
+        $this->picker()->validate_classic_checkout( [ 'shipping_method' => '', 'billing_phone' => '6912345678' ], $errors );
+
+        $this->assertSame( [ 'acs_point_required' ], $errors->get_error_codes() );
+    }
+
+    public function test_gateway_filter_hides_cod_only_for_point_without_terminal(): void {
+        $this->seedFeed( [ $this->point( [ 'id' => '1', 'cod' => 0 ] ), $this->point( [ 'id' => '2', 'cod' => 1 ] ) ] );
+        $gateways = [ 'cod' => 'COD', 'bacs' => 'Bank' ];
+
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:4' ], 'acs_point_id' => '1' ] );
+        $this->assertSame( [ 'bacs' ], array_keys( \WC_ACS_Points_Picker::filter_payment_gateways( $gateways ) ) );
+
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:4' ], 'acs_point_id' => '2' ] );
+        $this->assertSame( [ 'cod', 'bacs' ], array_keys( \WC_ACS_Points_Picker::filter_payment_gateways( $gateways ) ) );
+
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:4' ] ] );
+        $this->assertSame( [ 'cod', 'bacs' ], array_keys( \WC_ACS_Points_Picker::filter_payment_gateways( $gateways ) ) );
+
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'flat_rate:2' ], 'acs_point_id' => '1' ] );
+        $this->assertSame( [ 'cod', 'bacs' ], array_keys( \WC_ACS_Points_Picker::filter_payment_gateways( $gateways ) ) );
+    }
+
+    public function test_ajax_set_point_rejects_unknown_id(): void {
+        $this->seedFeed( [ $this->point() ] );
+        $this->mockSession( [] );
+        Functions\when( 'check_ajax_referer' )->justReturn( true );
+        $captured = null;
+        Functions\when( 'wp_send_json_error' )->alias( function ( $data, $status = null ) use ( &$captured ) {
+            $captured = $status;
+            throw new \RuntimeException( 'exit' );
+        } );
+        $_POST['point_id'] = '999';
+
+        try {
+            $this->picker()->ajax_set_point();
+        } catch ( \RuntimeException $e ) {
+        }
+
+        $this->assertSame( 404, $captured );
+        unset( $_POST['point_id'] );
+    }
+
+    public function test_ajax_set_point_stores_id_in_session(): void {
+        $this->seedFeed( [ $this->point() ] );
+        $this->mockSession( [] );
+        Functions\when( 'check_ajax_referer' )->justReturn( true );
+        $captured = null;
+        Functions\when( 'wp_send_json_success' )->alias( function ( $data ) use ( &$captured ) {
+            $captured = $data;
+            throw new \RuntimeException( 'exit' );
+        } );
+        $_POST['point_id'] = '4400';
+
+        try {
+            $this->picker()->ajax_set_point();
+        } catch ( \RuntimeException $e ) {
+        }
+
+        $this->assertSame( '4400', $captured['point']['id'] );
+        $this->assertSame( '4400', \WC()->session->stored['acs_point_id'] );
+        unset( $_POST['point_id'] );
+    }
+
+    public function test_save_from_store_api_reads_extension_data(): void {
+        $this->seedFeed( [ $this->point() ] );
+        $this->mockSession( [] );
+        $order = $this->pointsOrder();
+        $request = new \WP_REST_Request();
+        $request->set_params( [ 'extensions' => [ 'wc-acs-courier' => [ 'point_id' => '4400' ] ] ] );
+
+        $this->picker()->save_from_store_api( $order, $request );
+
+        $this->assertSame( '501', $order->updated_meta['_acs_point_branch'] );
+    }
+
+    public function test_save_from_store_api_throws_on_missing_point(): void {
+        $this->seedFeed( [] );
+        $this->mockSession( [] );
+        $request = new \WP_REST_Request();
+        $request->set_params( [] );
+
+        $this->expectException( \Exception::class );
+        $this->picker()->save_from_store_api( $this->pointsOrder(), $request );
+    }
 }
