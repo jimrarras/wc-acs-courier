@@ -234,3 +234,11 @@ Recorded in a new folder `data/site-backups/<deploy date>-acs-points/README.md` 
 ## Versioning
 
 Plugin version 1.1.0. `readme.txt` changelog entry lists the new method, the map, the voucher fix, and the removal of the Smartpoints checkbox.
+
+### Open check: closed 2026-09-09 (live voucher 9805904835, test order 9136, both deleted)
+
+The label printed by ACS for a locker shipment keeps the customer's own name and address as the receiver
+(ΠΑΡΑΛΗΠΤΗΣ: Δοκιμή ACS Points, Δωδώνης 10, 45333 Ιωάννινα), shows the destination as `ΙΒ` / `S501`, and ACS
+itself adds "ΠΑΡΑΛΑΒΗ ΑΠΟ ACS-SMARTPOINT(ΙΒ 501)" in the notes ahead of our `Delivery_Notes`. So the builder sends the
+right thing: the customer's address plus the two station codes. The integer branch code (501) printed correctly.
+Nothing to change.
