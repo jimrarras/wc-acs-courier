@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 9.6
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,6 +123,9 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.1.3 =
+* Fix: map badges and point-type filter follow the ACS Points instance even when another rate is preselected at page load
 
 = 1.1.2 =
 * New: "Cash on Delivery" setting on the ACS Points method: only at points with a terminal (default), never at lockers, or never at any point

@@ -64,6 +64,63 @@ class PointsPickerTest extends TestCase {
         $this->assertFalse( \WC_ACS_Points_Picker::methods_include_points( [] ) );
     }
 
+    public function test_effective_chosen_falls_back_to_the_offered_acs_points_rate(): void {
+        $flat = Mockery::mock( 'WC_Shipping_Rate' );
+        $flat->shouldReceive( 'get_method_id' )->andReturn( 'flat_rate' );
+        $rate = Mockery::mock( 'WC_Shipping_Rate' );
+        $rate->shouldReceive( 'get_method_id' )->andReturn( 'acs_points' );
+
+        $shipping = Mockery::mock();
+        $shipping->shouldReceive( 'get_packages' )->andReturn( [
+            [ 'rates' => [ 'flat_rate:2' => $flat, 'acs_points:5' => $rate ] ],
+        ] );
+
+        $session = Mockery::mock();
+        $session->stored = [ 'chosen_shipping_methods' => [ 'flat_rate:2' ] ];
+        $session->shouldReceive( 'get' )->andReturnUsing( function ( $key, $default = null ) use ( $session ) {
+            return $session->stored[ $key ] ?? $default;
+        } );
+
+        $wc = new class( $session, $shipping ) {
+            public $session;
+            public $customer = null;
+            private $s;
+            public function __construct( $session, $s ) {
+                $this->session = $session;
+                $this->s       = $s;
+            }
+            public function shipping() {
+                return $this->s;
+            }
+        };
+        Functions\when( 'WC' )->justReturn( $wc );
+
+        $this->assertSame( [ 'acs_points:5' ], \WC_ACS_Points_Picker::effective_chosen() );
+
+        $session->stored = [ 'chosen_shipping_methods' => [ 'acs_points:4' ] ];
+        $this->assertSame( [ 'acs_points:4' ], \WC_ACS_Points_Picker::effective_chosen() );
+
+        $shipping_no_points = Mockery::mock();
+        $shipping_no_points->shouldReceive( 'get_packages' )->andReturn( [
+            [ 'rates' => [ 'flat_rate:2' => $flat ] ],
+        ] );
+        $wc_no_points = new class( $session, $shipping_no_points ) {
+            public $session;
+            public $customer = null;
+            private $s;
+            public function __construct( $session, $s ) {
+                $this->session = $session;
+                $this->s       = $s;
+            }
+            public function shipping() {
+                return $this->s;
+            }
+        };
+        Functions\when( 'WC' )->justReturn( $wc_no_points );
+        $session->stored = [ 'chosen_shipping_methods' => [ 'flat_rate:2' ] ];
+        $this->assertSame( [ 'flat_rate:2' ], \WC_ACS_Points_Picker::effective_chosen() );
+    }
+
     public function test_instance_point_types_reads_instance_option(): void {
         $this->assertSame( 'lockers', \WC_ACS_Points_Picker::instance_point_types( [ 'acs_points:3' ] ) );
         $this->assertSame( 'both', \WC_ACS_Points_Picker::instance_point_types( [ 'acs_points:4' ] ) );

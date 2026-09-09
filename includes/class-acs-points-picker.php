@@ -80,6 +80,33 @@ class WC_ACS_Points_Picker {
     }
 
     /**
+     * Rate ids to resolve instance settings from: the chosen methods when one
+     * of them is acs_points, otherwise the acs_points rate offered in the
+     * current packages (the customer may pick it later without a reload).
+     *
+     * @return array
+     */
+    public static function effective_chosen() {
+        if ( ! function_exists( 'WC' ) || ! WC()->session ) {
+            return array();
+        }
+        $chosen = (array) WC()->session->get( 'chosen_shipping_methods', array() );
+        if ( self::methods_include_points( $chosen ) ) {
+            return $chosen;
+        }
+        if ( method_exists( WC(), 'shipping' ) && WC()->shipping() ) {
+            foreach ( (array) WC()->shipping()->get_packages() as $package ) {
+                foreach ( (array) ( $package['rates'] ?? array() ) as $rate_id => $rate ) {
+                    if ( self::METHOD_ID === $rate->get_method_id() ) {
+                        return array( (string) $rate_id );
+                    }
+                }
+            }
+        }
+        return $chosen;
+    }
+
+    /**
      * 'both' or 'lockers' for the chosen acs_points instance.
      *
      * @param array $chosen Chosen rate ids.
@@ -329,7 +356,7 @@ class WC_ACS_Points_Picker {
         }
 
         $point       = $this->get_selected_point();
-        $chosen      = ( function_exists( 'WC' ) && WC()->session ) ? (array) WC()->session->get( 'chosen_shipping_methods', array() ) : array();
+        $chosen      = self::effective_chosen();
         $allows_cod  = $point ? self::point_allows_cod( $point, self::instance_cod_mode( $chosen ) ) : false;
         ?>
         <div class="wc-acs-points-picker" data-package="<?php echo esc_attr( $index ); ?>">
@@ -380,7 +407,7 @@ class WC_ACS_Points_Picker {
      */
     public function script_settings() {
         $feed   = WC_ACS_Points_Feed::instance();
-        $chosen = ( function_exists( 'WC' ) && WC()->session ) ? (array) WC()->session->get( 'chosen_shipping_methods', array() ) : array();
+        $chosen = self::effective_chosen();
         $vendor = WC_ACS_PLUGIN_URL . 'assets/vendor/';
         $img    = WC_ACS_PLUGIN_URL . 'assets/img/';
 
