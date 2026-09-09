@@ -127,6 +127,18 @@ class PointsFeedTest extends TestCase {
         $this->assertSame( 0, $out[1]['cod'] );
     }
 
+    public function test_normalise_reads_locker_cod_from_the_notes(): void {
+        $na  = '*Παραλαβές που έχουν άφιξη στο κατάστημα παραλαβής τουλάχιστον 20’ λεπτά πριν την ώρα αναχώρησης, προωθούνται-αναχωρούν προς τον προορισμό τους την ίδια ημέρα. Μη διαθέσιμη';
+        $ok  = '*Παραλαβές που έχουν άφιξη στο κατάστημα παραλαβής τουλάχιστον 20’ λεπτά πριν την ώρα αναχώρησης, προωθούνται-αναχωρούν προς τον προορισμό τους την ίδια ημέρα. Αποδεκτή η χρήση των τραπεζικών καρτών.';
+        $out = \WC_ACS_Points_Feed::normalise( [
+            $this->rawPoint( [ 'id' => 1, 'notes' => $na, 'Acs_Smartpoint_COD_Supported' => 1 ] ),
+            $this->rawPoint( [ 'id' => 2, 'notes' => $ok, 'Acs_Smartpoint_COD_Supported' => 1 ] ),
+            $this->rawPoint( [ 'id' => 3, 'notes' => $ok, 'Acs_Smartpoint_COD_Supported' => 0 ] ),
+            $this->rawPoint( [ 'id' => 4, 'notes' => $na, 'type' => 'branch' ] ),
+        ], 'GR' );
+        $this->assertSame( [ 0, 1, 0, 1 ], array_column( $out, 'cod' ) );
+    }
+
     // ── store_country() ──────────────────────────────────────────
 
     public function test_store_country_strips_state_suffix(): void {

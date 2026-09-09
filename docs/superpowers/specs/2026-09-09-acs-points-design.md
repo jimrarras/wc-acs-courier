@@ -91,7 +91,7 @@ array(
 )
 ```
 
-`notes`, `icon`, `title`, `area` are dropped. A store (`type = store`) always has `cod = 1`: the alias reports `Acs_Smartpoint_COD_Supported = 0` for branches because the flag describes locker terminals, but every ACS store takes cash on delivery. This override is explicit in `normalise()` and covered by a test.
+`notes`, `icon`, `title`, `area` are dropped. A store (`type = store`) always has `cod = 1`: the alias reports `Acs_Smartpoint_COD_Supported = 0` for branches because the flag describes locker terminals, but every ACS store takes cash on delivery. This override is explicit in `normalise()` and covered by a test. For lockers the COD flag alone is not trusted: on 2026-09-09 the live feed set Acs_Smartpoint_COD_Supported = 1 on every locker while ACS_Stations reported "Μη διαθέσιμη" for every one. The feed's notes text is the discriminator: a locker whose notes contain "Μη διαθέσιμη" has no terminal and gets cod = 0 (1,188 of 1,642 on that day).
 
 **Storage.** Option `wc_acs_points_feed` (autoload `no`) holding `array( 'fetched_at' => <unix>, 'country' => 'GR', 'points' => [...] )`. On this store the option lands in Redis-backed object cache; at ~2,000 points the serialised array is ~450 KB, which is fine for a single option read once per request that needs it.
 

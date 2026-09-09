@@ -93,7 +93,7 @@ class WC_ACS_Points_Feed {
                 'lon'     => round( (float) $lon, 6 ),
                 'station' => trim( (string) ( $raw['Acs_Station_Destination'] ?? '' ) ),
                 'branch'  => trim( (string) ( $raw['Acs_Station_Branch_Destination'] ?? '' ) ),
-                'cod'     => 'store' === $type ? 1 : (int) ! empty( $raw['Acs_Smartpoint_COD_Supported'] ),
+                'cod'     => 'store' === $type ? 1 : self::locker_takes_cod( $raw ),
                 'h24'     => (int) ! empty( $raw['is_24h'] ),
                 'hours'   => trim( (string) ( $raw['weekdays'] ?? '' ) ),
                 'sat'     => trim( (string) ( $raw['saturday'] ?? '' ) ),
@@ -101,6 +101,25 @@ class WC_ACS_Points_Feed {
         }
 
         return $out;
+    }
+
+    /**
+     * Whether a locker has a card terminal for cash on delivery.
+     *
+     * ACS's Acs_Smartpoint_COD_Supported flag is 1 for every locker in the
+     * live feed (verified 2026-09-09), so it cannot be trusted on its own.
+     * The feed's notes carry the real state: lockers without a terminal get
+     * the phrase "Μη διαθέσιμη" appended after the card-payment sentence.
+     *
+     * @param array $raw Feed row.
+     * @return int 1 or 0
+     */
+    private static function locker_takes_cod( array $raw ) {
+        if ( empty( $raw['Acs_Smartpoint_COD_Supported'] ) ) {
+            return 0;
+        }
+        $notes = (string) ( $raw['notes'] ?? '' );
+        return ( false === mb_stripos( $notes, 'Μη διαθέσιμη', 0, 'UTF-8' ) ) ? 1 : 0;
     }
 
     /**
