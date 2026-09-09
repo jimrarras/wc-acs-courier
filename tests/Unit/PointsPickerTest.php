@@ -542,6 +542,22 @@ class PointsPickerTest extends TestCase {
         $this->assertSame( '4400', \WC()->session->stored['acs_point_id'] );
     }
 
+    public function test_reset_point_on_method_change_reads_the_posted_shipping_field(): void {
+        $this->seedFeed( [ $this->point() ] );
+
+        $_POST['shipping_method'] = [ 'flat_rate:2' ];
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+        $this->picker()->reset_point_on_method_change( 'shipping_method%5B0%5D=acs_points%3A4' );
+        $this->assertSame( '', \WC()->session->stored['acs_point_id'] );
+
+        $_POST['shipping_method'] = [ 'acs_points:4' ];
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+        $this->picker()->reset_point_on_method_change( 'shipping_method%5B0%5D=flat_rate%3A2' );
+        $this->assertSame( '4400', \WC()->session->stored['acs_point_id'] );
+
+        unset( $_POST['shipping_method'] );
+    }
+
     public function test_clear_session_point_on_cart_emptied(): void {
         $this->mockSession( [ 'acs_point_id' => '4400' ] );
 

@@ -272,17 +272,29 @@ class WC_ACS_Points_Picker {
     /**
      * Forget the chosen point when the customer moves to another shipping
      * method. WooCommerce passes the serialized checkout form on every
-     * update_order_review call.
+     * update_order_review call, and also posts the chosen rate as a
+     * top-level shipping_method array (the field it uses to set
+     * chosen_shipping_methods); some callers omit the radios from the
+     * serialized form, so the top-level field wins when present.
      *
      * @param string $posted Serialized checkout form data.
      */
     public function reset_point_on_method_change( $posted ) {
-        $data = array();
-        parse_str( (string) $posted, $data );
-        if ( ! isset( $data['shipping_method'] ) ) {
-            return;
+        $chosen = array();
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verified the update_order_review nonce.
+        if ( isset( $_POST['shipping_method'] ) ) {
+            $chosen = array_map( 'sanitize_text_field', (array) wp_unslash( $_POST['shipping_method'] ) );
+        } else {
+            $data = array();
+            parse_str( (string) $posted, $data );
+            if ( ! isset( $data['shipping_method'] ) ) {
+                return;
+            }
+            $chosen = (array) $data['shipping_method'];
         }
-        if ( ! self::methods_include_points( (array) $data['shipping_method'] ) ) {
+
+        if ( ! self::methods_include_points( $chosen ) ) {
             self::clear_session_point();
         }
     }

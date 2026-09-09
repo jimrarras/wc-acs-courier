@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 9.6
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,6 +123,9 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.2.3 =
+* Fix: the chosen point is also forgotten when the shipping method arrives only as the posted field of the checkout refresh
 
 = 1.2.2 =
 * New: "Remove" button on the chosen point; the chosen point is forgotten when the shipping method changes or the order completes
