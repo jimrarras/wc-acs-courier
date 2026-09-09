@@ -509,6 +509,47 @@ class PointsPickerTest extends TestCase {
         $this->assertSame( '', $other_output );
     }
 
+    // ── footer localization ──────────────────────────────────────
+
+    public function test_settings_are_localized_in_the_footer_not_in_the_head(): void {
+        $this->seedFeed( [] );
+        $this->mockSession( [] );
+
+        \Brain\Monkey\Actions\expectAdded( 'wp_print_footer_scripts' )->once()->with( Mockery::type( 'array' ), 5 );
+
+        $picker = $this->picker();
+
+        $this->assertTrue( method_exists( $picker, 'print_settings' ) );
+    }
+
+    public function test_print_settings_localizes_only_when_the_script_is_enqueued(): void {
+        $this->seedFeed( [] );
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:4' ] ] );
+        $picker = $this->picker();
+
+        $calls = [];
+        Functions\when( 'wp_localize_script' )->alias( function ( $handle, $name, $data ) use ( &$calls ) {
+            $calls[] = [ $handle, $name, $data ];
+        } );
+
+        Functions\when( 'wp_script_is' )->justReturn( false );
+        $picker->print_settings();
+        $this->assertSame( [], $calls );
+
+        Functions\when( 'wp_script_is' )->justReturn( true );
+        Functions\when( 'rest_url' )->alias( function ( $path ) {
+            return 'https://example.com/wp-json/' . $path;
+        } );
+        Functions\when( 'admin_url' )->justReturn( 'https://example.com/wp-admin/admin-ajax.php' );
+        Functions\when( 'wp_create_nonce' )->justReturn( 'nonce123' );
+        $picker->print_settings();
+
+        $this->assertCount( 1, $calls );
+        $this->assertSame( 'wc-acs-points', $calls[0][0] );
+        $this->assertSame( 'wcAcsPoints', $calls[0][1] );
+        $this->assertIsArray( $calls[0][2] );
+    }
+
     public function test_render_picker_is_silent_off_the_checkout(): void {
         Functions\when( 'is_checkout' )->justReturn( false );
         $this->seedFeed( [ $this->point() ] );

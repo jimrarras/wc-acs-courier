@@ -32,6 +32,7 @@ class WC_ACS_Points_Picker {
 
     private function __construct() {
         add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+        add_action( 'wp_print_footer_scripts', array( $this, 'print_settings' ), 5 );
         add_action( 'woocommerce_after_shipping_rate', array( $this, 'render_picker' ), 10, 2 );
         add_action( 'woocommerce_after_checkout_validation', array( $this, 'validate_classic_checkout' ), 10, 2 );
         add_action( 'woocommerce_checkout_create_order', array( $this, 'save_classic_checkout' ), 10, 2 );
@@ -469,6 +470,17 @@ class WC_ACS_Points_Picker {
 
         wp_enqueue_style( 'wc-acs-points', WC_ACS_PLUGIN_URL . 'assets/css/acs-points.css', array(), WC_ACS_VERSION );
         wp_enqueue_script( 'wc-acs-points', WC_ACS_PLUGIN_URL . 'assets/js/acs-points.js', array( 'jquery' ), WC_ACS_VERSION, true );
+    }
+
+    /**
+     * Localize the settings in the footer, after the checkout has rendered
+     * and WooCommerce has calculated the shipping packages, so the instance
+     * resolution in effective_chosen() sees the offered acs_points rate.
+     */
+    public function print_settings() {
+        if ( ! wp_script_is( 'wc-acs-points', 'enqueued' ) ) {
+            return;
+        }
         wp_localize_script( 'wc-acs-points', 'wcAcsPoints', $this->script_settings() );
     }
 
