@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 9.6
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,6 +123,9 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.1.2 =
+* New: "Cash on Delivery" setting on the ACS Points method: only at points with a terminal (default), never at lockers, or never at any point
 
 = 1.1.1 =
 * Fix: locker cash-on-delivery badge now follows the ACS notes text; the feed's COD flag is set on every locker and was showing "cash on delivery available" everywhere

@@ -40,6 +40,24 @@ class PointsShippingMethodTest extends TestCase {
         $this->assertContains( 'instance-settings', $this->method->supports );
     }
 
+    public function test_cod_mode_defaults_to_terminal(): void {
+        $this->assertSame( 'terminal', $this->method->cod_mode );
+    }
+
+    public function test_init_form_fields_includes_cod_mode(): void {
+        $reflection = new \ReflectionProperty( \WC_ACS_Points_Shipping_Method::class, 'instance_form_fields' );
+        $reflection->setAccessible( true );
+        $fields = $reflection->getValue( $this->method );
+
+        $this->assertArrayHasKey( 'cod_mode', $fields );
+        $this->assertSame( 'select', $fields['cod_mode']['type'] );
+        $this->assertSame( 'terminal', $fields['cod_mode']['default'] );
+        $this->assertSame( [ 'terminal', 'stores', 'off' ], array_keys( $fields['cod_mode']['options'] ) );
+
+        $keys = array_keys( $fields );
+        $this->assertSame( array_search( 'point_types', $keys, true ) + 1, array_search( 'cod_mode', $keys, true ) );
+    }
+
     public function test_adds_rate_at_cost(): void {
         $this->method->calculate_shipping( $this->package( [ $this->item( '0.2', 2 ) ] ) );
 

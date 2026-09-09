@@ -27,6 +27,9 @@ class WC_ACS_Points_Shipping_Method extends WC_Shipping_Method {
     /** @var string 'both' or 'lockers'. */
     public $point_types;
 
+    /** @var string 'terminal', 'stores' or 'off'. */
+    public $cod_mode;
+
     /**
      * @param int $instance_id Shipping zone instance id.
      */
@@ -56,6 +59,7 @@ class WC_ACS_Points_Shipping_Method extends WC_Shipping_Method {
         $this->free_min    = $this->get_option( 'free_min', '' );
         $this->max_weight  = $this->get_option( 'max_weight', '6' );
         $this->point_types = $this->get_option( 'point_types', 'both' );
+        $this->cod_mode    = $this->get_option( 'cod_mode', 'terminal' );
 
         add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
     }
@@ -104,6 +108,18 @@ class WC_ACS_Points_Shipping_Method extends WC_Shipping_Method {
                 'options'     => array(
                     'both'    => __( 'Lockers and stores', 'wc-acs-courier' ),
                     'lockers' => __( 'Lockers only', 'wc-acs-courier' ),
+                ),
+                'desc_tip'    => true,
+            ),
+            'cod_mode'    => array(
+                'title'       => __( 'Cash on Delivery', 'wc-acs-courier' ),
+                'type'        => 'select',
+                'description' => __( 'Where cash on delivery is offered for ACS Point pickup.', 'wc-acs-courier' ),
+                'default'     => 'terminal',
+                'options'     => array(
+                    'terminal' => __( 'Only at points with a card terminal (ACS data)', 'wc-acs-courier' ),
+                    'stores'   => __( 'Never at lockers, allowed at ACS stores', 'wc-acs-courier' ),
+                    'off'      => __( 'Never at any ACS Point', 'wc-acs-courier' ),
                 ),
                 'desc_tip'    => true,
             ),

@@ -11,6 +11,8 @@ class PointsPickerTest extends TestCase {
         $this->stubGetOption( [
             'woocommerce_acs_points_3_settings' => [ 'point_types' => 'lockers' ],
             'woocommerce_acs_points_4_settings' => [ 'point_types' => 'both' ],
+            'woocommerce_acs_points_5_settings' => [ 'point_types' => 'both', 'cod_mode' => 'stores' ],
+            'woocommerce_acs_points_6_settings' => [ 'point_types' => 'both', 'cod_mode' => 'off' ],
         ] );
     }
 
@@ -67,6 +69,55 @@ class PointsPickerTest extends TestCase {
         $this->assertSame( 'both', \WC_ACS_Points_Picker::instance_point_types( [ 'acs_points:4' ] ) );
         $this->assertSame( 'both', \WC_ACS_Points_Picker::instance_point_types( [ 'acs_points:9' ] ) );
         $this->assertSame( 'both', \WC_ACS_Points_Picker::instance_point_types( [ 'flat_rate:1' ] ) );
+    }
+
+    public function test_instance_cod_mode_reads_instance_option(): void {
+        $this->assertSame( 'terminal', \WC_ACS_Points_Picker::instance_cod_mode( [ 'acs_points:3' ] ) );
+        $this->assertSame( 'stores', \WC_ACS_Points_Picker::instance_cod_mode( [ 'acs_points:5' ] ) );
+        $this->assertSame( 'off', \WC_ACS_Points_Picker::instance_cod_mode( [ 'acs_points:6' ] ) );
+        $this->assertSame( 'terminal', \WC_ACS_Points_Picker::instance_cod_mode( [ 'flat_rate:1' ] ) );
+    }
+
+    public function test_point_allows_cod_matrix(): void {
+        $locker_with_cod    = $this->point( [ 'type' => 'locker', 'cod' => 1 ] );
+        $locker_without_cod = $this->point( [ 'type' => 'locker', 'cod' => 0 ] );
+        $store               = $this->point( [ 'type' => 'store', 'cod' => 0 ] );
+
+        $this->assertTrue( \WC_ACS_Points_Picker::point_allows_cod( $locker_with_cod, 'terminal' ) );
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $locker_without_cod, 'terminal' ) );
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $store, 'terminal' ) );
+
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $locker_with_cod, 'stores' ) );
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $locker_without_cod, 'stores' ) );
+        $this->assertTrue( \WC_ACS_Points_Picker::point_allows_cod( $store, 'stores' ) );
+
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $locker_with_cod, 'off' ) );
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $locker_without_cod, 'off' ) );
+        $this->assertFalse( \WC_ACS_Points_Picker::point_allows_cod( $store, 'off' ) );
+    }
+
+    public function test_validate_rejects_cod_at_locker_in_stores_mode(): void {
+        $errors = new \WP_Error();
+        \WC_ACS_Points_Picker::validate( $this->data( [ 'shipping_method' => [ 'acs_points:5' ], 'payment_method' => 'cod' ] ), $this->point( [ 'type' => 'locker', 'cod' => 1 ] ), $errors );
+        $this->assertSame( [ 'acs_point_cod' ], $errors->get_error_codes() );
+    }
+
+    public function test_validate_allows_cod_at_store_in_stores_mode(): void {
+        $errors = new \WP_Error();
+        \WC_ACS_Points_Picker::validate( $this->data( [ 'shipping_method' => [ 'acs_points:5' ], 'payment_method' => 'cod' ] ), $this->point( [ 'type' => 'store', 'cod' => 0 ] ), $errors );
+        $this->assertFalse( $errors->has_errors() );
+    }
+
+    public function test_gateway_filter_hides_cod_in_off_mode_even_with_terminal(): void {
+        $this->resetStaticProperty( \WC_ACS_Points_Feed::class, 'instance' );
+        $this->stubGetOption( [
+            'wc_acs_points_feed'                => [ 'fetched_at' => 1, 'country' => 'GR', 'points' => [ $this->point( [ 'id' => '1', 'cod' => 1 ] ) ] ],
+            'woocommerce_acs_points_6_settings' => [ 'point_types' => 'both', 'cod_mode' => 'off' ],
+        ] );
+        $gateways = [ 'cod' => 'COD', 'bacs' => 'Bank' ];
+        $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:6' ], 'acs_point_id' => '1' ] );
+
+        $this->assertSame( [ 'bacs' ], array_keys( \WC_ACS_Points_Picker::filter_payment_gateways( $gateways ) ) );
     }
 
     public function test_order_has_points(): void {
@@ -332,13 +383,14 @@ class PointsPickerTest extends TestCase {
         $settings = $this->picker()->script_settings();
 
         $this->assertSame( [
-            'restUrl', 'ajaxUrl', 'nonce', 'pointTypes', 'postcodeCentre', 'assets', 'icons', 'i18n',
+            'restUrl', 'ajaxUrl', 'nonce', 'pointTypes', 'codMode', 'postcodeCentre', 'assets', 'icons', 'i18n',
         ], array_keys( $settings ) );
 
         $this->assertSame( 'https://example.com/wp-json/wc-acs/v1/points', $settings['restUrl'] );
         $this->assertSame( 'https://example.com/wp-admin/admin-ajax.php', $settings['ajaxUrl'] );
         $this->assertSame( 'nonce123', $settings['nonce'] );
         $this->assertSame( 'lockers', $settings['pointTypes'] );
+        $this->assertSame( 'terminal', $settings['codMode'] );
         $this->assertNull( $settings['postcodeCentre'] );
 
         $this->assertSame( [

@@ -100,6 +100,41 @@ class WC_ACS_Points_Picker {
     }
 
     /**
+     * 'terminal', 'stores' or 'off' for the chosen acs_points instance.
+     *
+     * @param array $chosen Chosen rate ids.
+     * @return string
+     */
+    public static function instance_cod_mode( array $chosen ) {
+        foreach ( $chosen as $rate_id ) {
+            $parts = explode( ':', (string) $rate_id, 2 );
+            if ( self::METHOD_ID !== $parts[0] ) {
+                continue;
+            }
+            $instance_id = isset( $parts[1] ) ? (int) $parts[1] : 0;
+            $settings    = get_option( 'woocommerce_' . self::METHOD_ID . '_' . $instance_id . '_settings', array() );
+            $mode        = is_array( $settings ) ? ( $settings['cod_mode'] ?? 'terminal' ) : 'terminal';
+            return in_array( $mode, array( 'terminal', 'stores', 'off' ), true ) ? $mode : 'terminal';
+        }
+        return 'terminal';
+    }
+
+    /**
+     * @param array  $point Feed record.
+     * @param string $mode  'terminal', 'stores' or 'off'.
+     * @return bool
+     */
+    public static function point_allows_cod( array $point, $mode ) {
+        if ( 'off' === $mode ) {
+            return false;
+        }
+        if ( 'stores' === $mode ) {
+            return 'store' === ( $point['type'] ?? '' );
+        }
+        return ! empty( $point['cod'] );
+    }
+
+    /**
      * @param WC_Order $order Order.
      * @return bool
      */
@@ -132,7 +167,7 @@ class WC_ACS_Points_Picker {
             if ( 'lockers' === self::instance_point_types( $chosen ) && 'store' === ( $point['type'] ?? '' ) ) {
                 $errors->add( 'acs_point_type', __( 'Please choose an ACS locker.', 'wc-acs-courier' ) );
             }
-            if ( 'cod' === ( $data['payment_method'] ?? '' ) && empty( $point['cod'] ) ) {
+            if ( 'cod' === ( $data['payment_method'] ?? '' ) && ! self::point_allows_cod( $point, self::instance_cod_mode( $chosen ) ) ) {
                 $errors->add( 'acs_point_cod', __( 'Cash on delivery is not available at this ACS Point. Choose another point or pay by card.', 'wc-acs-courier' ) );
             }
         }
@@ -269,7 +304,7 @@ class WC_ACS_Points_Picker {
         }
 
         $point = WC_ACS_Points_Feed::instance()->find( (string) WC()->session->get( self::SESSION_KEY, '' ) );
-        if ( is_array( $point ) && empty( $point['cod'] ) ) {
+        if ( is_array( $point ) && ! self::point_allows_cod( $point, self::instance_cod_mode( $chosen ) ) ) {
             unset( $gateways['cod'] );
         }
 
@@ -293,7 +328,9 @@ class WC_ACS_Points_Picker {
             return;
         }
 
-        $point = $this->get_selected_point();
+        $point       = $this->get_selected_point();
+        $chosen      = ( function_exists( 'WC' ) && WC()->session ) ? (array) WC()->session->get( 'chosen_shipping_methods', array() ) : array();
+        $allows_cod  = $point ? self::point_allows_cod( $point, self::instance_cod_mode( $chosen ) ) : false;
         ?>
         <div class="wc-acs-points-picker" data-package="<?php echo esc_attr( $index ); ?>">
             <button type="button" class="wc-acs-points-open"<?php echo $point ? ' hidden' : ''; ?>>
@@ -307,7 +344,7 @@ class WC_ACS_Points_Picker {
                         <?php if ( ! empty( $point['h24'] ) ) : ?>
                             <span class="wc-acs-points-badge wc-acs-points-badge--24"><?php esc_html_e( '24/7', 'wc-acs-courier' ); ?></span>
                         <?php endif; ?>
-                        <?php if ( ! empty( $point['cod'] ) ) : ?>
+                        <?php if ( $allows_cod ) : ?>
                             <span class="wc-acs-points-badge wc-acs-points-badge--cod"><?php esc_html_e( 'Cash on delivery available', 'wc-acs-courier' ); ?></span>
                         <?php else : ?>
                             <span class="wc-acs-points-badge wc-acs-points-badge--nocod"><?php esc_html_e( 'No cash on delivery', 'wc-acs-courier' ); ?></span>
@@ -352,6 +389,7 @@ class WC_ACS_Points_Picker {
             'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
             'nonce'          => wp_create_nonce( self::NONCE_ACTION ),
             'pointTypes'     => self::instance_point_types( $chosen ),
+            'codMode'        => self::instance_cod_mode( $chosen ),
             'postcodeCentre' => WC_ACS_Points_Feed::centre_for_postcode( $this->customer_postcode(), $feed->get_points() ),
             'assets'         => array(
                 'leafletCss'        => $vendor . 'leaflet/leaflet.css',

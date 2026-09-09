@@ -544,6 +544,26 @@ msgstr "Lockers και καταστήματα"
 msgid "Lockers only"
 msgstr "Μόνο lockers"
 
+#: includes/class-acs-points-shipping-method.php:115
+msgid "Cash on Delivery"
+msgstr "Αντικαταβολή"
+
+#: includes/class-acs-points-shipping-method.php:117
+msgid "Where cash on delivery is offered for ACS Point pickup."
+msgstr "Πού προσφέρεται αντικαταβολή για παραλαβή από ACS Point."
+
+#: includes/class-acs-points-shipping-method.php:120
+msgid "Only at points with a card terminal (ACS data)"
+msgstr "Μόνο σε σημεία με τερματικό κάρτας (δεδομένα ACS)"
+
+#: includes/class-acs-points-shipping-method.php:121
+msgid "Never at lockers, allowed at ACS stores"
+msgstr "Ποτέ σε lockers, επιτρέπεται σε καταστήματα ACS"
+
+#: includes/class-acs-points-shipping-method.php:122
+msgid "Never at any ACS Point"
+msgstr "Ποτέ σε σημείο ACS"
+
 #: includes/class-acs-points-shipping-method.php:111
 #: includes/class-acs-shipping-method.php:84
 msgid "Tax Status"

@@ -115,6 +115,7 @@ array(
 | `free_min` | price | "" | subtotal at or above which the rate is 0; empty disables |
 | `max_weight` | decimal | 6 | kg; rate withheld above it (ACS standard locker limit) |
 | `point_types` | select | `both` | `both` or `lockers` |
+| `cod_mode` | select | terminal | terminal: COD where the point has a terminal; stores: never at lockers; off: never at any point |
 | `tax_status` | select | none | as the home-delivery method |
 
 `calculate_shipping()` withholds the rate when the package weight (`wc_get_weight` of contents, falling back to `wc_acs_default_weight` per item without weight) exceeds `max_weight`, otherwise adds one rate at `cost`, or 0 when `free_min` applies. Rate id is `acs_points:<instance>`. On pooq.gr the 05-pooq-shipping rule zeroes every courier rate above the store threshold anyway; `free_min` exists for stores without that rule.
@@ -139,7 +140,7 @@ Follows `WC_BoxNow_Locker` line by line where the problems are the same. Constan
 1. Skip unless a chosen method starts with `acs_points`.
 2. Point id empty or `find()` null: error `acs_point_required`, "Please choose an ACS Point before placing your order."
 3. Point type `store` while the instance is `lockers`: error `acs_point_type`, "Please choose an ACS locker."
-4. Payment method `cod` and point `cod = 0`: error `acs_point_cod`, "Cash on delivery is not available at this ACS Point. Choose another point or pay by card."
+4. Payment method `cod` and the point is not allowed COD under the instance's `cod_mode` (terminal: point `cod = 0`; stores: point type is not `store`; off: always): error `acs_point_cod`, "Cash on delivery is not available at this ACS Point. Choose another point or pay by card."
 5. Billing phone not a Greek mobile: error `acs_point_mobile`, "ACS sends the pickup PIN by SMS, so a Greek mobile number (69xxxxxxxx) is required." The check normalises by stripping spaces, dashes, a leading `+30` or `0030`, and accepts exactly ten digits starting with `69`. Applied only to `acs_points` orders; the home-delivery flow is unchanged.
 
 The mobile normalisation lives in a small static helper `WC_ACS_Points_Picker::normalise_mobile( $raw ) : ?string` returning the ten-digit form or null, reused by the voucher builder.

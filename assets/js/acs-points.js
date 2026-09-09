@@ -179,8 +179,18 @@
             ( p.sat ? ' · ' + escapeHtml( cfg.i18n.saturday ) + ': ' + escapeHtml( p.sat ) : '' ) + '</span>';
     }
 
+    function allowsCod( p ) {
+        if ( cfg.codMode === 'off' ) {
+            return false;
+        }
+        if ( cfg.codMode === 'stores' ) {
+            return p.type === 'store';
+        }
+        return !! p.cod;
+    }
+
     function codHtml( p ) {
-        return p.cod
+        return allowsCod( p )
             ? '<span class="wc-acs-points-badge wc-acs-points-badge--cod">' + escapeHtml( cfg.i18n.cod ) + '</span>'
             : '<span class="wc-acs-points-badge wc-acs-points-badge--nocod">' + escapeHtml( cfg.i18n.noCod ) + '</span>';
     }
@@ -314,7 +324,7 @@
         if ( p.type === 'store' ) {
             return icons().store;
         }
-        return p.cod ? icons().lockerCod : icons().locker;
+        return allowsCod( p ) ? icons().lockerCod : icons().locker;
     }
 
     function popupHtml( p ) {
