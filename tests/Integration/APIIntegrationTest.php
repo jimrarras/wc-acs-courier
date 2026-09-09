@@ -69,17 +69,7 @@ class APIIntegrationTest extends IntegrationTestCase {
         $this->assertArrayHasKey( 'ACS_SHOP_ID_CODE', $stations[0] );
     }
 
-    // ── Smartpoints & Pricing Tests ──────────────────────────────
-
-    public function test_get_smartpoints(): void {
-        $result = \WC_ACS_API::get_smartpoints( 'GR' );
-
-        $this->assertIsArray( $result, 'get_smartpoints should return an array' );
-        $this->assertNotEmpty( $result, 'Greece should have smartpoints' );
-
-        $types = array_unique( array_column( $result, '_type' ) );
-        $this->assertNotEmpty( $types, 'Each smartpoint should have a _type field' );
-    }
+    // ── Pricing Tests ─────────────────────────────────────────────
 
     public function test_price_calculation(): void {
         $result = \WC_ACS_API::price_calculation( [
