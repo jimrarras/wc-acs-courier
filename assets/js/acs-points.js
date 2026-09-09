@@ -251,8 +251,21 @@
             var id = $( this ).data( 'id' );
             var marker = state.markers[ id ];
             if ( marker ) {
-                state.map.setView( marker.getLatLng(), Math.max( state.map.getZoom(), 15 ) );
-                marker.openPopup();
+                var target = marker.getLatLng();
+                var zoom   = Math.max( state.map.getZoom(), 15 );
+                var open   = function () {
+                    if ( state.cluster && state.map ) {
+                        state.cluster.zoomToShowLayer( marker, function () {
+                            marker.openPopup();
+                        } );
+                    }
+                };
+                if ( state.map.getZoom() === zoom && state.map.getCenter().equals( target ) ) {
+                    open();
+                } else {
+                    state.map.once( 'moveend', open );
+                    state.map.setView( target, zoom );
+                }
             }
             if ( window.innerWidth < 768 ) {
                 state.overlay.find( '.wc-acs-points-sidebar' ).addClass( 'is-collapsed' );
