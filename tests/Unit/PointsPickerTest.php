@@ -421,6 +421,19 @@ class PointsPickerTest extends TestCase {
         $this->assertSame( [], $order->updated_meta );
     }
 
+    public function test_save_classic_checkout_writes_nothing_for_other_methods_even_with_a_session_point(): void {
+        $this->seedFeed( [ $this->point() ] );
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+
+        $line = Mockery::mock( 'WC_Order_Item_Shipping' );
+        $line->shouldReceive( 'get_method_id' )->andReturn( 'flat_rate' );
+        $order = $this->createOrderMock( [ 'shipping_methods' => [ $line ] ] );
+
+        $this->picker()->save_classic_checkout( $order, [] );
+
+        $this->assertSame( [], $order->updated_meta );
+    }
+
     public function test_validate_classic_checkout_falls_back_to_session_method(): void {
         $this->seedFeed( [] );
         $this->mockSession( [ 'chosen_shipping_methods' => [ 'acs_points:4' ] ] );
@@ -490,6 +503,56 @@ class PointsPickerTest extends TestCase {
         unset( $_POST['point_id'] );
     }
 
+    public function test_ajax_set_point_clears_session_on_empty_id(): void {
+        $this->seedFeed( [ $this->point() ] );
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+        Functions\when( 'check_ajax_referer' )->justReturn( true );
+        $captured = null;
+        Functions\when( 'wp_send_json_success' )->alias( function ( $data ) use ( &$captured ) {
+            $captured = $data;
+            throw new \RuntimeException( 'exit' );
+        } );
+        $_POST['point_id'] = '';
+
+        try {
+            $this->picker()->ajax_set_point();
+        } catch ( \RuntimeException $e ) {
+        }
+
+        $this->assertSame( [ 'point' => null ], $captured );
+        $this->assertSame( '', \WC()->session->stored['acs_point_id'] );
+        unset( $_POST['point_id'] );
+    }
+
+    // ── session hygiene ──────────────────────────────────────────
+
+    public function test_reset_point_on_method_change_clears_session_for_other_methods(): void {
+        $this->seedFeed( [ $this->point() ] );
+
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+        $this->picker()->reset_point_on_method_change( 'shipping_method%5B0%5D=flat_rate%3A2&payment_method=bacs' );
+        $this->assertSame( '', \WC()->session->stored['acs_point_id'] );
+
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+        $this->picker()->reset_point_on_method_change( 'shipping_method%5B0%5D=acs_points%3A4' );
+        $this->assertSame( '4400', \WC()->session->stored['acs_point_id'] );
+
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+        $this->picker()->reset_point_on_method_change( 'payment_method=bacs' );
+        $this->assertSame( '4400', \WC()->session->stored['acs_point_id'] );
+    }
+
+    public function test_clear_session_point_on_cart_emptied(): void {
+        $this->mockSession( [ 'acs_point_id' => '4400' ] );
+
+        \WC_ACS_Points_Picker::clear_session_point();
+
+        $this->assertSame( '', \WC()->session->stored['acs_point_id'] );
+
+        \Brain\Monkey\Actions\expectAdded( 'woocommerce_cart_emptied' )->once();
+        $this->picker();
+    }
+
     public function test_save_from_store_api_reads_extension_data(): void {
         $this->seedFeed( [ $this->point() ] );
         $this->mockSession( [] );
@@ -548,7 +611,7 @@ class PointsPickerTest extends TestCase {
         ], array_keys( $settings['icons'] ) );
 
         $this->assertSame( [
-            'title', 'search', 'all', 'lockers', 'stores', 'myLocation', 'select', 'change', 'close',
+            'title', 'search', 'all', 'lockers', 'stores', 'myLocation', 'select', 'change', 'remove', 'close',
             'loading', 'loadError', 'moreHint', 'noMatches', 'open24', 'cod', 'noCod', 'weekdays', 'saturday',
             'locateError', 'locker', 'store',
         ], array_keys( $settings['i18n'] ) );
@@ -583,6 +646,7 @@ class PointsPickerTest extends TestCase {
         $this->assertStringContainsString( 'wc-acs-points-badge--24', $output );
         $this->assertStringContainsString( 'wc-acs-points-badge--cod', $output );
         $this->assertStringContainsString( 'class="wc-acs-points-change"', $output );
+        $this->assertStringContainsString( 'class="wc-acs-points-remove"', $output );
         $this->assertStringContainsString( 'button type="button" class="wc-acs-points-open" hidden', $output );
 
         $other_rate = Mockery::mock( 'WC_Shipping_Rate' );

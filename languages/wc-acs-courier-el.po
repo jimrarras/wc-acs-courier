@@ -404,6 +404,9 @@ msgstr "24ωρο"
 msgid "Change"
 msgstr "Αλλαγή"
 
+msgid "Remove"
+msgstr "Αφαίρεση"
+
 #: includes/class-acs-points-picker.php:367
 msgid "Choose the ACS Point that suits you"
 msgstr "Επιλέξτε το ACS Point που σας εξυπηρετεί"

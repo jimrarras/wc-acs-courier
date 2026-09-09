@@ -389,6 +389,9 @@ msgstr ""
 msgid "Change"
 msgstr ""
 
+msgid "Remove"
+msgstr ""
+
 #: includes/class-acs-points-picker.php:367
 msgid "Choose the ACS Point that suits you"
 msgstr ""

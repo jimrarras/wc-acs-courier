@@ -43,6 +43,9 @@ class WC_ACS_Points_Picker {
         add_action( 'wp_ajax_wc_acs_set_point', array( $this, 'ajax_set_point' ) );
         add_action( 'wp_ajax_nopriv_wc_acs_set_point', array( $this, 'ajax_set_point' ) );
 
+        add_action( 'woocommerce_checkout_update_order_review', array( $this, 'reset_point_on_method_change' ) );
+        add_action( 'woocommerce_cart_emptied', array( __CLASS__, 'clear_session_point' ) );
+
         // woocommerce_blocks_loaded is deprecated since WC 8.4; woocommerce_init at 20 runs after WC is up.
         add_action( 'woocommerce_init', array( $this, 'register_store_api' ), 20 );
     }
@@ -258,12 +261,45 @@ class WC_ACS_Points_Picker {
     }
 
     /**
+     * Forget the chosen point for this session.
+     */
+    public static function clear_session_point() {
+        if ( function_exists( 'WC' ) && WC()->session ) {
+            WC()->session->set( self::SESSION_KEY, '' );
+        }
+    }
+
+    /**
+     * Forget the chosen point when the customer moves to another shipping
+     * method. WooCommerce passes the serialized checkout form on every
+     * update_order_review call.
+     *
+     * @param string $posted Serialized checkout form data.
+     */
+    public function reset_point_on_method_change( $posted ) {
+        $data = array();
+        parse_str( (string) $posted, $data );
+        if ( ! isset( $data['shipping_method'] ) ) {
+            return;
+        }
+        if ( ! self::methods_include_points( (array) $data['shipping_method'] ) ) {
+            self::clear_session_point();
+        }
+    }
+
+    /**
      * AJAX: remember the chosen point for this session and echo it back.
      */
     public function ajax_set_point() {
         check_ajax_referer( self::NONCE_ACTION, 'nonce' );
 
-        $id    = isset( $_POST['point_id'] ) ? sanitize_text_field( wp_unslash( $_POST['point_id'] ) ) : '';
+        $id = isset( $_POST['point_id'] ) ? sanitize_text_field( wp_unslash( $_POST['point_id'] ) ) : '';
+
+        if ( '' === $id ) {
+            self::clear_session_point();
+            wp_send_json_success( array( 'point' => null ) );
+        }
+
         $point = WC_ACS_Points_Feed::instance()->find( $id );
 
         if ( null === $point ) {
@@ -440,6 +476,7 @@ class WC_ACS_Points_Picker {
                         <?php endif; ?>
                     </span>
                     <button type="button" class="wc-acs-points-change"><?php esc_html_e( 'Change', 'wc-acs-courier' ); ?></button>
+                    <button type="button" class="wc-acs-points-remove"><?php esc_html_e( 'Remove', 'wc-acs-courier' ); ?></button>
                 <?php endif; ?>
             </div>
             <input type="hidden" name="acs_point_id" id="acs_point_id" value="<?php echo esc_attr( $point ? $point['id'] : '' ); ?>" />
@@ -503,6 +540,7 @@ class WC_ACS_Points_Picker {
                 'myLocation'  => __( 'My location', 'wc-acs-courier' ),
                 'select'      => __( 'Select', 'wc-acs-courier' ),
                 'change'      => __( 'Change', 'wc-acs-courier' ),
+                'remove'      => __( 'Remove', 'wc-acs-courier' ),
                 'close'       => __( 'Close', 'wc-acs-courier' ),
                 'loading'     => __( 'Loading points...', 'wc-acs-courier' ),
                 'loadError'   => __( 'Could not load the ACS points. Please try again.', 'wc-acs-courier' ),

@@ -58,7 +58,8 @@
     color: #555;
 }
 
-.wc-acs-points-change {
+.wc-acs-points-change,
+.wc-acs-points-remove {
     background: none;
     border: 0;
     padding: 0;
@@ -67,6 +68,11 @@
     font: inherit;
     font-size: 0.9em;
     text-decoration: underline;
+}
+
+.wc-acs-points-remove {
+    color: #6b7280;
+    margin-left: 4px;
 }
 
 .wc-acs-points-badge {

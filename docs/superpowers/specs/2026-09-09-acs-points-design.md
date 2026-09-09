@@ -159,6 +159,8 @@ The mobile normalisation lives in a small static helper `WC_ACS_Points_Picker::n
 
 The old `_acs_smartpoint_*` keys are no longer written or read. No order on pooq.gr carries them (the picker never rendered), so no migration.
 
+**Server-side rules.** The session point is cleared when the shipping method moves away from acs_points (woocommerce_checkout_update_order_review) and when the cart is emptied; the summary has a Remove button that clears it on demand. Point data is written to an order only when its shipping line is acs_points.
+
 ### Component 4: frontend (`assets/js/acs-points.js`, `assets/css/acs-points.css`)
 
 One jQuery IIFE, no build step, same conventions as `boxnow-locker.js`.

@@ -459,6 +459,14 @@
             } );
     }
 
+    function clearPoint() {
+        $( '#acs_point_id' ).val( '' );
+        $.post( cfg.ajaxUrl, { action: 'wc_acs_set_point', nonce: cfg.nonce, point_id: '' } )
+            .always( function () {
+                $( document.body ).trigger( 'update_checkout' );
+            } );
+    }
+
     function openPicker() {
         if ( state.overlay ) {
             return;
@@ -483,6 +491,16 @@
         $( document.body ).on( 'click', '.wc-acs-points-open, .wc-acs-points-change', function ( e ) {
             e.preventDefault();
             openPicker();
+        } );
+        $( document.body ).on( 'click', '.wc-acs-points-remove', function ( e ) {
+            e.preventDefault();
+            clearPoint();
+        } );
+        $( document.body ).on( 'change', 'input.shipping_method', function () {
+            var chosen = String( $( this ).val() || '' );
+            if ( chosen.indexOf( 'acs_points' ) !== 0 ) {
+                $( '#acs_point_id' ).val( '' );
+            }
         } );
         $( document ).on( 'keyup', function ( e ) {
             if ( e.key === 'Escape' && state.overlay ) {
