@@ -2,8 +2,8 @@
 /**
  * Plugin Name: ACS Courier for WooCommerce
  * Plugin URI: https://github.com/jimrarras/wc-acs-courier
- * Description: Open source ACS Courier integration for WooCommerce — create/print vouchers, track shipments, calculate shipping costs, and support ACS Smartpoints pickup locations.
- * Version: 1.0.1
+ * Description: Open source ACS Courier integration for WooCommerce, create/print vouchers, track shipments, calculate shipping costs, and offer pickup from ACS Points (lockers and stores) on a map.
+ * Version: 1.1.0
  * Author: Dimitrios Rarras
  * Author URI: https://github.com/jimrarras/wc-acs-courier
  * License: GPL-2.0-or-later
@@ -19,7 +19,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // Plugin constants — guarded to prevent fatal errors if loaded twice.
-defined( 'WC_ACS_VERSION' )    || define( 'WC_ACS_VERSION', '1.0.1' );
+defined( 'WC_ACS_VERSION' )    || define( 'WC_ACS_VERSION', '1.1.0' );
 defined( 'WC_ACS_PLUGIN_FILE' ) || define( 'WC_ACS_PLUGIN_FILE', __FILE__ );
 defined( 'WC_ACS_PLUGIN_DIR' )  || define( 'WC_ACS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 defined( 'WC_ACS_PLUGIN_URL' )  || define( 'WC_ACS_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

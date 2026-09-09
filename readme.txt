@@ -6,29 +6,29 @@ Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 9.6
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Open source ACS Courier integration for WooCommerce — create/print vouchers, track shipments, calculate shipping costs, and support ACS Smartpoints pickup locations.
+Open source ACS Courier integration for WooCommerce, create/print vouchers, track shipments, calculate shipping costs, and offer pickup from ACS Points (lockers and stores) on a map.
 
 == Description ==
 
-Integrate your WooCommerce store with ACS Courier, Greece's largest courier service. This free, open source plugin handles the complete shipping workflow — from voucher creation to delivery tracking.
+Integrate your WooCommerce store with ACS Courier, Greece's largest courier service. This free, open source plugin handles the complete shipping workflow, from voucher creation to delivery tracking.
 
 = Voucher Management =
 
 * Create vouchers manually (per-order button) or automatically on order status change
-* Print vouchers in PDF — A4 laser (3 labels/page) and thermal receipt formats
+* Print vouchers in PDF: A4 laser (3 labels/page) and thermal receipt formats
 * Delete vouchers that haven't been added to a pickup list
 * Bulk create vouchers for multiple orders from the orders list
 * Issue and print pickup lists to finalize daily shipments
 * Automatic COD amount inclusion for Cash on Delivery orders
-* Multipart shipments — multiple parcels per order
+* Multipart shipments: multiple parcels per order
 
 = Shipment Tracking =
 
-* Auto-tracking via WP Cron — hourly, twice daily, or daily
+* Auto-tracking via WP Cron: hourly, twice daily, or daily
 * Custom order statuses: "Delivered (ACS)" and "Delivery Denied (ACS)"
 * Full tracking checkpoint history in the order metabox
 * Automatic tracking number email to customers
@@ -39,21 +39,23 @@ Integrate your WooCommerce store with ACS Courier, Greece's largest courier serv
 
 * Real-time API rates based on your ACS contract pricing
 * Flat rate option as an alternative
-* Free shipping threshold — configurable minimum order amount
+* Free shipping threshold: configurable minimum order amount
 * Handling fee and COD surcharge support
 * Fallback cost when the API is unavailable
 * Rate and zip code lookup caching to minimize API calls
 
-= ACS Smartpoints =
+= ACS Points =
 
-* Pickup point selector at checkout — customers choose an ACS Smartpoint Locker or Store
-* Search by area or zip code with live filtering
-* Visual distinction between Lockers and Stores
-* Selected pickup point saved to order and displayed in admin
+* "Pickup from ACS Point" shipping method for your zones, with cost, free-delivery threshold and a weight cap
+* Map picker at checkout (OpenStreetMap, no API key): every ACS Smartpoint locker and ACS store, searchable, clustered, with opening hours and card-on-collection badges
+* Vouchers routed to the chosen point through the ACS station codes
+* Cash on delivery offered only at points with a card terminal
+* Change the point from the order screen until a voucher exists
+* Point shown on the thank-you page, in My Account and in order emails
 
 = Requirements =
 
-* ACS Courier API credentials — request from your local ACS branch or call 210-8190000
+* ACS Courier API credentials: request from your local ACS branch or call 210-8190000
 
 == Installation ==
 
@@ -69,18 +71,18 @@ Navigate to **WooCommerce → ACS Courier → API Credentials** and enter your A
 
 = 2. Shipping Settings =
 
-* **Billing Code** — your ACS credit/billing code (e.g., 2ΑΘ999999)
-* **Sender Name** — appears on the voucher label
-* **Origin Station Code** — your local ACS station in Greek uppercase (e.g., ΑΘ for Athens, ΘΣ for Thessaloniki)
-* **Default Weight** — used when products don't have weight set (minimum 0.5 kg)
-* **Charge Type** — sender pays or recipient pays
+* **Billing Code**: your ACS credit/billing code (e.g., 2ΑΘ999999)
+* **Sender Name**: appears on the voucher label
+* **Origin Station Code**: your local ACS station in Greek uppercase (e.g., ΑΘ for Athens, ΘΣ for Thessaloniki)
+* **Default Weight**: used when products don't have weight set (minimum 0.5 kg)
+* **Charge Type**: sender pays or recipient pays
 
 = 3. Automation =
 
-* **Auto-create Voucher** — enable and select which order status triggers automatic creation
-* **Auto Tracking** — enable automatic shipment status checking
-* **Tracking Frequency** — how often to check (hourly, twice daily, daily)
-* **Email Tracking Code** — send tracking email to customer when voucher is created
+* **Auto-create Voucher**: enable and select which order status triggers automatic creation
+* **Auto Tracking**: enable automatic shipment status checking
+* **Tracking Frequency**: how often to check (hourly, twice daily, daily)
+* **Email Tracking Code**: send tracking email to customer when voucher is created
 
 = 4. Shipping Zones =
 
@@ -96,9 +98,9 @@ Contact your local ACS branch or call ACS customer service at 210-8190000 to req
 
 Yes. When an order uses the COD payment method, the plugin automatically includes the COD amount on the voucher.
 
-= Can customers pick up from ACS Smartpoints? =
+= Can customers pick up from an ACS locker or store? =
 
-Yes. Enable Smartpoints in the plugin settings and customers will see a pickup point selector at checkout where they can choose a nearby ACS Locker or Store.
+Yes. Add "Pickup from ACS Point" to a shipping zone. Customers choose a point on a map at checkout, and the voucher is routed to it automatically.
 
 = Is this plugin compatible with WooCommerce HPOS? =
 
@@ -115,12 +117,19 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 == Screenshots ==
 
 1. Voucher management metabox on the order edit screen
-2. Plugin settings — API Credentials tab
-3. Plugin settings — Shipping tab
-4. Smartpoint pickup selector at checkout
+2. Plugin settings: API Credentials tab
+3. Plugin settings: Shipping tab
+4. ACS Points map picker at checkout
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.1.0 =
+* New: "Pickup from ACS Point" shipping method with a map picker (lockers and stores)
+* New: daily ACS points feed, admin refresh button, REST route for the map
+* New: change the point from the order screen until a voucher exists; point in emails and My Account
+* Fix: vouchers to a point now use the ACS station codes (the old Smartpoint checkbox sent a home delivery to the shop's street)
+* Removed: the Smartpoints checkbox under the ACS Courier rate
 
 = 1.0.1 =
 * Automatic voucher creation skips orders shipped through another carrier plugin (BOX NOW), with a per-order veto filter wc_acs_auto_create_voucher_allowed and a wc_acs_other_carrier_method_ids filter for the excluded method ids

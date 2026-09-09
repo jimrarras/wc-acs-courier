@@ -6,34 +6,36 @@
 
 ### Voucher Management
 - **Create vouchers** manually (per-order button) or automatically (on order status change)
-- **Print vouchers** in PDF — both A4 laser (3 labels/page) and thermal receipt formats
+- **Print vouchers** in PDF: both A4 laser (3 labels/page) and thermal receipt formats
 - **Delete vouchers** that haven't been added to a pickup list yet
-- **Bulk actions** — create vouchers for multiple orders at once from the orders list
-- **Issue & print pickup lists** — mandatory step to finalize daily shipments
-- **COD support** — automatically includes Cash on Delivery amount when payment method is COD
-- **Multipart shipments** — supports multiple parcels per order
+- **Bulk actions**: create vouchers for multiple orders at once from the orders list
+- **Issue & print pickup lists**: mandatory step to finalize daily shipments
+- **COD support**: automatically includes Cash on Delivery amount when payment method is COD
+- **Multipart shipments**: supports multiple parcels per order
 
 ### Shipment Tracking
-- **Auto-tracking** via WP Cron — checks shipment status hourly/twice daily/daily
-- **Custom order statuses** — "Delivered (ACS)" and "Delivery Denied (ACS)"
+- **Auto-tracking** via WP Cron: checks shipment status hourly/twice daily/daily
+- **Custom order statuses**: "Delivered (ACS)" and "Delivery Denied (ACS)"
 - **Tracking details** viewable in the order metabox with full checkpoint history
-- **Email notifications** — automatically emails the tracking number to customers
-- **Tracking info in order emails** — appends tracking link to all WooCommerce order emails
-- **Frontend tracking shortcode** — `[acs_tracking]` for a customer-facing tracking page
+- **Email notifications**: automatically emails the tracking number to customers
+- **Tracking info in order emails**: appends tracking link to all WooCommerce order emails
+- **Frontend tracking shortcode**: `[acs_tracking]` for a customer-facing tracking page
 
 ### Shipping Cost Calculation
 - **Real-time API rates** based on your ACS contract pricing
 - **Flat rate** option as an alternative
-- **Free shipping threshold** — configurable minimum order amount
+- **Free shipping threshold**: configurable minimum order amount
 - **Handling fee** and **COD surcharge** support
 - **Fallback cost** when API is unavailable
-- **Caching** — rates and zip code lookups are cached to minimize API calls
+- **Caching**: rates and zip code lookups are cached to minimize API calls
 
-### ACS Smartpoints
-- **Pickup point selector** at checkout — customers can choose to pick up from an ACS Smartpoint Locker or Store
-- **Search by area or zip code** with debounced live filtering
-- **Locker vs Store** visual distinction
-- **Selected point saved to order** and displayed in admin
+### ACS Points
+- **"Pickup from ACS Point" shipping method** for your zones, with cost, free-delivery threshold and a weight cap
+- **Map picker at checkout** (OpenStreetMap, no API key): every ACS Smartpoint locker and ACS store, searchable, clustered, with opening hours and card-on-collection badges
+- **Vouchers routed to the chosen point** through the ACS station codes
+- **Cash on delivery** offered only at points with a card terminal
+- **Change the point** from the order screen until a voucher exists
+- **Point shown** on the thank-you page, in My Account and in order emails
 
 ## Requirements
 
@@ -53,24 +55,24 @@
 
 ### 1. API Credentials
 Navigate to **WooCommerce → ACS Courier → API Credentials** and enter:
-- **API Key** — provided by ACS
-- **Company ID** and **Company Password** — your ACS account credentials
-- **User ID** and **User Password** — your ACS user credentials
+- **API Key**: provided by ACS
+- **Company ID** and **Company Password**: your ACS account credentials
+- **User ID** and **User Password**: your ACS user credentials
 
 Use the **Test Connection** button to verify.
 
 ### 2. Shipping Settings
-- **Billing Code** — your ACS credit/billing code (e.g., `2ΑΘ999999`)
-- **Sender Name** — appears on the voucher label
-- **Origin Station Code** — your local ACS station in Greek uppercase (e.g., `ΑΘ` for Athens, `ΘΣ` for Thessaloniki)
-- **Default Weight** — used when products don't have weight set (minimum 0.5 kg)
-- **Charge Type** — sender pays or recipient pays
+- **Billing Code**: your ACS credit/billing code (e.g., `2ΑΘ999999`)
+- **Sender Name**: appears on the voucher label
+- **Origin Station Code**: your local ACS station in Greek uppercase (e.g., `ΑΘ` for Athens, `ΘΣ` for Thessaloniki)
+- **Default Weight**: used when products don't have weight set (minimum 0.5 kg)
+- **Charge Type**: sender pays or recipient pays
 
 ### 3. Automation
-- **Auto-create Voucher** — enable and select which order status triggers automatic creation
-- **Auto Tracking** — enable automatic shipment status checking
-- **Tracking Frequency** — how often to check (hourly, twice daily, daily)
-- **Email Tracking Code** — send tracking email to customer when voucher is created
+- **Auto-create Voucher**: enable and select which order status triggers automatic creation
+- **Auto Tracking**: enable automatic shipment status checking
+- **Tracking Frequency**: how often to check (hourly, twice daily, daily)
+- **Email Tracking Code**: send tracking email to customer when voucher is created
 
 ### 4. Shipping Zones
 Go to **WooCommerce → Settings → Shipping** and add "ACS Courier" as a shipping method to your desired zones. Configure:
@@ -108,24 +110,28 @@ The plugin stores the following meta data on orders:
 | `_acs_tracking_status` | Latest tracking status text |
 | `_acs_shipment_status` | Numeric shipment status code |
 | `_acs_tracking_final` | Final status (delivered/denied) |
-| `_acs_smartpoint_id` | Selected Smartpoint ID |
-| `_acs_smartpoint_name` | Selected Smartpoint name |
-| `_acs_smartpoint_address` | Selected Smartpoint address |
+| `_acs_point_id` | Selected ACS Point ID |
+| `_acs_point_type` | Point type, `locker` or `store` |
+| `_acs_point_name` | Selected ACS Point name |
+| `_acs_point_address` | Selected ACS Point address |
+| `_acs_point_station` | ACS station code used to route the voucher |
+| `_acs_point_branch` | ACS branch code used to route the voucher |
+| `_acs_point_cod` | Whether the point accepts cash on delivery |
 
 ## Hooks & Filters
 
 ### Actions
-- `wc_acs_tracking_cron` — Fired by WP Cron for auto-tracking
+- `wc_acs_tracking_cron`: Fired by WP Cron for auto-tracking
 
 ### Filters
-- `woocommerce_shipping_methods` — Registers the ACS shipping method
-- `wc_order_statuses` — Adds custom ACS delivery statuses
+- `woocommerce_shipping_methods`: Registers the ACS shipping method
+- `wc_order_statuses`: Adds custom ACS delivery statuses
 
 ## Compatibility
 
-- **WooCommerce HPOS** — Full support for High-Performance Order Storage
-- **WooCommerce Blocks** — Basic compatibility
-- **WordPress Multisite** — Compatible
+- **WooCommerce HPOS**: Full support for High-Performance Order Storage
+- **WooCommerce Blocks**: Basic compatibility
+- **WordPress Multisite**: Compatible
 
 ## Debugging
 
@@ -133,7 +139,7 @@ Enable debug logging in **ACS Courier → API Credentials → Debug Logging**. L
 
 ## License
 
-GPL-2.0-or-later — Free and open source.
+GPL-2.0-or-later. Free and open source.
 
 ## Contributing
 

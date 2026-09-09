@@ -4,8 +4,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ACS Courier for WooCommerce 1.0.0\n"
-"Report-Msgid-Bugs-To: https://github.com/jimrarras/wc-acs-courier/issues\n"
-"POT-Creation-Date: 2026-02-27T00:00:00+00:00\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/app\n"
+"POT-Creation-Date: 2026-09-09T11:30:19+00:00\n"
 "PO-Revision-Date: 2026-02-27T00:00:00+02:00\n"
 "Last-Translator: Dimitrios Rarras\n"
 "Language-Team: Greek\n"
@@ -16,534 +16,623 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Plugin Name of the plugin
+#: wc-acs-courier.php wc-acs-courier.php:35 wc-acs-courier.php:69
 msgid "ACS Courier for WooCommerce"
 msgstr "ACS Courier για WooCommerce"
 
-#: wc-acs-courier.php:36
-msgid "requires WooCommerce to be installed and active."
-msgstr "απαιτεί το WooCommerce να είναι εγκατεστημένο και ενεργό."
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: wc-acs-courier.php
+msgid "https://github.com/jimrarras/wc-acs-courier"
+msgstr "https://github.com/jimrarras/wc-acs-courier"
 
-#: wc-acs-courier.php:109 wc-acs-courier.php:135
-msgctxt "Order status"
-msgid "Delivered (ACS)"
-msgstr "Παραδόθηκε (ACS)"
+#. Description of the plugin
+#: wc-acs-courier.php
+msgid ""
+"Open source ACS Courier integration for WooCommerce, create/print vouchers, "
+"track shipments, calculate shipping costs, and offer pickup from ACS Points "
+"(lockers and stores) on a map."
+msgstr ""
+"Ανοιχτού κώδικα ενσωμάτωση ACS Courier για WooCommerce, δημιουργία/εκτύπωση "
+"voucher, παρακολούθηση αποστολών, υπολογισμός εξόδων αποστολής και παραλαβή "
+"από ACS Points (lockers και καταστήματα) σε χάρτη."
 
-#: wc-acs-courier.php:115
-msgid "Delivered (ACS) <span class=\"count\">(%s)</span>"
-msgid_plural "Delivered (ACS) <span class=\"count\">(%s)</span>"
-msgstr[0] "Παραδόθηκε (ACS) <span class=\"count\">(%s)</span>"
-msgstr[1] "Παραδόθηκε (ACS) <span class=\"count\">(%s)</span>"
+#. Author of the plugin
+#: wc-acs-courier.php
+msgid "Dimitrios Rarras"
+msgstr "Dimitrios Rarras"
 
-#: wc-acs-courier.php:119 wc-acs-courier.php:136
-msgctxt "Order status"
-msgid "Delivery Denied (ACS)"
-msgstr "Άρνηση Παράδοσης (ACS)"
-
-#: wc-acs-courier.php:125
-msgid "Delivery Denied (ACS) <span class=\"count\">(%s)</span>"
-msgid_plural "Delivery Denied (ACS) <span class=\"count\">(%s)</span>"
-msgstr[0] "Άρνηση Παράδοσης (ACS) <span class=\"count\">(%s)</span>"
-msgstr[1] "Άρνηση Παράδοσης (ACS) <span class=\"count\">(%s)</span>"
-
-#: wc-acs-courier.php:169
-msgid "Settings"
-msgstr "Ρυθμίσεις"
-
-#: includes/class-acs-api.php:65
-msgid "ACS API Key is not configured."
-msgstr "Το ACS API Key δεν έχει ρυθμιστεί."
-
-#: includes/class-acs-api.php:95
-msgid "Invalid ACS API Key."
-msgstr "Μη έγκυρο ACS API Key."
-
-#: includes/class-acs-api.php:99
-msgid "ACS API rate limit exceeded. Try again shortly."
-msgstr "Υπέρβαση ορίου κλήσεων ACS API. Δοκιμάστε ξανά σύντομα."
-
-#: includes/class-acs-api.php:106
-msgid "Invalid response from ACS API."
-msgstr "Μη έγκυρη απάντηση από το ACS API."
-
-#: includes/class-acs-api.php:111
-msgid "Unknown ACS API error."
-msgstr "Άγνωστο σφάλμα ACS API."
-
-#: includes/class-acs-api.php:412
-msgid "Connection test failed — no data returned."
-msgstr "Ο έλεγχος σύνδεσης απέτυχε — δεν επιστράφηκαν δεδομένα."
-
-#: includes/class-acs-admin.php:47
+#: includes/class-acs-admin.php:47 includes/class-acs-admin.php:216
 msgid "ACS Courier Settings"
 msgstr "Ρυθμίσεις ACS Courier"
 
-#: includes/class-acs-admin.php:48 includes/class-acs-voucher.php:66
+#: includes/class-acs-admin.php:48 includes/class-acs-shipping-method.php:39
+#: includes/class-acs-shipping-method.php:58
+#: includes/class-acs-shipping-method.php:80 includes/class-acs-voucher.php:66
 #: includes/class-acs-voucher.php:77
 msgid "ACS Courier"
 msgstr "ACS Courier"
 
-#: includes/class-acs-admin.php:176
+#: includes/class-acs-admin.php:174
 msgid "Testing connection..."
 msgstr "Έλεγχος σύνδεσης..."
 
-#: includes/class-acs-admin.php:177
+#: includes/class-acs-admin.php:175
 msgid "Connection successful!"
 msgstr "Επιτυχής σύνδεση!"
 
-#: includes/class-acs-admin.php:178
+#: includes/class-acs-admin.php:176
 msgid "Connection failed"
 msgstr "Αποτυχία σύνδεσης"
 
-#: includes/class-acs-admin.php:179
+#: includes/class-acs-admin.php:177
 msgid "Creating voucher..."
 msgstr "Δημιουργία voucher..."
 
-#: includes/class-acs-admin.php:180
+#: includes/class-acs-admin.php:178
 msgid "Are you sure you want to delete this voucher?"
 msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το voucher;"
 
-#: includes/class-acs-admin.php:192 includes/class-acs-voucher.php:371
-#: includes/class-acs-voucher.php:453 includes/class-acs-voucher.php:508
-#: includes/class-acs-voucher.php:555 includes/class-acs-voucher.php:591
-#: includes/class-acs-voucher.php:654
+#: includes/class-acs-admin.php:179
+msgid "Refreshing..."
+msgstr "Ανανέωση..."
+
+#: includes/class-acs-admin.php:191 includes/class-acs-points-feed.php:316
+#: includes/class-acs-points-order.php:106
+#: includes/class-acs-points-order.php:150 includes/class-acs-voucher.php:372
+#: includes/class-acs-voucher.php:458 includes/class-acs-voucher.php:514
+#: includes/class-acs-voucher.php:561 includes/class-acs-voucher.php:597
+#: includes/class-acs-voucher.php:660
 msgid "Unauthorized."
 msgstr "Μη εξουσιοδοτημένη πρόσβαση."
 
-#: includes/class-acs-admin.php:201
+#: includes/class-acs-admin.php:202
 msgid "Connection to ACS API successful!"
 msgstr "Επιτυχής σύνδεση με το ACS API!"
 
-#: includes/class-acs-admin.php:220
+#: includes/class-acs-admin.php:221
 msgid "API Credentials"
 msgstr "Στοιχεία API"
 
-#: includes/class-acs-admin.php:224
+#: includes/class-acs-admin.php:225
 msgid "Shipping"
 msgstr "Αποστολή"
 
-#: includes/class-acs-admin.php:228
+#: includes/class-acs-admin.php:229
 msgid "Automation"
 msgstr "Αυτοματισμός"
 
-#: includes/class-acs-admin.php:238
+#: includes/class-acs-admin.php:246
 msgid "API Key"
 msgstr "Κλειδί API"
 
-#: includes/class-acs-admin.php:243
+#: includes/class-acs-admin.php:251
 msgid "The API Key provided by ACS."
 msgstr "Το κλειδί API που παρέχεται από την ACS."
 
-#: includes/class-acs-admin.php:247
+#: includes/class-acs-admin.php:255
 msgid "Company ID"
 msgstr "Κωδικός Εταιρείας"
 
-#: includes/class-acs-admin.php:255
+#: includes/class-acs-admin.php:263
 msgid "Company Password"
 msgstr "Κωδικός Εταιρείας (Password)"
 
-#: includes/class-acs-admin.php:263
+#: includes/class-acs-admin.php:271
 msgid "User ID"
 msgstr "Κωδικός Χρήστη"
 
-#: includes/class-acs-admin.php:271
+#: includes/class-acs-admin.php:279
 msgid "User Password"
 msgstr "Κωδικός Χρήστη (Password)"
 
-#: includes/class-acs-admin.php:279 includes/class-acs-admin.php:282
+#: includes/class-acs-admin.php:287 includes/class-acs-admin.php:290
 msgid "Test Connection"
 msgstr "Δοκιμή Σύνδεσης"
 
-#: includes/class-acs-admin.php:288
+#: includes/class-acs-admin.php:296
 msgid "Debug Logging"
 msgstr "Καταγραφή Αποσφαλμάτωσης"
 
-#: includes/class-acs-admin.php:293
+#: includes/class-acs-admin.php:301
 msgid "Enable debug logging (WooCommerce > Status > Logs)"
-msgstr "Ενεργοποίηση καταγραφής αποσφαλμάτωσης (WooCommerce > Κατάσταση > Αρχεία καταγραφής)"
+msgstr ""
+"Ενεργοποίηση καταγραφής αποσφαλμάτωσης (WooCommerce > Κατάσταση > Αρχεία "
+"καταγραφής)"
 
-#: includes/class-acs-admin.php:302
+#: includes/class-acs-admin.php:310
 msgid "Billing Code"
 msgstr "Κωδικός Χρέωσης"
 
-#: includes/class-acs-admin.php:307
+#: includes/class-acs-admin.php:315
 msgid "Your ACS credit/billing code (e.g., 2ΑΘ999999)."
 msgstr "Ο κωδικός χρέωσης ACS (π.χ. 2ΑΘ999999)."
 
-#: includes/class-acs-admin.php:311
+#: includes/class-acs-admin.php:319
 msgid "Sender Name"
 msgstr "Όνομα Αποστολέα"
 
-#: includes/class-acs-admin.php:319
+#: includes/class-acs-admin.php:327
 msgid "Origin Station Code"
 msgstr "Κωδικός Σταθμού Προέλευσης"
 
-#: includes/class-acs-admin.php:324
-msgid "ACS station code in Greek uppercase (e.g., ΑΘ for Athens). Found via zip code lookup."
-msgstr "Κωδικός σταθμού ACS σε ελληνικά κεφαλαία (π.χ. ΑΘ για Αθήνα). Βρίσκεται μέσω αναζήτησης Τ.Κ."
+#: includes/class-acs-admin.php:332
+msgid ""
+"ACS station code in Greek uppercase (e.g., ΑΘ for Athens). Found via zip "
+"code lookup."
+msgstr ""
+"Κωδικός σταθμού ACS σε ελληνικά κεφαλαία (π.χ. ΑΘ για Αθήνα). Βρίσκεται μέσω "
+"αναζήτησης Τ.Κ."
 
-#: includes/class-acs-admin.php:328
+#: includes/class-acs-admin.php:336
 msgid "Default Weight (kg)"
 msgstr "Προεπιλεγμένο Βάρος (kg)"
 
-#: includes/class-acs-admin.php:333
+#: includes/class-acs-admin.php:341
 msgid "Default weight when product weight is not set. Minimum 0.5 kg."
-msgstr "Προεπιλεγμένο βάρος όταν δεν έχει οριστεί βάρος προϊόντος. Ελάχιστο 0,5 kg."
+msgstr ""
+"Προεπιλεγμένο βάρος όταν δεν έχει οριστεί βάρος προϊόντος. Ελάχιστο 0,5 kg."
 
-#: includes/class-acs-admin.php:337
+#: includes/class-acs-admin.php:345
 msgid "Charge Type"
 msgstr "Τύπος Χρέωσης"
 
-#: includes/class-acs-admin.php:341
+#: includes/class-acs-admin.php:349
 msgid "Sender pays"
 msgstr "Πληρώνει ο αποστολέας"
 
-#: includes/class-acs-admin.php:344
+#: includes/class-acs-admin.php:352
 msgid "Recipient pays"
 msgstr "Πληρώνει ο παραλήπτης"
 
-#: includes/class-acs-admin.php:354
+#: includes/class-acs-admin.php:358
+#: includes/class-acs-points-shipping-method.php:36
+msgid "ACS Points"
+msgstr "ACS Points"
+
+#. translators: 1: number of points, 2: date
+#: includes/class-acs-admin.php:369
+#, php-format
+msgid "ACS points: %1$s, updated %2$s"
+msgstr "Σημεία ACS: %1$s, ενημερώθηκαν %2$s"
+
+#: includes/class-acs-admin.php:374
+msgid "Points have never been fetched."
+msgstr "Τα σημεία δεν έχουν ληφθεί ακόμη."
+
+#: includes/class-acs-admin.php:382
+msgid "Refresh points"
+msgstr "Ανανέωση σημείων"
+
+#: includes/class-acs-admin.php:385
+msgid ""
+"Lockers and stores offered by the \"Pickup from ACS Point\" shipping method. "
+"Refreshed automatically once a day."
+msgstr ""
+"Lockers και καταστήματα που προσφέρει η μέθοδος αποστολής \"Παραλαβή από "
+"ACS Point\". Ανανεώνονται αυτόματα μία φορά την ημέρα."
+
+#: includes/class-acs-admin.php:393
 msgid "Auto-create Voucher"
 msgstr "Αυτόματη Δημιουργία Voucher"
 
-#: includes/class-acs-admin.php:359
+#: includes/class-acs-admin.php:398
 msgid "Automatically create a voucher when order status changes."
 msgstr "Αυτόματη δημιουργία voucher κατά την αλλαγή κατάστασης παραγγελίας."
 
-#: includes/class-acs-admin.php:364
+#: includes/class-acs-admin.php:403
 msgid "Auto-create on Status"
 msgstr "Αυτόματη Δημιουργία στην Κατάσταση"
 
-#: includes/class-acs-admin.php:377
+#: includes/class-acs-admin.php:416
 msgid "Which order status triggers automatic voucher creation."
-msgstr "Ποια κατάσταση παραγγελίας ενεργοποιεί την αυτόματη δημιουργία voucher."
+msgstr ""
+"Ποια κατάσταση παραγγελίας ενεργοποιεί την αυτόματη δημιουργία voucher."
 
-#: includes/class-acs-admin.php:381
+#: includes/class-acs-admin.php:420
 msgid "Auto Tracking"
 msgstr "Αυτόματη Παρακολούθηση"
 
-#: includes/class-acs-admin.php:386
+#: includes/class-acs-admin.php:425
 msgid "Automatically check shipment status and update orders."
 msgstr "Αυτόματος έλεγχος κατάστασης αποστολής και ενημέρωση παραγγελιών."
 
-#: includes/class-acs-admin.php:391
+#: includes/class-acs-admin.php:430
 msgid "Tracking Frequency"
 msgstr "Συχνότητα Παρακολούθησης"
 
-#: includes/class-acs-admin.php:395
+#: includes/class-acs-admin.php:434
 msgid "Every hour"
 msgstr "Κάθε ώρα"
 
-#: includes/class-acs-admin.php:398
+#: includes/class-acs-admin.php:437
 msgid "Twice a day"
 msgstr "Δύο φορές την ημέρα"
 
-#: includes/class-acs-admin.php:401
+#: includes/class-acs-admin.php:440
 msgid "Once a day"
 msgstr "Μία φορά την ημέρα"
 
-#: includes/class-acs-admin.php:407
+#: includes/class-acs-admin.php:446
 msgid "Email Tracking Code"
 msgstr "Αποστολή Κωδικού Παρακολούθησης"
 
-#: includes/class-acs-admin.php:412
+#: includes/class-acs-admin.php:451
 msgid "Send tracking number to customer via email when voucher is created."
-msgstr "Αποστολή αριθμού παρακολούθησης στον πελάτη μέσω email κατά τη δημιουργία voucher."
+msgstr ""
+"Αποστολή αριθμού παρακολούθησης στον πελάτη μέσω email κατά τη δημιουργία "
+"voucher."
 
-#: includes/class-acs-shipping-method.php:22
-msgid "Real-time shipping rates from ACS Courier based on your contract pricing."
-msgstr "Τιμές αποστολής σε πραγματικό χρόνο από την ACS Courier βάσει της σύμβασής σας."
+#: includes/class-acs-api.php:72
+msgid "ACS API Key is not configured."
+msgstr "Το ACS API Key δεν έχει ρυθμιστεί."
 
-#: includes/class-acs-shipping-method.php:59
-msgid "Title"
-msgstr "Τίτλος"
+#: includes/class-acs-api.php:104
+msgid "Invalid ACS API Key."
+msgstr "Μη έγκυρο ACS API Key."
 
-#: includes/class-acs-shipping-method.php:61
-msgid "Title displayed at checkout."
-msgstr "Τίτλος που εμφανίζεται στο ταμείο."
+#: includes/class-acs-api.php:108
+msgid "ACS API rate limit exceeded. Try again shortly."
+msgstr "Υπέρβαση ορίου κλήσεων ACS API. Δοκιμάστε ξανά σύντομα."
 
-#: includes/class-acs-shipping-method.php:67
-msgid "Tax Status"
-msgstr "Κατάσταση ΦΠΑ"
+#: includes/class-acs-api.php:115
+msgid "Invalid response from ACS API."
+msgstr "Μη έγκυρη απάντηση από το ACS API."
 
-#: includes/class-acs-shipping-method.php:70
-msgid "Taxable"
-msgstr "Φορολογήσιμο"
+#: includes/class-acs-api.php:120
+msgid "Unknown ACS API error."
+msgstr "Άγνωστο σφάλμα ACS API."
 
-#: includes/class-acs-shipping-method.php:71
-msgid "None (VAT included in ACS rate)"
-msgstr "Κανένα (ΦΠΑ περιλαμβάνεται στην τιμή ACS)"
+#: includes/class-acs-api.php:405
+msgid "Connection test failed — no data returned."
+msgstr "Ο έλεγχος σύνδεσης απέτυχε — δεν επιστράφηκαν δεδομένα."
 
-#: includes/class-acs-shipping-method.php:75
-msgid "Rate Type"
-msgstr "Τύπος Χρέωσης"
+#. translators: %d: number of points returned
+#: includes/class-acs-points-feed.php:128
+#, php-format
+msgid "ACS returned only %d points; keeping the stored list."
+msgstr "Η ACS επέστρεψε μόνο %d σημεία. Διατηρείται η αποθηκευμένη λίστα."
 
-#: includes/class-acs-shipping-method.php:79
-msgid "API Price Calculation (real-time from ACS)"
-msgstr "Υπολογισμός Τιμής API (σε πραγματικό χρόνο από ACS)"
+#: includes/class-acs-points-order.php:79
+msgid "ACS Point"
+msgstr "Σημείο ACS"
 
-#: includes/class-acs-shipping-method.php:80
-msgid "Flat Rate"
-msgstr "Σταθερή Τιμή"
+#: includes/class-acs-points-order.php:80
+#: includes/class-acs-points-picker.php:386
+msgid "Store"
+msgstr "Κατάστημα"
 
-#: includes/class-acs-shipping-method.php:84
-msgid "Flat Rate (€)"
-msgstr "Σταθερή Τιμή (€)"
+#: includes/class-acs-points-order.php:80
+#: includes/class-acs-points-picker.php:385
+msgid "Locker"
+msgstr "Locker"
 
-#: includes/class-acs-shipping-method.php:87
-msgid "Used when Rate Type is Flat Rate."
-msgstr "Χρησιμοποιείται όταν ο Τύπος Χρέωσης είναι Σταθερή Τιμή."
+#: includes/class-acs-points-order.php:83
+#: includes/class-acs-points-picker.php:307
+#: includes/class-acs-points-picker.php:380
+msgid "Cash on delivery available"
+msgstr "Με αντικαταβολή"
 
-#: includes/class-acs-shipping-method.php:91
-msgid "Free Shipping Minimum (€)"
-msgstr "Ελάχιστο για Δωρεάν Αποστολή (€)"
+#: includes/class-acs-points-order.php:83
+#: includes/class-acs-points-picker.php:309
+#: includes/class-acs-points-picker.php:381
+msgid "No cash on delivery"
+msgstr "Χωρίς αντικαταβολή"
 
-#: includes/class-acs-shipping-method.php:94
-msgid "Offer free shipping for orders above this amount. Leave empty to disable."
-msgstr "Δωρεάν αποστολή για παραγγελίες πάνω από αυτό το ποσό. Αφήστε κενό για απενεργοποίηση."
+#: includes/class-acs-points-order.php:84
+#: includes/class-acs-points-order.php:195
+#: includes/class-acs-points-order.php:222
+msgid "View on map"
+msgstr "Δείτε στον χάρτη"
 
-#: includes/class-acs-shipping-method.php:98
-msgid "Handling Fee (€)"
-msgstr "Έξοδα Διαχείρισης (€)"
+#: includes/class-acs-points-order.php:89
+msgid "Change point: type an area, street or postcode"
+msgstr "Αλλαγή σημείου: πληκτρολογήστε περιοχή, οδό ή Τ.Κ."
 
-#: includes/class-acs-shipping-method.php:101
-msgid "Extra fee added on top of the ACS rate."
-msgstr "Επιπλέον χρέωση πάνω στην τιμή ACS."
+#: includes/class-acs-points-order.php:93
+#: includes/class-acs-points-order.php:158
+msgid "Delete the voucher to change the point."
+msgstr "Διαγράψτε το voucher για να αλλάξετε σημείο."
 
-#: includes/class-acs-shipping-method.php:105
-msgid "COD Extra Fee (€)"
-msgstr "Επιπλέον Χρέωση Αντικαταβολής (€)"
-
-#: includes/class-acs-shipping-method.php:108
-msgid "Extra fee for Cash on Delivery orders."
-msgstr "Επιπλέον χρέωση για παραγγελίες με αντικαταβολή."
-
-#: includes/class-acs-shipping-method.php:112
-msgid "Fallback Cost (€)"
-msgstr "Εναλλακτικό Κόστος (€)"
-
-#: includes/class-acs-shipping-method.php:115
-msgid "Cost to use if API calculation fails."
-msgstr "Κόστος σε περίπτωση αποτυχίας υπολογισμού API."
-
-#: includes/class-acs-shipping-method.php:134
-msgid "Free"
-msgstr "Δωρεάν"
-
-#: includes/class-acs-voucher.php:97
+#: includes/class-acs-points-order.php:155 includes/class-acs-voucher.php:97
+#: includes/class-acs-voucher.php:379 includes/class-acs-voucher.php:466
+#: includes/class-acs-voucher.php:521 includes/class-acs-voucher.php:568
+#: includes/class-acs-voucher.php:604 includes/class-acs-voucher.php:667
 msgid "Order not found."
 msgstr "Η παραγγελία δεν βρέθηκε."
 
-#: includes/class-acs-voucher.php:110
-msgid "Voucher:"
-msgstr "Voucher:"
+#: includes/class-acs-points-order.php:163
+#: includes/class-acs-points-picker.php:205
+msgid "Unknown ACS Point."
+msgstr "Άγνωστο σημείο ACS."
 
-#: includes/class-acs-voucher.php:119
-msgid "Status:"
-msgstr "Κατάσταση:"
-
-#: includes/class-acs-voucher.php:126
-msgid "Print A4 (Laser)"
-msgstr "Εκτύπωση A4 (Laser)"
-
-#: includes/class-acs-voucher.php:127
-msgid "A4"
-msgstr "A4"
-
-#: includes/class-acs-voucher.php:130
-msgid "Print Thermal"
-msgstr "Εκτύπωση Θερμικού"
-
-#: includes/class-acs-voucher.php:131
-msgid "Thermal"
-msgstr "Θερμικός"
-
-#: includes/class-acs-voucher.php:134
-msgid "Track Shipment"
-msgstr "Παρακολούθηση Αποστολής"
-
-#: includes/class-acs-voucher.php:135
-msgid "Track"
-msgstr "Παρακολούθηση"
-
-#: includes/class-acs-voucher.php:138
-msgid "Delete Voucher"
-msgstr "Διαγραφή Voucher"
-
-#: includes/class-acs-voucher.php:150
+#. translators: %s: point name and address
+#: includes/class-acs-points-order.php:169
 #, php-format
-msgid "Issue Pickup List (%s)"
-msgstr "Έκδοση Λίστας Παραλαβής (%s)"
+msgid "ACS Point changed to: %s"
+msgstr "Το σημείο ACS άλλαξε σε: %s"
 
-#: includes/class-acs-voucher.php:154
-msgid "Issues a pickup list for all vouchers on this date."
-msgstr "Εκδίδει λίστα παραλαβής για όλα τα voucher αυτής της ημερομηνίας."
+#: includes/class-acs-points-order.php:192
+msgid "Pickup point"
+msgstr "Σημείο παραλαβής"
 
-#: includes/class-acs-voucher.php:159
-msgid "Pickup List:"
-msgstr "Λίστα Παραλαβής:"
+#: includes/class-acs-points-order.php:216
+#: includes/class-acs-points-order.php:221
+msgid "Pickup from:"
+msgstr "Παραλαβή από:"
 
-#: includes/class-acs-voucher.php:172
-msgid "Parcels"
-msgstr "Δέματα"
+#: includes/class-acs-points-picker.php:130
+#: includes/class-acs-points-picker.php:246
+msgid "Please choose an ACS Point before placing your order."
+msgstr "Επιλέξτε ένα σημείο ACS πριν ολοκληρώσετε την παραγγελία."
 
-#: includes/class-acs-voucher.php:176
-msgid "Weight (kg)"
-msgstr "Βάρος (kg)"
+#: includes/class-acs-points-picker.php:133
+msgid "Please choose an ACS locker."
+msgstr "Επιλέξτε ένα ACS locker."
 
-#: includes/class-acs-voucher.php:182
-msgid "Extra Services"
-msgstr "Επιπλέον Υπηρεσίες"
+#: includes/class-acs-points-picker.php:136
+msgid ""
+"Cash on delivery is not available at this ACS Point. Choose another point or "
+"pay by card."
+msgstr ""
+"Η αντικαταβολή δεν είναι διαθέσιμη σε αυτό το σημείο ACS. Επιλέξτε άλλο "
+"σημείο ή πληρώστε με κάρτα."
 
-#: includes/class-acs-voucher.php:183
+#: includes/class-acs-points-picker.php:141
+msgid ""
+"ACS sends the pickup PIN by SMS, so a Greek mobile number (69xxxxxxxx) is "
+"required."
+msgstr ""
+"Η ACS στέλνει το PIN παραλαβής με SMS, γι' αυτό χρειάζεται ελληνικό κινητό "
+"(69xxxxxxxx)."
+
+#: includes/class-acs-points-picker.php:296
+msgid "Choose ACS Point"
+msgstr "Επιλογή σημείου ACS"
+
+#: includes/class-acs-points-picker.php:304
+#: includes/class-acs-points-picker.php:379
+msgid "24/7"
+msgstr "24ωρο"
+
+#: includes/class-acs-points-picker.php:312
+#: includes/class-acs-points-picker.php:374
+msgid "Change"
+msgstr "Αλλαγή"
+
+#: includes/class-acs-points-picker.php:367
+msgid "Choose the ACS Point that suits you"
+msgstr "Επιλέξτε το ACS Point που σας εξυπηρετεί"
+
+#: includes/class-acs-points-picker.php:368
+msgid "Search by area, street or postcode"
+msgstr "Αναζήτηση περιοχής, οδού ή Τ.Κ."
+
+#: includes/class-acs-points-picker.php:369
+msgid "All"
+msgstr "Όλα"
+
+#: includes/class-acs-points-picker.php:370
+msgid "Lockers"
+msgstr "Lockers"
+
+#: includes/class-acs-points-picker.php:371
+msgid "Stores"
+msgstr "Καταστήματα"
+
+#: includes/class-acs-points-picker.php:372
+msgid "My location"
+msgstr "Η θέση μου"
+
+#: includes/class-acs-points-picker.php:373
+msgid "Select"
+msgstr "Επιλογή"
+
+#: includes/class-acs-points-picker.php:375
+msgid "Close"
+msgstr "Κλείσιμο"
+
+#: includes/class-acs-points-picker.php:376
+msgid "Loading points..."
+msgstr "Φόρτωση σημείων..."
+
+#: includes/class-acs-points-picker.php:377
+msgid "Could not load the ACS points. Please try again."
+msgstr "Δεν ήταν δυνατή η φόρτωση των σημείων ACS. Δοκιμάστε ξανά."
+
+#: includes/class-acs-points-picker.php:378
+msgid "Move the map to see more points"
+msgstr "Μετακινήστε τον χάρτη για περισσότερα σημεία"
+
+#: includes/class-acs-points-picker.php:382
+msgid "Weekdays"
+msgstr "Καθημερινές"
+
+#: includes/class-acs-points-picker.php:383 includes/class-acs-voucher.php:187
 msgid "Saturday"
 msgstr "Σάββατο"
 
-#: includes/class-acs-voucher.php:184
-msgid "Morning"
-msgstr "Πρωινή"
+#: includes/class-acs-points-picker.php:384
+msgid "Your location is not available."
+msgstr "Η θέση σας δεν είναι διαθέσιμη."
 
-#: includes/class-acs-voucher.php:185
-msgid "Return Docs"
-msgstr "Επιστροφή Εγγράφων"
+#: includes/class-acs-points-picker.php:410
+msgid "Selected ACS Point id."
+msgstr "Αναγνωριστικό επιλεγμένου σημείου ACS."
 
-#: includes/class-acs-voucher.php:188
-msgid "Notes"
-msgstr "Σημειώσεις"
+#: includes/class-acs-points-shipping-method.php:37
+msgid ""
+"Pickup from an ACS Smartpoint locker or an ACS store, chosen on a map at "
+"checkout."
+msgstr ""
+"Παραλαβή από ACS Smartpoint locker ή κατάστημα ACS, με επιλογή σε χάρτη στο "
+"checkout."
 
-#: includes/class-acs-voucher.php:190
-msgid "Delivery notes..."
-msgstr "Σημειώσεις παράδοσης..."
+#: includes/class-acs-points-shipping-method.php:52
+#: includes/class-acs-points-shipping-method.php:75
+msgid "Pickup from ACS Point"
+msgstr "Παραλαβή από ACS Point"
 
-#: includes/class-acs-voucher.php:194
-msgid "Create Voucher"
-msgstr "Δημιουργία Voucher"
+#: includes/class-acs-points-shipping-method.php:66
+msgid "Enable/Disable"
+msgstr "Ενεργοποίηση/Απενεργοποίηση"
 
-#: includes/class-acs-voucher.php:340
-#, php-format
-msgid "Smartpoint pickup: %s"
-msgstr "Παραλαβή από Smartpoint: %s"
+#: includes/class-acs-points-shipping-method.php:68
+msgid "Enable this shipping method"
+msgstr "Ενεργοποίηση αυτής της μεθόδου αποστολής"
 
-#: includes/class-acs-voucher.php:383
-msgid "This order already has an ACS voucher."
-msgstr "Αυτή η παραγγελία έχει ήδη ACS voucher."
+#: includes/class-acs-points-shipping-method.php:72
+msgid "Method Title"
+msgstr "Τίτλος Μεθόδου"
 
-#: includes/class-acs-voucher.php:421
-msgid "Failed to create voucher."
-msgstr "Αποτυχία δημιουργίας voucher."
+#: includes/class-acs-points-shipping-method.php:74
+msgid "Shown to the customer at checkout."
+msgstr "Εμφανίζεται στον πελάτη στο checkout."
 
-#: includes/class-acs-voucher.php:429
-#, php-format
-msgid "ACS voucher created: %s"
-msgstr "ACS voucher δημιουργήθηκε: %s"
+#: includes/class-acs-points-shipping-method.php:79
+msgid "Cost"
+msgstr "Κόστος"
 
-#: includes/class-acs-voucher.php:442
-msgid "Voucher created successfully!"
-msgstr "Το voucher δημιουργήθηκε επιτυχώς!"
+#: includes/class-acs-points-shipping-method.php:81
+msgid "Flat cost for pickup at an ACS Point."
+msgstr "Σταθερό κόστος για παραλαβή από σημείο ACS."
 
-#: includes/class-acs-voucher.php:466
-msgid "No voucher found for this order."
-msgstr "Δεν βρέθηκε voucher για αυτή την παραγγελία."
+#: includes/class-acs-points-shipping-method.php:86
+msgid "Free Delivery Threshold"
+msgstr "Όριο Δωρεάν Παραλαβής"
 
-#: includes/class-acs-voucher.php:498
-msgid "Could not retrieve PDF data."
-msgstr "Δεν ήταν δυνατή η ανάκτηση του PDF."
+#: includes/class-acs-points-shipping-method.php:88
+msgid ""
+"Order subtotal at or above which pickup is free. Leave empty to disable."
+msgstr ""
+"Υποσύνολο παραγγελίας από το οποίο η παραλαβή είναι δωρεάν. Κενό για "
+"απενεργοποίηση."
 
-#: includes/class-acs-voucher.php:520
-msgid "No voucher to delete."
-msgstr "Δεν υπάρχει voucher για διαγραφή."
+#: includes/class-acs-points-shipping-method.php:93
+msgid "Max Weight (kg)"
+msgstr "Μέγιστο βάρος (kg)"
 
-#: includes/class-acs-voucher.php:541
-#, php-format
-msgid "ACS voucher deleted: %s"
-msgstr "ACS voucher διαγράφηκε: %s"
+#: includes/class-acs-points-shipping-method.php:95
+msgid ""
+"The rate is not offered above this package weight. ACS standard lockers take "
+"up to 6 kg. 0 disables the cap."
+msgstr ""
+"Η μέθοδος δεν προσφέρεται πάνω από αυτό το βάρος. Τα τυπικά lockers ACS "
+"δέχονται έως 6 kg. Το 0 αφαιρεί το όριο."
 
-#: includes/class-acs-voucher.php:545
-msgid "Voucher deleted."
-msgstr "Το voucher διαγράφηκε."
+#: includes/class-acs-points-shipping-method.php:100
+msgid "Point Types"
+msgstr "Τύποι σημείων"
 
-#: includes/class-acs-voucher.php:567
-msgid "No voucher to track."
-msgstr "Δεν υπάρχει voucher για παρακολούθηση."
+#: includes/class-acs-points-shipping-method.php:102
+msgid "Which ACS Points the customer may choose."
+msgstr "Ποια σημεία ACS μπορεί να επιλέξει ο πελάτης."
 
-#: includes/class-acs-voucher.php:612
-msgid "Failed to issue pickup list."
-msgstr "Αποτυχία έκδοσης λίστας παραλαβής."
+#: includes/class-acs-points-shipping-method.php:105
+msgid "Lockers and stores"
+msgstr "Lockers και καταστήματα"
 
-#: includes/class-acs-voucher.php:643
-msgid "Pickup list issued."
-msgstr "Η λίστα παραλαβής εκδόθηκε."
+#: includes/class-acs-points-shipping-method.php:106
+msgid "Lockers only"
+msgstr "Μόνο lockers"
 
-#: includes/class-acs-voucher.php:668
-msgid "No pickup list found."
-msgstr "Δεν βρέθηκε λίστα παραλαβής."
+#: includes/class-acs-points-shipping-method.php:111
+#: includes/class-acs-shipping-method.php:84
+msgid "Tax Status"
+msgstr "Κατάσταση ΦΠΑ"
 
-#: includes/class-acs-voucher.php:692
-msgid "Could not retrieve pickup list PDF."
-msgstr "Δεν ήταν δυνατή η ανάκτηση του PDF λίστας παραλαβής."
+#: includes/class-acs-points-shipping-method.php:115
+#: includes/class-acs-shipping-method.php:88
+msgid "Taxable"
+msgstr "Φορολογήσιμο"
 
-#: includes/class-acs-voucher.php:731
-#, php-format
-msgid "ACS auto-voucher failed: %s"
-msgstr "Αυτόματη δημιουργία ACS voucher απέτυχε: %s"
+#: includes/class-acs-points-shipping-method.php:116
+msgid "None"
+msgstr "Κανένα"
 
-#: includes/class-acs-voucher.php:745
-#, php-format
-msgid "ACS voucher auto-created: %s"
-msgstr "ACS voucher δημιουργήθηκε αυτόματα: %s"
+#: includes/class-acs-shipping-method.php:40
+msgid ""
+"Real-time shipping rates from ACS Courier based on your contract pricing."
+msgstr ""
+"Τιμές αποστολής σε πραγματικό χρόνο από την ACS Courier βάσει της σύμβασής "
+"σας."
 
-#: includes/class-acs-voucher.php:755
-#, php-format
-msgid "ACS auto-voucher error: %s"
-msgstr "Σφάλμα αυτόματου ACS voucher: %s"
+#: includes/class-acs-shipping-method.php:77
+msgid "Title"
+msgstr "Τίτλος"
 
-#: includes/class-acs-voucher.php:771
-#, php-format
-msgid "Your order #%s has been shipped via ACS Courier"
-msgstr "Η παραγγελία σας #%s εστάλη μέσω ACS Courier"
+#: includes/class-acs-shipping-method.php:79
+msgid "Title displayed at checkout."
+msgstr "Τίτλος που εμφανίζεται στο ταμείο."
 
-#: includes/class-acs-voucher.php:779
-#, php-format
-msgid "Dear %1$s,\n\nYour order #%2$s has been shipped via ACS Courier.\n\nTracking Number: %3$s\nTrack your shipment: %4$s\n\nThank you for your purchase!\n%5$s"
-msgstr "Αγαπητέ/ή %1$s,\n\nΗ παραγγελία σας #%2$s εστάλη μέσω ACS Courier.\n\nΑριθμός Παρακολούθησης: %3$s\nΠαρακολουθήστε την αποστολή σας: %4$s\n\nΕυχαριστούμε για την αγορά σας!\n%5$s"
+#: includes/class-acs-shipping-method.php:89
+msgid "None (VAT included in ACS rate)"
+msgstr "Κανένα (ΦΠΑ περιλαμβάνεται στην τιμή ACS)"
 
-#: includes/class-acs-voucher.php:808
-msgid "ACS: Create Vouchers"
-msgstr "ACS: Δημιουργία Voucher"
+#: includes/class-acs-shipping-method.php:93
+msgid "Rate Type"
+msgstr "Τύπος Χρέωσης"
 
-#: includes/class-acs-voucher.php:809
-msgid "ACS: Print Vouchers (A4)"
-msgstr "ACS: Εκτύπωση Voucher (A4)"
+#: includes/class-acs-shipping-method.php:97
+msgid "API Price Calculation (real-time from ACS)"
+msgstr "Υπολογισμός Τιμής API (σε πραγματικό χρόνο από ACS)"
 
-#: includes/class-acs-voucher.php:919
-#, php-format
-msgid "%d ACS voucher created."
-msgid_plural "%d ACS vouchers created."
-msgstr[0] "%d ACS voucher δημιουργήθηκε."
-msgstr[1] "%d ACS voucher δημιουργήθηκαν."
+#: includes/class-acs-shipping-method.php:98
+msgid "Flat Rate"
+msgstr "Σταθερή Τιμή"
 
-#: includes/class-acs-voucher.php:932
-#, php-format
-msgid "%d voucher ready for printing."
-msgid_plural "%d vouchers ready for printing."
-msgstr[0] "%d voucher έτοιμο για εκτύπωση."
-msgstr[1] "%d voucher έτοιμα για εκτύπωση."
+#: includes/class-acs-shipping-method.php:102
+msgid "Flat Rate (€)"
+msgstr "Σταθερή Τιμή (€)"
 
-#: includes/class-acs-voucher.php:948
-msgid "Failed to print ACS vouchers. Please try printing individually."
-msgstr "Αποτυχία εκτύπωσης ACS voucher. Δοκιμάστε εκτύπωση μεμονωμένα."
+#: includes/class-acs-shipping-method.php:105
+msgid "Used when Rate Type is Flat Rate."
+msgstr "Χρησιμοποιείται όταν ο Τύπος Χρέωσης είναι Σταθερή Τιμή."
 
-#: includes/class-acs-voucher.php:955
-msgid "No ACS vouchers found on the selected orders. Create vouchers first."
-msgstr "Δεν βρέθηκαν ACS voucher στις επιλεγμένες παραγγελίες. Δημιουργήστε πρώτα voucher."
+#: includes/class-acs-shipping-method.php:109
+msgid "Free Shipping Minimum (€)"
+msgstr "Ελάχιστο για Δωρεάν Αποστολή (€)"
 
-#: includes/class-acs-voucher.php:974
-msgid "ACS Voucher"
-msgstr "ACS Voucher"
+#: includes/class-acs-shipping-method.php:112
+msgid ""
+"Offer free shipping for orders above this amount. Leave empty to disable."
+msgstr ""
+"Δωρεάν αποστολή για παραγγελίες πάνω από αυτό το ποσό. Αφήστε κενό για "
+"απενεργοποίηση."
+
+#: includes/class-acs-shipping-method.php:116
+msgid "Handling Fee (€)"
+msgstr "Έξοδα Διαχείρισης (€)"
+
+#: includes/class-acs-shipping-method.php:119
+msgid "Extra fee added on top of the ACS rate."
+msgstr "Επιπλέον χρέωση πάνω στην τιμή ACS."
+
+#: includes/class-acs-shipping-method.php:123
+msgid "COD Extra Fee (€)"
+msgstr "Επιπλέον Χρέωση Αντικαταβολής (€)"
+
+#: includes/class-acs-shipping-method.php:126
+msgid "Extra fee for Cash on Delivery orders."
+msgstr "Επιπλέον χρέωση για παραγγελίες με αντικαταβολή."
+
+#: includes/class-acs-shipping-method.php:130
+msgid "Fallback Cost (€)"
+msgstr "Εναλλακτικό Κόστος (€)"
+
+#: includes/class-acs-shipping-method.php:133
+msgid "Cost to use if API calculation fails."
+msgstr "Κόστος σε περίπτωση αποτυχίας υπολογισμού API."
+
+#: includes/class-acs-shipping-method.php:152
+msgid "Free"
+msgstr "Δωρεάν"
 
 #: includes/class-acs-tracking.php:118
 msgid "ACS: Shipment delivered."
 msgstr "ACS: Η αποστολή παραδόθηκε."
 
+#. translators: %s: delivery info
 #: includes/class-acs-tracking.php:121
 #, php-format
 msgid "ACS Tracking: Delivered — %s"
@@ -553,17 +642,19 @@ msgstr "ACS Παρακολούθηση: Παραδόθηκε — %s"
 msgid "ACS: Delivery denied/returned."
 msgstr "ACS: Άρνηση/Επιστροφή παράδοσης."
 
+#. translators: 1: delivery info, 2: reason code
 #: includes/class-acs-tracking.php:132
 #, php-format
 msgid "ACS Tracking: Denied — %1$s (Reason: %2$s)"
 msgstr "ACS Παρακολούθηση: Απορρίφθηκε — %1$s (Λόγος: %2$s)"
 
+#. translators: %s: delivery info
 #: includes/class-acs-tracking.php:140
 #, php-format
 msgid "ACS Tracking update: %s"
 msgstr "ACS Παρακολούθηση ενημέρωση: %s"
 
-#: includes/class-acs-tracking.php:183
+#: includes/class-acs-tracking.php:183 includes/class-acs-tracking.php:229
 msgid "Shipment Tracking"
 msgstr "Παρακολούθηση Αποστολής"
 
@@ -599,54 +690,290 @@ msgstr "Παρακολουθήστε την αποστολή σας ACS:"
 msgid "Enter tracking number"
 msgstr "Εισάγετε αριθμό παρακολούθησης"
 
+#: includes/class-acs-tracking.php:254 includes/class-acs-voucher.php:135
+msgid "Track"
+msgstr "Παρακολούθηση"
+
 #: includes/class-acs-tracking.php:261
 msgid "Track your shipment on the ACS website"
 msgstr "Παρακολουθήστε την αποστολή σας στο site της ACS"
 
-#: includes/class-acs-smartpoints.php:71
-msgid "Loading ACS pickup points..."
-msgstr "Φόρτωση σημείων παραλαβής ACS..."
+#: includes/class-acs-voucher.php:110
+msgid "Voucher:"
+msgstr "Voucher:"
 
-#: includes/class-acs-smartpoints.php:72
-msgid "Select a pickup point"
-msgstr "Επιλέξτε σημείο παραλαβής"
+#: includes/class-acs-voucher.php:119
+msgid "Status:"
+msgstr "Κατάσταση:"
 
-#: includes/class-acs-smartpoints.php:73
-msgid "Selected:"
-msgstr "Επιλεγμένο:"
+#: includes/class-acs-voucher.php:126
+msgid "Print A4 (Laser)"
+msgstr "Εκτύπωση A4 (Laser)"
 
-#: includes/class-acs-smartpoints.php:74
-msgid "Search by area or zip code..."
-msgstr "Αναζήτηση με περιοχή ή Τ.Κ...."
+#: includes/class-acs-voucher.php:127
+msgid "A4"
+msgstr "A4"
 
-#: includes/class-acs-smartpoints.php:75
-msgid "No pickup points found for this area."
-msgstr "Δεν βρέθηκαν σημεία παραλαβής για αυτή την περιοχή."
+#: includes/class-acs-voucher.php:130
+msgid "Print Thermal"
+msgstr "Εκτύπωση Θερμικού"
 
-#: includes/class-acs-smartpoints.php:76
-msgid "Smartpoint Locker"
-msgstr "Smartpoint Locker"
+#: includes/class-acs-voucher.php:131
+msgid "Thermal"
+msgstr "Θερμικός"
 
-#: includes/class-acs-smartpoints.php:77
-msgid "ACS Store"
-msgstr "Κατάστημα ACS"
+#: includes/class-acs-voucher.php:134
+msgid "Track Shipment"
+msgstr "Παρακολούθηση Αποστολής"
 
-#: includes/class-acs-smartpoints.php:107
-msgid "Pick up from ACS Smartpoint / Store"
-msgstr "Παραλαβή από ACS Smartpoint / Κατάστημα"
+#: includes/class-acs-voucher.php:138
+msgid "Delete Voucher"
+msgstr "Διαγραφή Voucher"
 
-#: includes/class-acs-smartpoints.php:124
-msgid "Pickup point:"
-msgstr "Σημείο παραλαβής:"
+#. translators: %s: pickup date
+#: includes/class-acs-voucher.php:150
+#, php-format
+msgid "Issue Pickup List (%s)"
+msgstr "Έκδοση Λίστας Παραλαβής (%s)"
 
-#: includes/class-acs-smartpoints.php:129
-msgid "Change"
-msgstr "Αλλαγή"
+#: includes/class-acs-voucher.php:154
+msgid "Issues a pickup list for all vouchers on this date."
+msgstr "Εκδίδει λίστα παραλαβής για όλα τα voucher αυτής της ημερομηνίας."
 
-#: includes/class-acs-smartpoints.php:220
-msgid "Please select an ACS pickup point or uncheck the Smartpoint option."
-msgstr "Παρακαλώ επιλέξτε σημείο παραλαβής ACS ή αποεπιλέξτε την επιλογή Smartpoint."
+#: includes/class-acs-voucher.php:159
+msgid "Pickup List:"
+msgstr "Λίστα Παραλαβής:"
 
-#: includes/class-acs-smartpoints.php:261
-msgid "ACS Smartpoint Pickup:"
-msgstr "Παραλαβή ACS Smartpoint:"
+#: includes/class-acs-voucher.php:173
+msgid "Parcels"
+msgstr "Δέματα"
+
+#: includes/class-acs-voucher.php:176
+msgid "ACS Points accept one parcel per shipment."
+msgstr "Τα ACS Points δέχονται ένα δέμα ανά αποστολή."
+
+#: includes/class-acs-voucher.php:180
+msgid "Weight (kg)"
+msgstr "Βάρος (kg)"
+
+#: includes/class-acs-voucher.php:186
+msgid "Extra Services"
+msgstr "Επιπλέον Υπηρεσίες"
+
+#: includes/class-acs-voucher.php:188
+msgid "Morning"
+msgstr "Πρωινή"
+
+#: includes/class-acs-voucher.php:189
+msgid "Return Docs"
+msgstr "Επιστροφή Εγγράφων"
+
+#: includes/class-acs-voucher.php:192
+msgid "Notes"
+msgstr "Σημειώσεις"
+
+#: includes/class-acs-voucher.php:194
+msgid "Delivery notes..."
+msgstr "Σημειώσεις παράδοσης..."
+
+#: includes/class-acs-voucher.php:198
+msgid "Create Voucher"
+msgstr "Δημιουργία Voucher"
+
+#: includes/class-acs-voucher.php:300
+msgid "ACS Points need a Greek mobile number."
+msgstr "Τα ACS Points απαιτούν ελληνικό κινητό."
+
+#: includes/class-acs-voucher.php:384
+msgid "This order already has an ACS voucher."
+msgstr "Αυτή η παραγγελία έχει ήδη ACS voucher."
+
+#: includes/class-acs-voucher.php:426
+msgid "Failed to create voucher."
+msgstr "Αποτυχία δημιουργίας voucher."
+
+#. translators: %s: voucher number
+#: includes/class-acs-voucher.php:434 includes/class-acs-voucher.php:975
+#, php-format
+msgid "ACS voucher created: %s"
+msgstr "ACS voucher δημιουργήθηκε: %s"
+
+#: includes/class-acs-voucher.php:447
+msgid "Voucher created successfully!"
+msgstr "Το voucher δημιουργήθηκε επιτυχώς!"
+
+#: includes/class-acs-voucher.php:471
+msgid "No voucher found for this order."
+msgstr "Δεν βρέθηκε voucher για αυτή την παραγγελία."
+
+#: includes/class-acs-voucher.php:504
+msgid "Could not retrieve PDF data."
+msgstr "Δεν ήταν δυνατή η ανάκτηση του PDF."
+
+#: includes/class-acs-voucher.php:526
+msgid "No voucher to delete."
+msgstr "Δεν υπάρχει voucher για διαγραφή."
+
+#. translators: %s: voucher number
+#: includes/class-acs-voucher.php:547
+#, php-format
+msgid "ACS voucher deleted: %s"
+msgstr "ACS voucher διαγράφηκε: %s"
+
+#: includes/class-acs-voucher.php:551
+msgid "Voucher deleted."
+msgstr "Το voucher διαγράφηκε."
+
+#: includes/class-acs-voucher.php:573
+msgid "No voucher to track."
+msgstr "Δεν υπάρχει voucher για παρακολούθηση."
+
+#: includes/class-acs-voucher.php:618
+msgid "Failed to issue pickup list."
+msgstr "Αποτυχία έκδοσης λίστας παραλαβής."
+
+#: includes/class-acs-voucher.php:649
+msgid "Pickup list issued."
+msgstr "Η λίστα παραλαβής εκδόθηκε."
+
+#: includes/class-acs-voucher.php:674
+msgid "No pickup list found."
+msgstr "Δεν βρέθηκε λίστα παραλαβής."
+
+#: includes/class-acs-voucher.php:702
+msgid "Could not retrieve pickup list PDF."
+msgstr "Δεν ήταν δυνατή η ανάκτηση του PDF λίστας παραλαβής."
+
+#. translators: %s: shipping method id of the other carrier
+#: includes/class-acs-voucher.php:738
+#, php-format
+msgid ""
+"ACS auto-voucher skipped: this order ships with %s (BOX NOW or another "
+"carrier), not ACS."
+msgstr ""
+"Παράλειψη αυτόματου ACS voucher: αυτή η παραγγελία αποστέλλεται με %s (BOX "
+"NOW ή άλλη μεταφορική), όχι ACS."
+
+#. translators: %s: error message
+#: includes/class-acs-voucher.php:789 includes/class-acs-voucher.php:800
+#, php-format
+msgid "ACS auto-voucher failed: %s"
+msgstr "Αυτόματη δημιουργία ACS voucher απέτυχε: %s"
+
+#. translators: %s: voucher number
+#: includes/class-acs-voucher.php:814
+#, php-format
+msgid "ACS voucher auto-created: %s"
+msgstr "ACS voucher δημιουργήθηκε αυτόματα: %s"
+
+#. translators: %s: error message
+#: includes/class-acs-voucher.php:824
+#, php-format
+msgid "ACS auto-voucher error: %s"
+msgstr "Σφάλμα αυτόματου ACS voucher: %s"
+
+#: includes/class-acs-voucher.php:937
+msgid "ACS: Create Vouchers"
+msgstr "ACS: Δημιουργία Voucher"
+
+#: includes/class-acs-voucher.php:938
+msgid "ACS: Print Vouchers (A4)"
+msgstr "ACS: Εκτύπωση Voucher (A4)"
+
+#: includes/class-acs-voucher.php:962
+#, php-format
+msgid "ACS voucher skipped: %s"
+msgstr "Το voucher ACS παραλείφθηκε: %s"
+
+#. translators: %d: number of vouchers created
+#: includes/class-acs-voucher.php:1055
+#, php-format
+msgid "%d ACS voucher created."
+msgid_plural "%d ACS vouchers created."
+msgstr[0] "%d ACS voucher δημιουργήθηκε."
+msgstr[1] "%d ACS voucher δημιουργήθηκαν."
+
+#. translators: %d: number of vouchers
+#: includes/class-acs-voucher.php:1068
+#, php-format
+msgid "%d voucher ready for printing."
+msgid_plural "%d vouchers ready for printing."
+msgstr[0] "%d voucher έτοιμο για εκτύπωση."
+msgstr[1] "%d voucher έτοιμα για εκτύπωση."
+
+#: includes/class-acs-voucher.php:1084
+msgid "Failed to print ACS vouchers. Please try printing individually."
+msgstr "Αποτυχία εκτύπωσης ACS voucher. Δοκιμάστε εκτύπωση μεμονωμένα."
+
+#: includes/class-acs-voucher.php:1091
+msgid "No ACS vouchers found on the selected orders. Create vouchers first."
+msgstr ""
+"Δεν βρέθηκαν ACS voucher στις επιλεγμένες παραγγελίες. Δημιουργήστε πρώτα "
+"voucher."
+
+#: includes/class-acs-voucher.php:1110
+msgid "ACS Voucher"
+msgstr "ACS Voucher"
+
+#: wc-acs-courier.php:36
+msgid "requires WooCommerce to be installed and active."
+msgstr "απαιτεί το WooCommerce να είναι εγκατεστημένο και ενεργό."
+
+#: wc-acs-courier.php:70
+msgid "Missing required file:"
+msgstr "Λείπει απαιτούμενο αρχείο:"
+
+#: wc-acs-courier.php:129
+msgid "ACS Courier for WooCommerce requires PHP 7.4 or higher."
+msgstr "Το ACS Courier για WooCommerce απαιτεί PHP 7.4 ή νεότερη έκδοση."
+
+#: wc-acs-courier.php:130 wc-acs-courier.php:140 wc-acs-courier.php:167
+msgid "Plugin Activation Error"
+msgstr "Σφάλμα Ενεργοποίησης Προσθέτου"
+
+#: wc-acs-courier.php:139
+msgid ""
+"ACS Courier for WooCommerce requires WooCommerce to be installed and active."
+msgstr ""
+"Το ACS Courier για WooCommerce απαιτεί την εγκατάσταση και ενεργοποίηση του "
+"WooCommerce."
+
+#. translators: %s: missing file path
+#: wc-acs-courier.php:164
+#, php-format
+msgid ""
+"ACS Courier for WooCommerce is missing a required file: %s. Please re-upload "
+"the plugin."
+msgstr ""
+"Το ACS Courier για WooCommerce δεν έχει το απαιτούμενο αρχείο: %s. "
+"Παρακαλώ ανεβάστε ξανά το πρόσθετο."
+
+#: wc-acs-courier.php:200 wc-acs-courier.php:226
+msgctxt "Order status"
+msgid "Delivered (ACS)"
+msgstr "Παραδόθηκε (ACS)"
+
+#. translators: %s: number of orders
+#: wc-acs-courier.php:206
+#, php-format
+msgid "Delivered (ACS) <span class=\"count\">(%s)</span>"
+msgid_plural "Delivered (ACS) <span class=\"count\">(%s)</span>"
+msgstr[0] "Παραδόθηκε (ACS) <span class=\"count\">(%s)</span>"
+msgstr[1] "Παραδόθηκε (ACS) <span class=\"count\">(%s)</span>"
+
+#: wc-acs-courier.php:210 wc-acs-courier.php:227
+msgctxt "Order status"
+msgid "Delivery Denied (ACS)"
+msgstr "Άρνηση Παράδοσης (ACS)"
+
+#. translators: %s: number of orders
+#: wc-acs-courier.php:216
+#, php-format
+msgid "Delivery Denied (ACS) <span class=\"count\">(%s)</span>"
+msgid_plural "Delivery Denied (ACS) <span class=\"count\">(%s)</span>"
+msgstr[0] "Άρνηση Παράδοσης (ACS) <span class=\"count\">(%s)</span>"
+msgstr[1] "Άρνηση Παράδοσης (ACS) <span class=\"count\">(%s)</span>"
+
+#: wc-acs-courier.php:260
+msgid "Settings"
+msgstr "Ρυθμίσεις"
