@@ -276,6 +276,8 @@
             state.userMarker = null;
         }
         $( 'body' ).removeClass( 'wc-acs-points-noscroll' );
+        state.filter = 'all';
+        state.search = '';
     }
 
     // ─── Map ──────────────────────────────────────────────────────
