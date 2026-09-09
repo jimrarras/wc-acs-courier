@@ -88,23 +88,11 @@ This checklist covers all user-interface and front-end functionality that can be
 - [ ] Free shipping threshold: orders above the threshold show "Free" or zero cost for ACS Courier
 - [ ] Free shipping threshold: orders below the threshold show the normal rate
 
-### 4.2 Smartpoint Picker
+### 4.2 Smartpoint Picker (removed in 1.1.0)
 
-- [ ] A "Ship to Smartpoint" checkbox or option appears below the ACS Courier rate
-- [ ] Checking the Smartpoint option reveals the Smartpoint picker UI
-- [ ] Unchecking hides the picker again
-- [ ] Smartpoint picker opens without JavaScript errors
-- [ ] Picker displays a search field that accepts text input
-- [ ] Picker displays a list or map of Smartpoint locations (if data is available)
-- [ ] A Smartpoint location can be selected from the list/map
-- [ ] Selected Smartpoint name/address is shown to the customer
-- [ ] Picker can be closed and reopened without issues
-
-### 4.3 Validation
-
-- [ ] Checking "Ship to Smartpoint" without selecting a location and submitting the order shows a validation error
-- [ ] The validation error message is clear and user-friendly
-- [ ] After selecting a valid Smartpoint, the order can be placed without errors
+The "Ship to Smartpoint" checkbox under the ACS Courier rate no longer exists; it was
+replaced by the separate "Pickup from ACS Point" shipping method and its map picker.
+See the "ACS Points" section below for the current checklist.
 
 ---
 
