@@ -220,4 +220,88 @@ class PointsFeedTest extends TestCase {
         $this->assertNull( \WC_ACS_Points_Feed::centre_for_postcode( '99999', $points ) );
         $this->assertNull( \WC_ACS_Points_Feed::centre_for_postcode( '1', $points ) );
     }
+
+    // ── payload() / rest_points() ────────────────────────────────
+
+    private function seedStored(): void {
+        $this->options['wc_acs_points_feed'] = [
+            'fetched_at' => 1700000000,
+            'country'    => 'GR',
+            'points'     => \WC_ACS_Points_Feed::normalise( [ $this->rawPoint() ], 'GR' ),
+        ];
+    }
+
+    public function test_payload_is_positional_in_documented_order(): void {
+        $this->seedStored();
+
+        $payload = \WC_ACS_Points_Feed::instance()->payload();
+
+        $this->assertSame( 1700000000, $payload['v'] );
+        $this->assertSame(
+            [ '4400', 'locker', 'ACS SMARTPOINT LOCKER ΙΩΑΝΝΙΝΑ', 'Market In, Χαρ. Τρικούπη 38', 'ΙΩΑΝΝΙΝΑ', '45333', 39.664978, 20.848969, 'ΙΒ', '501', 1, 1, '24ΩΡΟ', '24ΩΡΟ' ],
+            $payload['points'][0]
+        );
+    }
+
+    public function test_rest_points_sets_cache_headers(): void {
+        $this->seedStored();
+        $request = new \WP_REST_Request( 'GET', '/wc-acs/v1/points' );
+
+        $response = \WC_ACS_Points_Feed::instance()->rest_points( $request );
+
+        $this->assertSame( 200, $response->get_status() );
+        $this->assertSame( 'public, max-age=86400', $response->get_headers()['Cache-Control'] );
+        $this->assertSame( '"1700000000"', $response->get_headers()['ETag'] );
+        $this->assertCount( 1, $response->get_data()['points'] );
+    }
+
+    public function test_rest_points_returns_304_on_matching_etag(): void {
+        $this->seedStored();
+        $request = new \WP_REST_Request( 'GET', '/wc-acs/v1/points' );
+        $request->set_header( 'If-None-Match', '"1700000000"' );
+
+        $response = \WC_ACS_Points_Feed::instance()->rest_points( $request );
+
+        $this->assertSame( 304, $response->get_status() );
+        $this->assertNull( $response->get_data() );
+    }
+
+    // ── ajax_refresh() ───────────────────────────────────────────
+
+    public function test_ajax_refresh_requires_capability(): void {
+        Functions\when( 'check_ajax_referer' )->justReturn( true );
+        Functions\when( 'current_user_can' )->justReturn( false );
+        $captured = null;
+        Functions\when( 'wp_send_json_error' )->alias( function ( $data ) use ( &$captured ) {
+            $captured = $data;
+            throw new \RuntimeException( 'exit' );
+        } );
+
+        try {
+            \WC_ACS_Points_Feed::instance()->ajax_refresh();
+        } catch ( \RuntimeException $e ) {
+        }
+
+        $this->assertSame( 'Unauthorized.', $captured );
+    }
+
+    public function test_ajax_refresh_reports_count_and_date(): void {
+        Functions\when( 'check_ajax_referer' )->justReturn( true );
+        Functions\when( 'current_user_can' )->justReturn( true );
+        Functions\when( 'date_i18n' )->justReturn( '2026-09-09 10:00' );
+        $this->stubFeedResponse( $this->manyPoints( 130 ) );
+        $captured = null;
+        Functions\when( 'wp_send_json_success' )->alias( function ( $data ) use ( &$captured ) {
+            $captured = $data;
+            throw new \RuntimeException( 'exit' );
+        } );
+
+        try {
+            \WC_ACS_Points_Feed::instance()->ajax_refresh();
+        } catch ( \RuntimeException $e ) {
+        }
+
+        $this->assertSame( 130, $captured['count'] );
+        $this->assertSame( '2026-09-09 10:00', $captured['fetched'] );
+    }
 }

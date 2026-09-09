@@ -14,6 +14,7 @@
         bindEvents() {
             // Settings page — Test connection
             $(document).on('click', '#wc-acs-test-connection', this.testConnection);
+            $(document).on('click', '#wc-acs-refresh-points', this.refreshPoints);
 
             // Order metabox — Voucher actions
             $(document).on('click', '.wc-acs-create-voucher', this.createVoucher);
@@ -57,6 +58,35 @@
                 .done(function (res) {
                     if (res.success) {
                         $result.text('✓ ' + res.data).addClass('success');
+                    } else {
+                        $result.text('✗ ' + res.data).addClass('error');
+                    }
+                })
+                .fail(function () {
+                    $result.text('✗ Request failed').addClass('error');
+                })
+                .always(function () {
+                    $btn.prop('disabled', false);
+                });
+        },
+
+        // ─── Refresh ACS points ────────────────────────────────
+        refreshPoints(e) {
+            e.preventDefault();
+            const $btn = $(this);
+            const $result = $('#wc-acs-refresh-result');
+
+            $btn.prop('disabled', true);
+            $result.text(wc_acs.i18n.refreshing).removeClass('success error');
+
+            $.post(wc_acs.ajax_url, {
+                action: 'wc_acs_refresh_points',
+                nonce: wc_acs.nonce,
+            })
+                .done(function (res) {
+                    if (res.success) {
+                        $result.text('✓ ' + res.data.count + ' (' + res.data.fetched + ')').addClass('success');
+                        $('#wc-acs-points-status').text(res.data.count + ' / ' + res.data.fetched);
                     } else {
                         $result.text('✗ ' + res.data).addClass('error');
                     }

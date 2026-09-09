@@ -33,6 +33,8 @@ class WC_ACS_Points_Feed {
     private function __construct() {
         add_action( self::CRON_HOOK, array( $this, 'refresh' ) );
         add_action( 'init', array( $this, 'maybe_schedule' ) );
+        add_action( 'rest_api_init', array( $this, 'register_rest' ) );
+        add_action( 'wp_ajax_wc_acs_refresh_points', array( $this, 'ajax_refresh' ) );
     }
 
     /**
@@ -247,5 +249,83 @@ class WC_ACS_Points_Feed {
         if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
             wp_schedule_event( time(), 'daily', self::CRON_HOOK );
         }
+    }
+
+    const REST_NAMESPACE = 'wc-acs/v1';
+
+    /**
+     * Public, read-only route. The list is not personal data and the browser
+     * caches it for a day, so no nonce and no cookies are involved.
+     */
+    public function register_rest() {
+        register_rest_route( self::REST_NAMESPACE, '/points', array(
+            'methods'             => 'GET',
+            'callback'            => array( $this, 'rest_points' ),
+            'permission_callback' => '__return_true',
+        ) );
+    }
+
+    /**
+     * Positional rows keep the payload around 60 KB gzipped for 2,000 points.
+     * Column order: id, type, name, street, city, zip, lat, lon, station,
+     * branch, cod, h24, hours, sat. acs-points.js reads the same order.
+     *
+     * @return array
+     */
+    public function payload() {
+        $rows = array();
+        foreach ( $this->get_points() as $p ) {
+            $rows[] = array(
+                $p['id'], $p['type'], $p['name'], $p['street'], $p['city'], $p['zip'],
+                $p['lat'], $p['lon'], $p['station'], $p['branch'],
+                (int) $p['cod'], (int) $p['h24'], $p['hours'], $p['sat'],
+            );
+        }
+        return array(
+            'v'      => $this->fetched_at(),
+            'points' => $rows,
+        );
+    }
+
+    /**
+     * @param WP_REST_Request $request Request.
+     * @return WP_REST_Response
+     */
+    public function rest_points( $request ) {
+        $etag = '"' . $this->fetched_at() . '"';
+
+        if ( $request->get_header( 'if_none_match' ) === $etag ) {
+            $response = new WP_REST_Response( null, 304 );
+            $response->header( 'ETag', $etag );
+            return $response;
+        }
+
+        $response = new WP_REST_Response( $this->payload(), 200 );
+        $response->header( 'Cache-Control', 'public, max-age=86400' );
+        $response->header( 'ETag', $etag );
+        return $response;
+    }
+
+    /**
+     * Settings-page button: refresh now and report.
+     */
+    public function ajax_refresh() {
+        check_ajax_referer( 'wc_acs_nonce', 'nonce' );
+
+        if ( ! current_user_can( 'manage_woocommerce' ) ) {
+            wp_send_json_error( __( 'Unauthorized.', 'wc-acs-courier' ) );
+        }
+
+        WC_ACS_API::reset_credentials();
+        $result = $this->refresh();
+
+        if ( is_wp_error( $result ) ) {
+            wp_send_json_error( $result->get_error_message() );
+        }
+
+        wp_send_json_success( array(
+            'count'   => $this->count(),
+            'fetched' => date_i18n( 'Y-m-d H:i', $this->fetched_at() ),
+        ) );
     }
 }

@@ -176,6 +176,7 @@ class WC_ACS_Admin {
                 'error'          => __( 'Connection failed', 'wc-acs-courier' ),
                 'creating'       => __( 'Creating voucher...', 'wc-acs-courier' ),
                 'confirm_delete' => __( 'Are you sure you want to delete this voucher?', 'wc-acs-courier' ),
+                'refreshing'     => __( 'Refreshing...', 'wc-acs-courier' ),
             ),
         ) );
     }
@@ -351,6 +352,37 @@ class WC_ACS_Admin {
                                         <?php esc_html_e( 'Recipient pays', 'wc-acs-courier' ); ?>
                                     </option>
                                 </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'ACS Points', 'wc-acs-courier' ); ?></th>
+                            <td>
+                                <?php
+                                $feed    = WC_ACS_Points_Feed::instance();
+                                $fetched = $feed->fetched_at();
+                                ?>
+                                <p id="wc-acs-points-status">
+                                    <?php
+                                    if ( $fetched > 0 ) {
+                                        printf(
+                                            /* translators: 1: number of points, 2: date */
+                                            esc_html__( 'ACS points: %1$s, updated %2$s', 'wc-acs-courier' ),
+                                            esc_html( number_format_i18n( $feed->count() ) ),
+                                            esc_html( date_i18n( 'Y-m-d H:i', $fetched ) )
+                                        );
+                                    } else {
+                                        esc_html_e( 'Points have never been fetched.', 'wc-acs-courier' );
+                                    }
+                                    ?>
+                                </p>
+                                <?php if ( '' !== $feed->last_error() ) : ?>
+                                    <p class="description" style="color:#b32d2e;"><?php echo esc_html( $feed->last_error() ); ?></p>
+                                <?php endif; ?>
+                                <button type="button" id="wc-acs-refresh-points" class="button button-secondary">
+                                    <?php esc_html_e( 'Refresh points', 'wc-acs-courier' ); ?>
+                                </button>
+                                <span id="wc-acs-refresh-result" class="wc-acs-test-result"></span>
+                                <p class="description"><?php esc_html_e( 'Lockers and stores offered by the "Pickup from ACS Point" shipping method. Refreshed automatically once a day.', 'wc-acs-courier' ); ?></p>
                             </td>
                         </tr>
                     </table>
