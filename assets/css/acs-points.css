@@ -128,18 +128,37 @@ body.wc-acs-points-noscroll {
 }
 
 .wc-acs-points-title {
+    min-width: 0;
     font-weight: 700;
     font-size: 1.05em;
 }
 
+.wc-acs-points-title-short {
+    display: none;
+}
+
+/* 44px target; the negative margin keeps the desktop header height. */
 .wc-acs-points-close {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: -8px -12px -8px 0;
     border: 0;
+    border-radius: 6px;
     background: none;
     font-size: 28px;
     line-height: 1;
     cursor: pointer;
     color: #374151;
-    padding: 0 4px;
+    padding: 0;
+}
+
+.wc-acs-points-close:focus-visible {
+    outline: 2px solid #111827;
+    outline-offset: -2px;
 }
 
 .wc-acs-points-body {
@@ -219,29 +238,50 @@ body.wc-acs-points-noscroll {
     color: #991b1b;
 }
 
+/* A row: the point text (shows it on the map) and its own Select button. */
 .wc-acs-points-item {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
-    width: 100%;
-    text-align: left;
-    padding: 10px 12px 10px 16px;
-    border: 0;
+    align-items: center;
+    gap: 10px;
+    padding-right: 12px;
     border-bottom: 1px solid #f3f4f6;
     border-left: 4px solid #9ca3af;
     background: #fff;
-    cursor: pointer;
-    font: inherit;
 }
 
 .wc-acs-points-item--store {
     border-left-color: #e30613;
 }
 
-.wc-acs-points-item:hover,
-.wc-acs-points-item:focus-visible {
+.wc-acs-points-item:hover {
     background: #f9fafb;
-    outline: none;
+}
+
+.wc-acs-points-item-show {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    gap: 3px;
+    min-width: 0;
+    text-align: left;
+    padding: 10px 0 10px 12px;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+}
+
+.wc-acs-points-item-show:focus-visible {
+    outline: 2px solid #111827;
+    outline-offset: -2px;
+}
+
+.wc-acs-points-item-select {
+    flex: none;
+    min-height: 44px;
+    padding: 0 14px;
+    font-size: 0.9em;
 }
 
 .wc-acs-points-item-name {
@@ -287,13 +327,36 @@ body.wc-acs-points-noscroll {
 
 .wc-acs-points-popup .wc-acs-points-select {
     align-self: flex-start;
-    padding: 8px 14px;
+    min-height: 44px;
+    padding: 0 18px;
     margin-top: 4px;
+}
+
+/* Leaflet's stylesheet loads after this one, so these carry one extra class. */
+.wc-acs-points-overlay .wc-acs-points-map .leaflet-popup-content {
+    margin-right: 40px;
+}
+
+.wc-acs-points-overlay .wc-acs-points-map a.leaflet-popup-close-button {
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    line-height: 44px;
+}
+
+/* Wide screens: room for the row's Select button without doubling the row height. */
+@media (min-width: 1024px) {
+    .wc-acs-points-body {
+        grid-template-columns: 420px 1fr;
+    }
 }
 
 /* ---- Phones: the list becomes a bottom sheet ---- */
 @media (max-width: 767px) {
     .wc-acs-points-overlay {
+        bottom: auto;
+        height: 100%;
+        height: 100dvh;
         padding: 0;
     }
 
@@ -301,6 +364,29 @@ body.wc-acs-points-noscroll {
         width: 100%;
         height: 100%;
         border-radius: 0;
+    }
+
+    .wc-acs-points-header {
+        padding: 2px 4px 2px 16px;
+    }
+
+    .wc-acs-points-title {
+        overflow: hidden;
+        font-size: 1em;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .wc-acs-points-title-full {
+        display: none;
+    }
+
+    .wc-acs-points-title-short {
+        display: inline;
+    }
+
+    .wc-acs-points-close {
+        margin: 0;
     }
 
     .wc-acs-points-body {
@@ -317,7 +403,8 @@ body.wc-acs-points-noscroll {
         left: 0;
         right: 0;
         bottom: 0;
-        height: 55%;
+        height: 68%;
+        padding-bottom: env(safe-area-inset-bottom, 0px);
         border-right: 0;
         border-top: 1px solid #e5e7eb;
         border-radius: 14px 14px 0 0;
@@ -327,7 +414,7 @@ body.wc-acs-points-noscroll {
     }
 
     .wc-acs-points-sidebar.is-collapsed {
-        height: 132px;
+        height: auto;
     }
 
     .wc-acs-points-sidebar.is-collapsed .wc-acs-points-list {
@@ -336,12 +423,13 @@ body.wc-acs-points-noscroll {
 
     .wc-acs-points-sheet-toggle {
         display: block;
+        flex: none;
         width: 100%;
-        height: 22px;
+        height: 44px;
         border: 0;
         background: none;
         cursor: pointer;
-        padding: 8px 0 0;
+        padding: 0;
     }
 
     .wc-acs-points-sheet-toggle span {
@@ -353,7 +441,30 @@ body.wc-acs-points-noscroll {
         background: #d1d5db;
     }
 
+    .wc-acs-points-sheet-toggle:focus-visible {
+        outline: 2px solid #111827;
+        outline-offset: -4px;
+    }
+
     .wc-acs-points-tools {
-        padding: 6px 12px 8px;
+        padding: 0 12px 8px;
+    }
+
+    .wc-acs-points-chips {
+        padding-bottom: 8px;
+    }
+
+    .wc-acs-points-item-show {
+        gap: 2px;
+        padding: 8px 0 8px 12px;
+        line-height: 1.3;
+    }
+
+    .wc-acs-points-item-name {
+        font-size: 0.92em;
+    }
+
+    .wc-acs-points-item-address {
+        font-size: 0.85em;
     }
 }

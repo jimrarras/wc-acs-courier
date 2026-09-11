@@ -627,9 +627,9 @@ class PointsPickerTest extends TestCase {
         ], array_keys( $settings['icons'] ) );
 
         $this->assertSame( [
-            'title', 'search', 'all', 'lockers', 'stores', 'myLocation', 'select', 'change', 'remove', 'close',
-            'loading', 'loadError', 'moreHint', 'noMatches', 'open24', 'cod', 'noCod', 'weekdays', 'saturday',
-            'locateError', 'locker', 'store',
+            'title', 'titleShort', 'search', 'all', 'lockers', 'stores', 'myLocation', 'select', 'change', 'remove',
+            'close', 'showList', 'hideList', 'loading', 'loadError', 'moreHint', 'noMatches', 'open24', 'cod', 'noCod',
+            'weekdays', 'saturday', 'locateError', 'locker', 'store',
         ], array_keys( $settings['i18n'] ) );
         foreach ( $settings['i18n'] as $value ) {
             $this->assertNotSame( '', $value );

@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 9.6
-Stable tag: 1.2.3
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,6 +123,11 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.3.0 =
+* New: every point in the ACS Points list has its own Select button, so a point is chosen in one tap
+* New: the phone back button closes the map instead of leaving the checkout
+* Tweak: phone layout with a one-line title, 44px close, list handle and popup buttons, a taller list, and the list opens when the search field is focused
 
 = 1.2.3 =
 * Fix: the chosen point is also forgotten when the shipping method arrives only as the posted field of the checkout refresh

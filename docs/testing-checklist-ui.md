@@ -158,9 +158,12 @@ See the "ACS Points" section below for the current checklist.
 - [ ] Map opens centred near the typed postcode; Greece overview with an empty postcode
 - [ ] Search filters the list by name, street, city and postcode, accent-insensitive
 - [ ] Lockers / Stores chips filter both the list and the markers
-- [ ] Clicking a list row opens the marker popup; "Select" closes the overlay and the summary shows name, address, 24/7 and COD badges
-- [ ] "Change" reopens the map; Escape and the close button close it
-- [ ] Phone: the list is a bottom sheet with a drag handle; selecting a row collapses it
+- [ ] Clicking a list row's text opens the marker popup; the row's own "Select" and the popup's "Select" both close the overlay and the summary shows name, address, 24/7 and COD badges
+- [ ] "Change" reopens the map; Escape, the close button and the browser back button close it
+- [ ] After closing the map any of those ways, one Back press leaves the checkout (no leftover history entry)
+- [ ] Phone (375px): one-line short title and a 44px close button; the list is a bottom sheet with a 44px handle whose label switches between show and hide list; about 4 rows are visible
+- [ ] Phone: tapping a row's text collapses the sheet; focusing the search field expands it again
+- [ ] Phone: the popup's "Select" and close buttons are 44px tall; the bottom of the sheet is not hidden behind the browser toolbar
 - [ ] "My location" asks for permission and pans the map; denying shows the error text
 - [ ] Placing the order without a point shows the "choose an ACS Point" error
 - [ ] A landline in the phone field shows the Greek-mobile error

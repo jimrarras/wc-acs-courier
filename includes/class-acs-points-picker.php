@@ -545,6 +545,7 @@ class WC_ACS_Points_Picker {
             ),
             'i18n'           => array(
                 'title'       => __( 'Choose the ACS Point that suits you', 'wc-acs-courier' ),
+                'titleShort'  => __( 'Choose an ACS Point', 'wc-acs-courier' ),
                 'search'      => __( 'Search by area, street or postcode', 'wc-acs-courier' ),
                 'all'         => __( 'All', 'wc-acs-courier' ),
                 'lockers'     => __( 'Lockers', 'wc-acs-courier' ),
@@ -554,6 +555,8 @@ class WC_ACS_Points_Picker {
                 'change'      => __( 'Change', 'wc-acs-courier' ),
                 'remove'      => __( 'Remove', 'wc-acs-courier' ),
                 'close'       => __( 'Close', 'wc-acs-courier' ),
+                'showList'    => __( 'Show the list', 'wc-acs-courier' ),
+                'hideList'    => __( 'Hide the list', 'wc-acs-courier' ),
                 'loading'     => __( 'Loading points...', 'wc-acs-courier' ),
                 'loadError'   => __( 'Could not load the ACS points. Please try again.', 'wc-acs-courier' ),
                 'moreHint'    => __( 'Move the map to see more points', 'wc-acs-courier' ),

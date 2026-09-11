@@ -28,7 +28,8 @@
         icons: null,
         filter: 'all',
         search: '',
-        userMarker: null
+        userMarker: null,
+        historyPushed: false
     };
 
     // ─── Asset loading ────────────────────────────────────────────
@@ -142,6 +143,11 @@
         return sorted.length % 2 === 0 ? ( sorted[ mid - 1 ] + sorted[ mid ] ) / 2 : sorted[ mid ];
     }
 
+    /** Same breakpoint as the bottom-sheet rules in acs-points.css. */
+    function isPhone() {
+        return window.innerWidth < 768;
+    }
+
     function checkoutPostcode() {
         var field = $( '#ship-to-different-address-checkbox' ).is( ':checked' ) ? $( '#shipping_postcode' ) : $( '#billing_postcode' );
         return $.trim( String( field.val() || '' ) );
@@ -195,7 +201,41 @@
             : '<span class="wc-acs-points-badge wc-acs-points-badge--nocod">' + escapeHtml( cfg.i18n.noCod ) + '</span>';
     }
 
+    // ─── History ──────────────────────────────────────────────────
+    // Opening the picker adds a history entry, so the phone back button (and
+    // the iOS swipe back) closes the map instead of leaving the checkout.
+    // Every other way of closing removes that entry again.
+
+    function pushHistory() {
+        if ( ! window.history || typeof window.history.pushState !== 'function' ) {
+            return;
+        }
+        try {
+            window.history.pushState( { wcAcsPoints: true }, '' );
+            state.historyPushed = true;
+        } catch ( e ) {
+            state.historyPushed = false;
+        }
+    }
+
+    function onPopState() {
+        if ( state.overlay && state.historyPushed ) {
+            state.historyPushed = false;
+            closeOverlay();
+        }
+    }
+
     // ─── Overlay ──────────────────────────────────────────────────
+
+    function setSheetCollapsed( collapsed ) {
+        if ( ! state.overlay ) {
+            return;
+        }
+        state.overlay.find( '.wc-acs-points-sidebar' ).toggleClass( 'is-collapsed', collapsed );
+        state.overlay.find( '.wc-acs-points-sheet-toggle' )
+            .attr( 'aria-expanded', collapsed ? 'false' : 'true' )
+            .attr( 'aria-label', collapsed ? cfg.i18n.showList : cfg.i18n.hideList );
+    }
 
     function buildOverlay() {
         var chips = cfg.pointTypes === 'lockers' ? '' :
@@ -209,12 +249,15 @@
             '<div class="wc-acs-points-overlay" role="dialog" aria-modal="true" aria-label="' + escapeHtml( cfg.i18n.title ) + '">' +
                 '<div class="wc-acs-points-modal">' +
                     '<div class="wc-acs-points-header">' +
-                        '<span class="wc-acs-points-title">' + escapeHtml( cfg.i18n.title ) + '</span>' +
+                        '<span class="wc-acs-points-title">' +
+                            '<span class="wc-acs-points-title-full">' + escapeHtml( cfg.i18n.title ) + '</span>' +
+                            '<span class="wc-acs-points-title-short">' + escapeHtml( cfg.i18n.titleShort || cfg.i18n.title ) + '</span>' +
+                        '</span>' +
                         '<button type="button" class="wc-acs-points-close" aria-label="' + escapeHtml( cfg.i18n.close ) + '">&times;</button>' +
                     '</div>' +
                     '<div class="wc-acs-points-body">' +
                         '<aside class="wc-acs-points-sidebar">' +
-                            '<button type="button" class="wc-acs-points-sheet-toggle" aria-label="' + escapeHtml( cfg.i18n.close ) + '"><span></span></button>' +
+                            '<button type="button" class="wc-acs-points-sheet-toggle" aria-expanded="true" aria-label="' + escapeHtml( cfg.i18n.hideList ) + '"><span></span></button>' +
                             '<div class="wc-acs-points-tools">' +
                                 '<input type="search" class="wc-acs-points-search" placeholder="' + escapeHtml( cfg.i18n.search ) + '" autocomplete="off" />' +
                                 '<button type="button" class="wc-acs-points-locate">' + escapeHtml( cfg.i18n.myLocation ) + '</button>' +
@@ -253,11 +296,17 @@
                 renderList();
             }, 250 );
         } );
+        // A collapsed sheet sits under the phone keyboard; typing needs the list anyway.
+        state.overlay.on( 'focus', '.wc-acs-points-search', function () {
+            if ( isPhone() ) {
+                setSheetCollapsed( false );
+            }
+        } );
         state.overlay.on( 'click', '.wc-acs-points-locate', locate );
         state.overlay.on( 'click', '.wc-acs-points-sheet-toggle', function () {
-            state.overlay.find( '.wc-acs-points-sidebar' ).toggleClass( 'is-collapsed' );
+            setSheetCollapsed( ! state.overlay.find( '.wc-acs-points-sidebar' ).hasClass( 'is-collapsed' ) );
         } );
-        state.overlay.on( 'click', '.wc-acs-points-item', function () {
+        state.overlay.on( 'click', '.wc-acs-points-item-show', function () {
             var id = $( this ).data( 'id' );
             var marker = state.markers[ id ];
             if ( marker ) {
@@ -277,8 +326,8 @@
                     state.map.setView( target, zoom );
                 }
             }
-            if ( window.innerWidth < 768 ) {
-                state.overlay.find( '.wc-acs-points-sidebar' ).addClass( 'is-collapsed' );
+            if ( isPhone() ) {
+                setSheetCollapsed( true );
             }
         } );
         state.overlay.on( 'click', '.wc-acs-points-select', function () {
@@ -301,6 +350,10 @@
         $( 'body' ).removeClass( 'wc-acs-points-noscroll' );
         state.filter = 'all';
         state.search = '';
+        if ( state.historyPushed ) {
+            state.historyPushed = false;
+            window.history.back();
+        }
     }
 
     // ─── Map ──────────────────────────────────────────────────────
@@ -407,14 +460,19 @@
             return;
         }
 
+        // Each row holds two buttons (a button cannot contain another): the
+        // text shows the point on the map, "Select" picks it in one tap.
         var html = points.slice( 0, LIST_CAP ).map( function ( item ) {
             var p = item.p;
             var km = item.d < 10 ? item.d.toFixed( 1 ) : Math.round( item.d );
-            return '<button type="button" class="wc-acs-points-item wc-acs-points-item--' + escapeHtml( p.type ) + '" data-id="' + escapeHtml( p.id ) + '">' +
-                '<span class="wc-acs-points-item-name">' + escapeHtml( p.name ) + '</span>' +
-                '<span class="wc-acs-points-item-address">' + escapeHtml( p.street ) + ', ' + escapeHtml( p.zip ) + ' ' + escapeHtml( p.city ) + '</span>' +
-                '<span class="wc-acs-points-item-meta">' + hoursHtml( p ) + ' ' + codHtml( p ) + '<span class="wc-acs-points-km">' + km + ' km</span></span>' +
-            '</button>';
+            return '<div class="wc-acs-points-item wc-acs-points-item--' + escapeHtml( p.type ) + '">' +
+                '<button type="button" class="wc-acs-points-item-show" data-id="' + escapeHtml( p.id ) + '">' +
+                    '<span class="wc-acs-points-item-name">' + escapeHtml( p.name ) + '</span>' +
+                    '<span class="wc-acs-points-item-address">' + escapeHtml( p.street ) + ', ' + escapeHtml( p.zip ) + ' ' + escapeHtml( p.city ) + '</span>' +
+                    '<span class="wc-acs-points-item-meta">' + hoursHtml( p ) + ' ' + codHtml( p ) + '<span class="wc-acs-points-km">' + km + ' km</span></span>' +
+                '</button>' +
+                '<button type="button" class="wc-acs-points-select wc-acs-points-item-select" data-id="' + escapeHtml( p.id ) + '" aria-label="' + escapeHtml( cfg.i18n.select + ': ' + p.name ) + '">' + escapeHtml( cfg.i18n.select ) + '</button>' +
+            '</div>';
         } ).join( '' );
 
         if ( points.length > LIST_CAP ) {
@@ -472,6 +530,7 @@
             return;
         }
         buildOverlay();
+        pushHistory();
         Promise.all( [ loadAssets(), loadPoints() ] )
             .then( function () {
                 if ( state.overlay ) {
@@ -507,5 +566,6 @@
                 closeOverlay();
             }
         } );
+        window.addEventListener( 'popstate', onPopState );
     } );
 }( jQuery ) );

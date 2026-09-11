@@ -424,6 +424,18 @@ msgstr ""
 msgid "Close"
 msgstr ""
 
+#: includes/class-acs-points-picker.php:548
+msgid "Choose an ACS Point"
+msgstr ""
+
+#: includes/class-acs-points-picker.php:558
+msgid "Show the list"
+msgstr ""
+
+#: includes/class-acs-points-picker.php:559
+msgid "Hide the list"
+msgstr ""
+
 #: includes/class-acs-points-picker.php:376
 msgid "Loading points..."
 msgstr ""
