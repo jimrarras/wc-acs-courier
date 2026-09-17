@@ -4,6 +4,8 @@
 
 It is a class-based, unit-tested plugin built for and running on a production Greek WooCommerce store.
 
+![The ACS Points picker at checkout: a searchable list of ACS lockers and stores beside a clustered map](.github/readme/acs-points-map.webp)
+
 ## Features
 
 ### Voucher Management
@@ -163,7 +165,9 @@ ACS Courier is a trademark of its owner. This plugin is not affiliated with or e
 
 ## Support
 
-If this plugin saves you time, you can [buy me a coffee](https://buymeacoffee.com/jimrarras).
+If this plugin saves you time, you can buy me a coffee.
+
+<a href="https://buymeacoffee.com/jimrarras"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy me a coffee" height="48"></a>
 
 ## License
 
