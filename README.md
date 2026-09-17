@@ -1,5 +1,7 @@
 # ACS Courier for WooCommerce
 
+<img src=".github/readme/banner.webp" alt="ACS Courier for WooCommerce: vouchers, tracking and ACS Points lockers on a map" width="100%">
+
 **Open source** WooCommerce plugin for integrating with ACS Courier (Greece's largest courier service).
 
 It is a class-based, unit-tested plugin built for and running on a production Greek WooCommerce store.
