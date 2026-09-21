@@ -68,13 +68,26 @@
 
     function loadAssets() {
         if ( ! state.assets ) {
-            state.assets = Promise.all( [
+            // Another picker (wc-geniki-taxydromiki) may be loading or have loaded
+            // Leaflet already. A second copy would replace window.L and orphan the
+            // markercluster plugin attached to the first, so share one load.
+            var styles = Promise.all( [
                 loadStyle( cfg.assets.leafletCss ),
                 loadStyle( cfg.assets.clusterCss ),
                 loadStyle( cfg.assets.clusterDefaultCss )
-            ] )
-                .then( function () { return loadScript( cfg.assets.leafletJs ); } )
-                .then( function () { return loadScript( cfg.assets.clusterJs ); } );
+            ] );
+
+            if ( ! window.__wcLeafletLoading ) {
+                window.__wcLeafletLoading = Promise.resolve()
+                    .then( function () {
+                        return window.L && window.L.map ? null : loadScript( cfg.assets.leafletJs );
+                    } )
+                    .then( function () {
+                        return window.L && window.L.markerClusterGroup ? null : loadScript( cfg.assets.clusterJs );
+                    } );
+            }
+
+            state.assets = styles.then( function () { return window.__wcLeafletLoading; } );
         }
         return state.assets;
     }

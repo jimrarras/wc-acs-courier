@@ -892,14 +892,14 @@ msgid "Could not retrieve pickup list PDF."
 msgstr "Δεν ήταν δυνατή η ανάκτηση του PDF λίστας παραλαβής."
 
 #. translators: %s: shipping method id of the other carrier
-#: includes/class-acs-voucher.php:738
+#: includes/class-acs-voucher.php:740
 #, php-format
 msgid ""
-"ACS auto-voucher skipped: this order ships with %s (BOX NOW or another "
-"carrier), not ACS."
+"ACS auto-voucher skipped: this order ships with another carrier (%s), not "
+"ACS."
 msgstr ""
-"Παράλειψη αυτόματου ACS voucher: αυτή η παραγγελία αποστέλλεται με %s (BOX "
-"NOW ή άλλη μεταφορική), όχι ACS."
+"Η αυτόματη δημιουργία voucher ACS παραλείφθηκε: η παραγγελία αποστέλλεται "
+"με άλλη εταιρεία (%s), όχι με ACS."
 
 #. translators: %s: error message
 #: includes/class-acs-voucher.php:789 includes/class-acs-voucher.php:800

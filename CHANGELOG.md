@@ -3,6 +3,16 @@
 All notable changes to ACS Courier for WooCommerce are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.1] - 2026-09-21
+
+### Added
+
+- Automatic vouchers skip orders shipped with Geniki Taxydromiki (wc-geniki-taxydromiki), the same way they skip BOX NOW orders
+
+### Changed
+
+- The points map shares one Leaflet copy with other carrier pickers on the same checkout
+
 ## [1.3.0] - 2026-09-11
 
 ### Added

@@ -864,9 +864,9 @@ msgid "Could not retrieve pickup list PDF."
 msgstr ""
 
 #. translators: %s: shipping method id of the other carrier
-#: includes/class-acs-voucher.php:738
+#: includes/class-acs-voucher.php:740
 #, php-format
-msgid "ACS auto-voucher skipped: this order ships with %s (BOX NOW or another carrier), not ACS."
+msgid "ACS auto-voucher skipped: this order ships with another carrier (%s), not ACS."
 msgstr ""
 
 #. translators: %s: error message

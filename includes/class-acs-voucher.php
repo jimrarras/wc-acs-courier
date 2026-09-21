@@ -712,11 +712,12 @@ class WC_ACS_Voucher {
      * Should this order get an ACS voucher automatically?
      *
      * A store may run another carrier plugin alongside this one (for example
-     * wc-boxnow-delivery). An order shipped through that carrier must not also
-     * get an ACS voucher when it reaches the trigger status. The rule is "not
-     * another known carrier", never "is the ACS shipping method": a store may
-     * offer its ACS rate as a plain flat_rate, so requiring our own method id
-     * would switch automation off for every real ACS order.
+     * wc-boxnow-delivery or wc-geniki-taxydromiki). An order shipped through
+     * that carrier must not also get an ACS voucher when it reaches the
+     * trigger status. The rule is "not another known carrier", never "is the
+     * ACS shipping method": a store may offer its ACS rate as a plain
+     * flat_rate, so requiring our own method id would switch automation off
+     * for every real ACS order.
      *
      * @param WC_Order $order Order.
      * @return bool
@@ -726,16 +727,17 @@ class WC_ACS_Voucher {
          * Shipping method ids that belong to other carrier plugins.
          *
          * @since 1.0.1
+         * @since 1.3.1 Geniki Taxydromiki ids added to the default.
          *
-         * @param string[] $method_ids Method ids to leave alone. Default: BOX NOW's.
+         * @param string[] $method_ids Method ids to leave alone.
          */
-        $other_carriers = (array) apply_filters( 'wc_acs_other_carrier_method_ids', array( 'box_now_delivery' ) );
+        $other_carriers = (array) apply_filters( 'wc_acs_other_carrier_method_ids', array( 'box_now_delivery', 'geniki_courier', 'geniki_points' ) );
 
         foreach ( $order->get_shipping_methods() as $item ) {
             if ( in_array( $item->get_method_id(), $other_carriers, true ) ) {
                 $order->add_order_note(
                     /* translators: %s: shipping method id of the other carrier */
-                    sprintf( __( 'ACS auto-voucher skipped: this order ships with %s (BOX NOW or another carrier), not ACS.', 'wc-acs-courier' ), $item->get_method_id() )
+                    sprintf( __( 'ACS auto-voucher skipped: this order ships with another carrier (%s), not ACS.', 'wc-acs-courier' ), $item->get_method_id() )
                 );
                 $order->save();
                 return false;

@@ -7,7 +7,7 @@ Tested up to: 7.1
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 11.1
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,10 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.3.1 =
+* New: automatic vouchers skip orders shipped with Geniki Taxydromiki (wc-geniki-taxydromiki), the same way they skip BOX NOW orders
+* Tweak: the points map shares one Leaflet copy with other carrier pickers on the same checkout
 
 = 1.3.0 =
 * New: every point in the ACS Points list has its own Select button, so a point is chosen in one tap

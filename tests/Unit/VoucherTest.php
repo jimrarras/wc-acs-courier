@@ -489,7 +489,34 @@ class VoucherTest extends TestCase {
 
         $this->assertArrayNotHasKey( '_acs_voucher_no', $order->updated_meta );
         $this->assertCount( 1, $order->notes, 'The operator should see why no ACS voucher was created.' );
-        $this->assertStringContainsString( 'BOX NOW', $order->notes[0] );
+        $this->assertStringContainsString( 'box_now_delivery', $order->notes[0] );
+    }
+
+    public function genikiMethodIds(): array {
+        return array( array( 'geniki_courier' ), array( 'geniki_points' ) );
+    }
+
+    /** @dataProvider genikiMethodIds */
+    public function test_auto_create_skips_an_order_shipped_with_geniki( string $method_id ): void {
+        // A store running wc-geniki-taxydromiki alongside this plugin: a Geniki
+        // order reaching the trigger status must not also get an ACS voucher.
+        $this->stubGetOption( [
+            'wc_acs_auto_create_voucher' => 'yes',
+            'wc_acs_auto_create_status'  => 'wc-processing',
+        ] );
+
+        $order = $this->createOrderMock( [
+            'shipping_methods' => [ $this->shippingItem( $method_id ) ],
+        ] );
+        Functions\when( 'wc_get_order' )->justReturn( $order );
+
+        // wp_remote_post not stubbed: a call would fatal, proving the API was never reached.
+        $this->voucher->auto_create_voucher( 100, 'pending', 'processing' );
+
+        $this->assertArrayNotHasKey( '_acs_voucher_no', $order->updated_meta );
+        $this->assertCount( 1, $order->notes );
+        $this->assertStringContainsString( $method_id, $order->notes[0] );
+        $this->assertStringNotContainsString( 'BOX NOW', $order->notes[0], 'The note must not blame BOX NOW for a Geniki order.' );
     }
 
     public function test_auto_create_proceeds_for_a_flat_rate_order(): void {
