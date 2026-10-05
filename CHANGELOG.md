@@ -3,6 +3,12 @@
 All notable changes to ACS Courier for WooCommerce are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.2] - 2026-10-05
+
+### Added
+
+- Optional "Complete On Pickup" automation setting (off by default): a Processing order becomes Completed the first time ACS reports the parcel, once per order, so the customer gets the Completed email without a manual step. Delivered and returned orders keep their ACS statuses
+
 ## [1.3.1] - 2026-09-21
 
 ### Added

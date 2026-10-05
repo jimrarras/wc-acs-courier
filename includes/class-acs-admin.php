@@ -96,6 +96,10 @@ class WC_ACS_Admin {
             array( 'default' => 'yes' ),
             $sanitize_checkbox
         ) );
+        register_setting( 'wc_acs_automation', 'wc_acs_complete_on_scan', array_merge(
+            array( 'default' => 'no' ),
+            $sanitize_checkbox
+        ) );
         register_setting( 'wc_acs_automation', 'wc_acs_tracking_frequency', array(
             'default'           => 'hourly',
             'sanitize_callback' => array( $this, 'sanitize_frequency' ),
@@ -425,6 +429,17 @@ class WC_ACS_Admin {
                                         <?php checked( 'yes', get_option( 'wc_acs_auto_tracking', 'yes' ) ); ?> />
                                     <?php esc_html_e( 'Automatically check shipment status and update orders.', 'wc-acs-courier' ); ?>
                                 </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?php esc_html_e( 'Complete On Pickup', 'wc-acs-courier' ); ?></th>
+                            <td>
+                                <label>
+                                    <input type="checkbox" name="wc_acs_complete_on_scan" value="yes"
+                                        <?php checked( 'yes', get_option( 'wc_acs_complete_on_scan', 'no' ) ); ?> />
+                                    <?php esc_html_e( 'Set a Processing order to Completed the first time ACS reports the parcel (this sends the customer the Completed email).', 'wc-acs-courier' ); ?>
+                                </label>
+                                <p class="description"><?php esc_html_e( 'Needs Auto Tracking. Delivered and returned orders keep their own ACS statuses.', 'wc-acs-courier' ); ?></p>
                             </td>
                         </tr>
                         <tr>

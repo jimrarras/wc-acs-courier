@@ -26,6 +26,7 @@ $options = array(
 	'wc_acs_auto_tracking',
 	'wc_acs_tracking_frequency',
 	'wc_acs_email_tracking',
+	'wc_acs_complete_on_scan',
 	'wc_acs_debug_logging',
 	'wc_acs_points_feed',
 	'wc_acs_points_feed_error',

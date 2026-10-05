@@ -53,13 +53,16 @@ class TrackingTest extends TestCase {
                 $captures->notes[] = $note;
             }
         );
+        $order->shouldReceive( 'has_status' )->andReturnUsing( function ( $status ) use ( $meta ) {
+            return ( $meta['__status'] ?? 'processing' ) === $status;
+        } );
         $order->shouldReceive( 'save' )->andReturnNull();
 
         return [ $order, $captures ];
     }
 
-    private function stubTrackingApi( array $tracking_data ): void {
-        $this->stubGetOption( [
+    private function stubTrackingApi( array $tracking_data, array $options = [] ): void {
+        $this->stubGetOption( $options + [
             'wc_acs_auto_tracking'    => 'yes',
             'wc_acs_api_key'          => 'key',
             'wc_acs_company_id'       => 'C',
@@ -300,5 +303,88 @@ class TrackingTest extends TestCase {
 
         $this->assertEmpty( $captures->statuses );
         $this->assertEmpty( $captures->notes );
+    }
+
+    // ── Complete on first scan ────────────────────────────────────────
+
+    private function runScan( array $meta, array $tracking, array $options ): \stdClass {
+        [ $order, $captures ] = $this->makeTrackingOrder( $meta + [ '_acs_voucher_no' => '7000020' ] );
+        $this->stubTrackingApi( $tracking + [ 'delivery_flag' => 0, 'returned_flag' => 0 ], $options );
+        Functions\when( 'wc_get_orders' )->justReturn( [ $order ] );
+        $this->tracking->run_tracking();
+        return $captures;
+    }
+
+    public function test_first_scan_completes_processing_order_when_enabled(): void {
+        $captures = $this->runScan(
+            [ '_acs_shipment_status' => 0, '_acs_tracking_status' => '' ],
+            [ 'shipment_status' => 5, 'delivery_info' => 'Shipment is on transit to destination' ],
+            [ 'wc_acs_complete_on_scan' => 'yes' ]
+        );
+
+        $this->assertSame( [ 'completed' ], $captures->statuses );
+        $this->assertSame( 'yes', $captures->meta['_acs_completed_on_scan'] );
+        $this->assertArrayNotHasKey( '_acs_tracking_final', $captures->meta );
+    }
+
+    public function test_first_scan_leaves_order_alone_by_default(): void {
+        $captures = $this->runScan(
+            [ '_acs_shipment_status' => 0, '_acs_tracking_status' => '' ],
+            [ 'shipment_status' => 5, 'delivery_info' => 'Shipment is on transit to destination' ],
+            []
+        );
+
+        $this->assertEmpty( $captures->statuses );
+    }
+
+    public function test_uncollected_parcel_is_not_completed(): void {
+        $captures = $this->runScan(
+            [ '_acs_shipment_status' => 0, '_acs_tracking_status' => '' ],
+            [ 'shipment_status' => 0, 'delivery_info' => '' ],
+            [ 'wc_acs_complete_on_scan' => 'yes' ]
+        );
+
+        $this->assertEmpty( $captures->statuses );
+    }
+
+    public function test_only_processing_orders_are_completed(): void {
+        foreach ( [ 'on-hold', 'completed', 'cancelled' ] as $status ) {
+            $captures = $this->runScan(
+                [ '__status' => $status, '_acs_shipment_status' => 0, '_acs_tracking_status' => '' ],
+                [ 'shipment_status' => 5, 'delivery_info' => 'Shipment is on transit to destination' ],
+                [ 'wc_acs_complete_on_scan' => 'yes' ]
+            );
+            $this->assertEmpty( $captures->statuses, "status {$status} must not be changed" );
+        }
+    }
+
+    public function test_order_is_completed_only_once(): void {
+        $captures = $this->runScan(
+            [ '_acs_shipment_status' => 5, '_acs_tracking_status' => 'Shipment is on transit to destination', '_acs_completed_on_scan' => 'yes' ],
+            [ 'shipment_status' => 5, 'delivery_info' => 'Shipment is on transit to destination' ],
+            [ 'wc_acs_complete_on_scan' => 'yes' ]
+        );
+
+        $this->assertEmpty( $captures->statuses, 'an order the merchant moved back to Processing is not completed again' );
+    }
+
+    public function test_delivery_wins_over_completion(): void {
+        $captures = $this->runScan(
+            [ '_acs_shipment_status' => 0, '_acs_tracking_status' => '' ],
+            [ 'shipment_status' => 4, 'delivery_info' => 'Delivered' ],
+            [ 'wc_acs_complete_on_scan' => 'yes' ]
+        );
+
+        $this->assertSame( [ 'acs-delivered' ], $captures->statuses );
+    }
+
+    public function test_denied_wins_over_completion(): void {
+        $captures = $this->runScan(
+            [ '_acs_shipment_status' => 0, '_acs_tracking_status' => '' ],
+            [ 'shipment_status' => 1, 'delivery_info' => 'Refused', 'non_delivery_reason_code' => 'REF' ],
+            [ 'wc_acs_complete_on_scan' => 'yes' ]
+        );
+
+        $this->assertSame( [ 'acs-denied' ], $captures->statuses );
     }
 }

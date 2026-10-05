@@ -134,11 +134,14 @@ class WC_ACS_Tracking {
                 WC_ACS_API::log( "Order #{$order->get_id()} marked as denied. Reason: {$reason}" );
             }
             // In transit — only add note when status changed
-            elseif ( $status_changed ) {
-                $order->add_order_note(
-                    /* translators: %s: delivery info */
-                    sprintf( __( 'ACS Tracking update: %s', 'wc-acs-courier' ), $info )
-                );
+            else {
+                if ( $status_changed ) {
+                    $order->add_order_note(
+                        /* translators: %s: delivery info */
+                        sprintf( __( 'ACS Tracking update: %s', 'wc-acs-courier' ), $info )
+                    );
+                }
+                $this->maybe_complete_on_scan( $order, $status );
             }
 
             $order->save();
@@ -149,6 +152,31 @@ class WC_ACS_Tracking {
         }
 
         WC_ACS_API::log( "Auto-tracking complete. Tracked {$tracked} orders." );
+    }
+
+    /**
+     * Move a Processing order to Completed the first time ACS reports the parcel.
+     *
+     * Opt-in (wc_acs_complete_on_scan). Until ACS collects a parcel its summary
+     * carries no status (0), so any non-zero status means ACS has it. Delivered
+     * and denied are handled before this is reached. It happens once per order
+     * (_acs_completed_on_scan), so an order the merchant puts back to Processing
+     * is not completed again by the next tracking run.
+     *
+     * @param WC_Order $order  Order (the caller saves it).
+     * @param int      $status ACS shipment_status.
+     */
+    private function maybe_complete_on_scan( $order, $status ) {
+        if ( 'yes' !== get_option( 'wc_acs_complete_on_scan', 'no' ) ) {
+            return;
+        }
+        if ( $status <= 0 || ! $order->has_status( 'processing' ) || $order->get_meta( '_acs_completed_on_scan' ) ) {
+            return;
+        }
+
+        $order->update_meta_data( '_acs_completed_on_scan', 'yes' );
+        $order->set_status( 'completed', __( 'ACS: parcel collected by the courier.', 'wc-acs-courier' ) );
+        WC_ACS_API::log( "Order #{$order->get_id()} completed on first ACS scan." );
     }
 
     /**

@@ -7,7 +7,7 @@ Tested up to: 7.1
 Requires PHP: 7.4
 WC requires at least: 6.0
 WC tested up to: 11.1
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -124,6 +124,9 @@ Deactivation clears the tracking cron job. Uninstalling removes all plugin setti
 5. Tracking details in the order metabox
 
 == Changelog ==
+
+= 1.3.2 =
+* New: optional "Complete On Pickup" setting (off by default) sets a Processing order to Completed the first time ACS reports the parcel, once per order. Delivered and returned orders keep their ACS statuses
 
 = 1.3.1 =
 * New: automatic vouchers skip orders shipped with Geniki Taxydromiki (wc-geniki-taxydromiki), the same way they skip BOX NOW orders

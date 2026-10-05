@@ -1024,3 +1024,19 @@ msgstr[1] "Άρνηση Παράδοσης (ACS) <span class=\"count\">(%s)</spa
 #: wc-acs-courier.php:260
 msgid "Settings"
 msgstr "Ρυθμίσεις"
+
+#: includes/class-acs-admin.php:447
+msgid "Complete On Pickup"
+msgstr "Ολοκλήρωση στην παραλαβή"
+
+#: includes/class-acs-admin.php:452
+msgid "Set a Processing order to Completed the first time ACS reports the parcel (this sends the customer the Completed email)."
+msgstr "Μετάβαση μιας παραγγελίας «Σε επεξεργασία» σε «Ολοκληρωμένη» την πρώτη φορά που η ACS αναφέρει το δέμα (στέλνει στον πελάτη το email ολοκλήρωσης)."
+
+#: includes/class-acs-admin.php:454
+msgid "Needs Auto Tracking. Delivered and returned orders keep their own ACS statuses."
+msgstr "Απαιτεί Αυτόματη Παρακολούθηση. Οι παραδομένες και οι επιστραφείσες παραγγελίες κρατούν τις δικές τους καταστάσεις ACS."
+
+#: includes/class-acs-tracking.php:176
+msgid "ACS: parcel collected by the courier."
+msgstr "ACS: το δέμα παραλήφθηκε από τον μεταφορέα."

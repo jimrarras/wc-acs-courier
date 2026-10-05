@@ -988,3 +988,19 @@ msgstr[1] ""
 #: wc-acs-courier.php:260
 msgid "Settings"
 msgstr ""
+
+#: includes/class-acs-admin.php:447
+msgid "Complete On Pickup"
+msgstr ""
+
+#: includes/class-acs-admin.php:452
+msgid "Set a Processing order to Completed the first time ACS reports the parcel (this sends the customer the Completed email)."
+msgstr ""
+
+#: includes/class-acs-admin.php:454
+msgid "Needs Auto Tracking. Delivered and returned orders keep their own ACS statuses."
+msgstr ""
+
+#: includes/class-acs-tracking.php:176
+msgid "ACS: parcel collected by the courier."
+msgstr ""
