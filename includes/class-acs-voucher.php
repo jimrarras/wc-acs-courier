@@ -166,6 +166,9 @@ class WC_ACS_Voucher {
 
                 <div id="wc-acs-tracking-details" style="display:none; margin-top:10px;"></div>
 
+            <?php elseif ( '' !== ( $blocked = $this->manual_voucher_block_reason( $order ) ) ) : // phpcs:ignore WordPress.CodeAnalysis.AssignmentInCondition ?>
+                <p class="wc-acs-blocked"><?php echo esc_html( $blocked ); ?></p>
+
             <?php else : ?>
                 <div class="wc-acs-create-section">
                     <?php $is_point_order = '' !== (string) $order->get_meta( '_acs_point_station' ); ?>
@@ -382,6 +385,11 @@ class WC_ACS_Voucher {
         // Already has voucher?
         if ( $order->get_meta( '_acs_voucher_no' ) ) {
             wp_send_json_error( __( 'This order already has an ACS voucher.', 'wc-acs-courier' ) );
+        }
+
+        $blocked = $this->manual_voucher_block_reason( $order );
+        if ( '' !== $blocked ) {
+            wp_send_json_error( $blocked );
         }
 
         // Extra params from the metabox form
@@ -756,6 +764,34 @@ class WC_ACS_Voucher {
     }
 
     /**
+     * Why must no voucher be created by hand for this order?
+     *
+     * should_auto_create() only guards the automatic path. A person clicking
+     * "Create Voucher" in the order box, or using the bulk action, reaches the
+     * API without it, so another plugin needs a say there too: for example
+     * pooq-marketplaces, whose orders ship with the marketplace's own voucher.
+     *
+     * @since 1.3.3
+     *
+     * @param WC_Order $order   Order.
+     * @param string   $context 'button' (order box) or 'bulk' (bulk action).
+     * @return string Reason shown to the operator, or '' when a voucher may be created.
+     */
+    public function manual_voucher_block_reason( $order, $context = 'button' ) {
+        /**
+         * Block creating an ACS voucher by hand (order box or bulk action).
+         *
+         * @since 1.3.3
+         *
+         * @param string   $reason  Empty to allow; a non-empty, already translated sentence to refuse.
+         * @param WC_Order $order   The order.
+         * @param string   $context 'button' for the order box, 'bulk' for the bulk action.
+         */
+        $reason = apply_filters( 'wc_acs_manual_voucher_block_reason', '', $order, $context );
+        return is_string( $reason ) ? trim( $reason ) : '';
+    }
+
+    /**
      * Auto-create voucher on order status change.
      *
      * @param int    $order_id   Order ID.
@@ -955,6 +991,13 @@ class WC_ACS_Voucher {
             foreach ( $ids as $order_id ) {
                 $order = wc_get_order( $order_id );
                 if ( ! $order || $order->get_meta( '_acs_voucher_no' ) ) {
+                    continue;
+                }
+
+                $blocked = $this->manual_voucher_block_reason( $order, 'bulk' );
+                if ( '' !== $blocked ) {
+                    $order->add_order_note( sprintf( __( 'ACS voucher skipped: %s', 'wc-acs-courier' ), $blocked ) );
+                    $order->save();
                     continue;
                 }
 

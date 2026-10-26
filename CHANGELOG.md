@@ -3,6 +3,12 @@
 All notable changes to ACS Courier for WooCommerce are documented here.
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.3] - 2026-10-26
+
+### Added
+
+- `wc_acs_manual_voucher_block_reason` filter (reason string, empty allows; second argument is the order, third is `button` or `bulk`). It guards the manual paths, the order box "Create Voucher" button and the "ACS: Create Vouchers" bulk action, which the automatic-path filters never covered. A refused order shows the reason in the box instead of the Create form, and a bulk run skips it with an order note
+
 ## [1.3.2] - 2026-10-05
 
 ### Added

@@ -578,4 +578,47 @@ class VoucherTest extends TestCase {
 
         $this->assertArrayNotHasKey( '_acs_voucher_no', $order->updated_meta );
     }
+
+    // ── manual_voucher_block_reason(): the order box and the bulk action ──
+
+    public function test_manual_voucher_block_reason_is_empty_by_default(): void {
+        $order = $this->createOrderMock();
+        $this->assertSame( '', $this->voucher->manual_voucher_block_reason( $order ) );
+    }
+
+    public function test_manual_voucher_block_reason_returns_the_filtered_reason_trimmed(): void {
+        Functions\when( 'apply_filters' )->alias( function ( $tag, $value, ...$args ) {
+            return 'wc_acs_manual_voucher_block_reason' === $tag ? '  Marketplace order.  ' : $value;
+        } );
+        $order = $this->createOrderMock();
+        $this->assertSame( 'Marketplace order.', $this->voucher->manual_voucher_block_reason( $order ) );
+    }
+
+    public function test_manual_voucher_block_reason_ignores_a_non_string_filter_result(): void {
+        Functions\when( 'apply_filters' )->alias( function ( $tag, $value, ...$args ) {
+            return 'wc_acs_manual_voucher_block_reason' === $tag ? false : $value;
+        } );
+        $order = $this->createOrderMock();
+        $this->assertSame( '', $this->voucher->manual_voucher_block_reason( $order ) );
+    }
+
+    public function test_bulk_create_skips_a_blocked_order_and_says_why(): void {
+        Functions\when( 'apply_filters' )->alias( function ( $tag, $value, ...$args ) {
+            return 'wc_acs_manual_voucher_block_reason' === $tag ? 'Marketplace order.' : $value;
+        } );
+        Functions\when( 'add_query_arg' )->alias( function ( $key, $value, $url ) {
+            return $url . '?' . $key . '=' . $value;
+        } );
+
+        $order = $this->createOrderMock();
+        Functions\when( 'wc_get_order' )->justReturn( $order );
+
+        // wp_remote_post not stubbed: reaching the API would fatal.
+        $redirect = $this->voucher->handle_bulk_actions( 'edit.php', 'acs_create_vouchers', [ 100 ] );
+
+        $this->assertArrayNotHasKey( '_acs_voucher_no', $order->updated_meta );
+        $this->assertCount( 1, $order->notes );
+        $this->assertStringContainsString( 'Marketplace order.', $order->notes[0] );
+        $this->assertStringContainsString( 'acs_vouchers_created=0', $redirect );
+    }
 }
